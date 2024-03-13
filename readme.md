@@ -54,7 +54,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 #### **<br>Najważniejsze konstrukcje językowe wraz z przykładami:**
 * **Komenatrze**
   * Komentarz jednoliniowy
-    ```json
+    ```
     //This is comment
     ``` 
     <br>
@@ -87,6 +87,13 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     <br>
 * **Instrukcje warunkowe:**
     * if
+        ```
+      int a = 2;
+      
+      if a == 2 {
+            a = a + 2
+      }
+        ```
     * if-else
     * if-elseif
 
