@@ -14,7 +14,7 @@ Możliwe są także wszystkie podstawowe operacje na słowniku:
 * Modyfikowanie elementów 
 * Wyszukiwanie elementów według klucza
 * Sprawdzanie czy klucz znajduje się w słowniku
-* Iterowanie po słowniku w celu modyfikacji wartości 
+* Iterowanie po słowniku
 
 Język pozwala także na wykonywanie zapytań w stylu LINQ, 
 umożliwiających wyszukiwanie, filtrowanie oraz przejrzyste zwrócenie danych w sposób określony przez użytkownika.
@@ -28,7 +28,7 @@ Korzystanie z LTS wersji Java zapewnia stabilność, bezpieczeństwo oraz długo
 
 ### **<br>Cechy języka:**
 * **Statyczne typowanie**, wszystkie typy danych muszą być jasno zadeklarowane zgodnie ze składnią języka
-* **Silne typowani**e, automatyczne konwersje międzu typami nie są obsługiwane, takie operacje wymagają jasnego zdefiniowania za pomocą wbudowanych w język mechanizmów 
+* **Silne typowanie**, automatyczne konwersje międzu typami nie są obsługiwane, takie operacje wymagają jasnego zdefiniowania za pomocą wbudowanych w język mechanizmów 
 * **Referencje**, argumenty są przekazywane do funkcji oraz metod przez referencję(podobnie jak w języku Python)
 * **Mutowalność**, zmienne są mutowalne
 * **Funkcja main**, plik źródłowy musi zawierać jedną bezargumentową funkcję main zwracającą int
@@ -90,6 +90,17 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
   * /
   * \+
   * \-
+    ```
+    int first = 4;
+    int second = 3;
+    int third = 2;
+    
+    // dzielenie dwóch zmiennych typu integer również zwraca integer, czyli po wykonaniu poniższej linii zmienna result1 = 1
+    int result1 = second / third;  
+    
+    //zachowana jest kolejność działań zgodna z matematyką, czyli po wykonaniu poniższej linii zmienna result2 = 14
+    int result2 = 2 + first * second;
+    ```
 
     <br>
 * **Operatory porównania:**
@@ -99,21 +110,25 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     * <=
     * \>
     * \>=
-
-    <br>
-* **Pętle:**
-    * while
-    * for
+  
+      ```
+      int a = 2;
+      bool var = a < 1;
+      bool var1 = a != 2;
+      bool var2 = a >= 2;
+      
+      //przyklady rowniez w sekcji "petle warunkowe"
+      ```
 
     <br>
 * **Instrukcje warunkowe:**
     * if
         <br> Przykład konstruckji if (TEST MARKDOWN):
       ```
-      int a = 2;
+      int a = 3;
       
-      if a == 2 {
-            a = a + 2;
+      if a != 2 {
+          a = a + 2;
       }
       ```
     * if-else
@@ -121,7 +136,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       int a = 2;
       int b;
       
-      if a == 2 {
+      if a >= 2 {
             b = 2;
       } else {
             b = 0;  
@@ -134,12 +149,22 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       
       if a == 2 {
             b = 2;
-      } elseif a == 3 {
-            b = 3;  
-      } else {
-            b = 0;
-      }
+      } elseif a < 2 {
+            b = -3;  
+      } elseif > 2 {
+            b = 3;
       ```
+
+    <br>
+* **Pętle warunkowe:**
+    * while
+    ```
+    int x = 2;
+  
+    while x != 5 {
+        x = x + 1
+    }
+    ```
 
   <br>
 * **Funkcje:**
