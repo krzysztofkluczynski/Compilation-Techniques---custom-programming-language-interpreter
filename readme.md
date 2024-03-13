@@ -70,9 +70,19 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
   
     <br>
 * **Operatory logiczne:**
-  * and
+  * and 
   * or
-  * no
+  * not
+  
+    Przykładowe operacje:
+
+    ```
+    bool var_true = true;
+    bool var_false = false;
+    
+    bool a = var_true and (not var_false);
+    bool b = var_true and (var_true or var_false);
+    ```
 
     <br>
 * **Operatory arytmetyczne:**
@@ -98,7 +108,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     <br>
 * **Instrukcje warunkowe:**
     * if
-        <br> Przykład konstruckji if (DO USUINECIA TEST MARKDOWN):
+        <br> Przykład konstruckji if (TEST MARKDOWN):
       ```
       int a = 2;
       
@@ -126,6 +136,8 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
             b = 2;
       } elseif a == 3 {
             b = 3;  
+      } else {
+            b = 0;
       }
       ```
 
@@ -145,6 +157,10 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 * **Operatory rzutowania:**
     * int na float
     * float na int
+    * int na string
+    * float na string
+    * string na int
+    * string na float
 
     <br>
 * **Zapytania na słownikach:**
@@ -156,8 +172,25 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 ### **<br>Obsługa błędów:**
 
 ### **<br>Wymagania funkcjonalne:**
+* Interpreter pozwala na uruchomienie kodu zapisanego w pliku tekstowym
+* Język obsługuje podstawowe typy danych(int, float, bool) oraz konstrukcje językowe (pętle, instrukcje warunkowe)
+* Język pozwala na wykonywanie podstawowych operacji arytmetycznych i logicznych na zmiennych
+* Język posiada kolekcje - listy i słowniki
+* Na słownikach możliwe jest wywołanie metody sort(), która zmieni kolejność elementów w słowniku zgodnie z wyrażeniem, które poda użytkownik jako parametr
+* Na słownikach możliwe jest wykonanie zapytania w stylu LINQ(deklaratywnie), które zwróci przefiltrowane wartości we wskazanej kolejności
+* język umożlwia tworzenie własnych funkcji
+* język umożliwia tworzenie własnych klas
+* Język jest statycznie typowany
+* Język jest silnie typowany
+* Zmienne są mutowalne
+* Zmienne są przekazywane do funkcji przez referencję
 
 ### **<br>Wymagania niefunkcjonalne:**
+* Interpreter powinien zapewniać deterministyczne działanie, co oznacza, że ten sam kod źródłowy zawsze produkuje te same wyniki przy identycznych warunkach wejściowych, zapewniając stabilność działania aplikacji.
+* Interpreter powinien być łatwy do rozszerzania o dodatkowe funkcje i biblioteki, co umożliwia tworzenie bardziej zaawansowanych programów w oparciu o ten język.
+* Interpreter powinien być odpowiednio udokumentowany, aby ułatwić użytkownikom korzystanie z niego, opisując składnię języka, dostępne funkcje, typy danych itp.
+* Język zawiera jedynie podstawowe konstrukcje przez co jest prosty do nauki
+* Mechanizm sortowania słownika powinien być zoptymalizowany pod kątem wydajności
 
 ### **<br>Zwięzły opis realizacji:**
 
