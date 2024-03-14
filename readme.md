@@ -65,10 +65,29 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
   * int
   * float
   * String
-  * Dictionary
+    ```
+    bool var_bool = true;
+    int var_int = 2;
+    float var_float = 3.2;
+    String var_string = "Hello";
+    ```
   * List
+    ```
+    List<int> var_list =  [1, 2, 3, 4, 5];
+    ```
   * Tuple
-  
+    ```
+    Tuple<String, int> var_tuple = #"dog", 3#;
+    ```
+  * Dict
+    ```
+    Dictionary<String, int> var_dict = |
+        "dog": 3,
+        "cat": 4,
+        "cow": 5,
+        "hamster": 6 
+    |;
+    ```
 
   
     <br>
@@ -232,7 +251,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       
         
         fn void printNumber() {
-            print("current value: " + (@String this.number);
+            print("current value: " + ($String this.number);
         }
       
       }
