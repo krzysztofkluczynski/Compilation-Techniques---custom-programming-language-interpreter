@@ -64,9 +64,12 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
   * bool
   * int
   * float
-  * string
+  * String
   * Dictionary
   * List
+  * Tuple
+  
+
   
     <br>
 * **Operatory logiczne:**
@@ -182,7 +185,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
           int x = 26;
           printIfEven(x);
     
-          return 0  ;
+          return 0;
       }
       ```
 
@@ -203,19 +206,107 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     <br>
 * **Klasy:**
     * definicja klasy
+      Zakładamy, że wszystkie pola oraz metody są publiczne, język nie posiada modyfikatorów dostępu
+      ```
+      class Counter {
+        
+        Counter(int number) {
+        int number = 0;
+        }
+      
+        fn int getNumber() {
+            return this.number;
+        }
+      
+        fn void setNumber(int number) {
+            this.number = number;
+        }
+      
+        fn void increment() {
+             this.number = this.number + 1; 
+        }
+      
+        fn void decrement() {
+            this.number = this.number - 1;
+        }
+      
+        
+        fn void printNumber() {
+            print("current value: " + (@String this.number);
+        }
+      
+      }
+      
+      
+      fn int main() {
+          int x = 1;
+          Counter counter = Counter(x);
+          counter.increment;
+          counter.printNumber();
+      }
+      ```
 
-    <br>
+  <br>
 * **Funkcje wbudowane:**
     * print
+      <br>Funkcja print powoduje wypisanie tekstu w konsoli, przyjmuje jedynie argumenty typu String 
+      ```
+      fn int main() {
+          print("Hello");
+          return 0;
+      }
+      ```
 
     <br>
 * **Operatory rzutowania:**
     * int na float
+      ```
+      fn int main() {
+          int x = 2;
+          float y = ($float x); // y = 2.0
+          return 0;
+      }
+      ```
     * float na int
+      ```
+      fn int main() {
+          float x = 3.33;
+          int y = ($int x); // y = 3
+          return 0;
+      }
+      ```
     * int na string
+      ```
+      fn int main() {
+          int x = 3;
+          String y = ($String x);
+          return 0;
+      }
+      ```
     * float na string
+      ```
+      fn int main() {
+          float x = 3.2;
+          String y = ($String x);
+          return 0;
+      }
+      ```
     * string na int
+      ```
+      fn int main() {
+          String x = "3";
+          int y = ($String x);
+          return 0;
+      }
+      ```
     * string na float
+      ```
+      fn int main() {
+          String x = "3.2";
+          float y = ($String x);
+          return 0;
+      }
+      ```
 
     <br>
 * **Zapytania na słownikach:**
