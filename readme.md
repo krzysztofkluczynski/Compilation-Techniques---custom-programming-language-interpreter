@@ -330,6 +330,37 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     <br>
 * **Zapytania na słownikach:**
     * zapytania deklaratywne
+      ```
+      Dictionary<String, int> var_dict = |
+          "dog": 3,
+          "cat": 4,
+          "cow": 1,
+          "hamster": 6
+      |;
+      
+      List<Tuple<String, int>> query_result = 
+                                SELECT 
+                            var_dict.key
+                            var_dict.value
+                                FROM
+                            var dict
+                                WHERE
+                            var_dict.value > 2
+                                ORDER BY
+                            var_dict.value
+                                ASC
+
+      List<String> query_result2 = 
+                                SELECT 
+                            var_dict.key
+                                FROM
+                            var dict
+                                WHERE
+                            var_dict.value > 2
+                                ORDER BY
+                            var_dict.value
+                                DESC
+      ```
   
 
 ### **<br>EBNF:**
