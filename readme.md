@@ -74,7 +74,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
   * or
   * not
   
-    Przykładowe operacje:
+    Przykładowe operacje: 
 
     ```
     bool var_true = true;
@@ -123,7 +123,6 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     <br>
 * **Instrukcje warunkowe:**
     * if
-        <br> Przykład konstruckji if (TEST MARKDOWN):
       ```
       int a = 3;
       
@@ -158,17 +157,48 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     <br>
 * **Pętle warunkowe:**
     * while
-    ```
-    int x = 2;
+      ```
+      int x = 2;
   
-    while x != 5 {
-        x = x + 1
-    }
-    ```
+      while x != 5 {
+          x = x + 1
+      }
+      ```
 
   <br>
 * **Funkcje:**
-    * definicja funkcji
+    * funkcja niezwracająca wartości
+      ```
+      fn void printIfEven(int number) {
+          if (number / 2) * 2 != number {
+              print("The number is odd.");
+          } else {
+              print("The number is even.");
+          }
+      }
+      
+      
+      fn int main() {
+          int x = 26;
+          printIfEven(x);
+    
+          return 0  ;
+      }
+      ```
+
+  * funkcja bezargumentowa
+    ```
+    fn int getMaxInt() {
+        return 2147483647;
+    }
+    
+    
+    fn int main() {
+        int x = getmaxInt();
+        print(($String x))
+        return 0;
+    }
+    ```
 
     <br>
 * **Klasy:**
