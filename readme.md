@@ -61,40 +61,42 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     
     <br>
 * **Typy danych:**
-  * bool
-  * int
-  * float
-  * String
-    ```
-    bool var_bool = true;
-    int var_int = 2;
-    float var_float = 3.2;
-    String var_string = "Hello";
-    ```
-  * List
-    ```
-    List<int> var_list =  [1, 2, 3, 4, 5];
-    ```
-  * Tuple
-    ```
-    Tuple<String, int> var_tuple = #"dog", 3#;
-    ```
-  * Dict
-    ```
-    Dictionary<String, int> var_dict = |
-        "dog": 3,
-        "cat": 4,
-        "cow": 5,
-        "hamster": 6 
-    |;
-    ```
+    * `bool`: Reprezentuje wartości logiczne, które mogą być `true` lub `false`.
+    * `int`: Reprezentuje liczby całkowite z zakresu od -2147483648 do 2147483648.
+    * `float`: Reprezentuje liczby zmiennoprzecinkowe pojedynczej precyzji z zakresu od 1.40129846432481707e-45 do 3.40282346638528860e+38.
+    * `String`: Reprezentuje sekwencję znaków, która może zawierać litery, cyfry, białe znaki oraz znaki specjalne, o maksymalnej długości 200 znaków.
+      ```
+      bool var_bool = true;
+      int var_int = 2;
+      float var_float = 3.2;
+      String var_string = "Hello";
+      ```
 
-  
+    <br>
+* **Kolekcje:**
+    * `List`: Kolekcja elementów uporządkowanych, która pozwala na przechowywanie wielu elementów o różnych typach.
+      ```
+      List<int> var_list = [1, 2, 3, 4, 5];
+      ```
+    * `Tuple`: Krotka jest kolekcją elementów o różnych typach, które są traktowane jako pojedyncza jednostka.
+      ```
+      Tuple<String, int> var_tuple = #"dog", 3#;
+      ```
+    * `Dictionary`: Kolekcja par klucz-wartość, gdzie każdy klucz musi być unikalny, a wartości mogą być dowolnego typu.
+      ```
+      Dictionary<String, int> var_dict = |
+          "dog": 3,
+          "cat": 4,
+          "cow": 5,
+          "hamster": 6 
+      |;
+      ```
+
     <br>
 * **Operatory logiczne:**
-  * and 
-  * or
-  * not
+  * `and` - operator koniunkcji
+  * `or` - operator alternatywy
+  * `not` - operaor negacji
   
     Przykładowe operacje: 
 
@@ -102,16 +104,17 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     bool var_true = true;
     bool var_false = false;
     
-    bool a = var_true and (not var_false);
-    bool b = var_true and (var_true or var_false);
+    //operatory można łączyć w bardziej zaawanasowane wyrażenia używając nawiasów
+    bool a = var_true and (not var_false); // a = true
+    bool b = var_true and (var_true or var_false); // b = false
     ```
 
     <br>
 * **Operatory arytmetyczne:**
-  * \*
-  * /
-  * \+
-  * \-
+  * `*`      - operator mnożenia
+  * `/`       - operator dzielenia
+  * `+`      - operator dodawania
+  * `-`    - operator odejmowania
     ```
     int first = 4;
     int second = 3;
@@ -126,12 +129,12 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
     <br>
 * **Operatory porównania:**
-    * ==
-    * !=
-    * <
-    * <=
-    * \>
-    * \>=
+    * `==`: Oznacza równość, sprawdza, czy dwa elementy są równe.
+    * `!=`: Oznacza nierówność, sprawdza, czy dwa elementy nie są równe.
+    * `<`: Oznacza mniej niż, sprawdza, czy pierwszy element jest mniejszy niż drugi.
+    * `<=`: Oznacza mniejsze bądź równe, sprawdza, czy pierwszy element jest mniejszy lub równy drugiemu.
+    * `>`: Oznacza większe niż, sprawdza, czy pierwszy element jest większy niż drugi.
+    * `>=`: Oznacza większe bądź równe, sprawdza, czy pierwszy element jest większy lub równy drugiemu.
   
       ```
       int a = 2;
@@ -144,15 +147,15 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
     <br>
 * **Instrukcje warunkowe:**
-    * if
+    * `if`: Instrukcja warunkowa, która wykonuje określony blok kodu, jeśli warunek jest spełniony.
       ```
       int a = 3;
-      
+        
       if a != 2 {
           a = a + 2;
       }
       ```
-    * if-else
+    * `if-else`: Instrukcja warunkowa, która wykonuje określony blok kodu, jeśli warunek jest spełniony, a inny blok kodu, jeśli warunek nie jest spełniony.
       ```
       int a = 2;
       int b;
@@ -163,7 +166,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
             b = 0;  
       }
       ```
-    * if-elseif
+    * `if-elseif`: Instrukcja warunkowa, która wykonuje różne bloki kodu w zależności od spełnienia warunków.
       ```
       int a = 2;
       int b;
@@ -172,16 +175,16 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
             b = 2;
       } elseif a < 2 {
             b = -3;  
-      } elseif > 2 {
+      } elseif a > 2 {
             b = 3;
       ```
 
     <br>
 * **Pętle warunkowe:**
-    * while
+    * `while`: Pętla, która wykonuje określony blok kodu dopóki podany warunek jest spełniony.
       ```
       int x = 2;
-  
+    
       while x != 5 {
           x = x + 1
       }
