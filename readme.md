@@ -5,8 +5,8 @@
 **Temat nr 8**: Język z wbudowanym typem słownika, którego zawartość można sortować.<br>
 
 ### **<br>Opis:**
-Tematem projektu jest realizacja interpreta języka z wbudowanym typem słownika. 
-Zawartość struktury można sortować wykonując dedykowaną do tego metodę, przyjmującą wyrażenie w stylu _lambda_ jako parametr określający sposób sortowania.
+Tematem projektu jest realizacja interpreTERA języka z wbudowanym typem słownika. 
+Zawartość struktury można sortować, wykonując dedykowaną do tego metodę, przyjmującą wyrażenie w stylu _lambda_ jako parametr określający sposób sortowania.
 Wykonanie tej metody powoduje zmiane kolejności iterowania po elementach struktury.
 Możliwe są także wszystkie podstawowe operacje na słowniku: 
 * Dodawnia elementów
@@ -60,7 +60,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     ``` 
     
     <br>
-* **Typy danych:**
+* **Typy danych:** //TODO dopisac operacje dla kazdego z typow
     * `bool`: Reprezentuje wartości logiczne, które mogą być `true` lub `false`.
     * `int`: Reprezentuje liczby całkowite z zakresu od -2147483648 do 2147483648.
     * `float`: Reprezentuje liczby zmiennoprzecinkowe pojedynczej precyzji z zakresu od 1.40129846432481707e-45 do 3.40282346638528860e+38.
@@ -73,7 +73,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       ```
 
     <br>
-* **Kolekcje:**
+* **Kolekcje:** //TODO DOPISAC OPERACJE NA KAZDYM Z TYCH
     * `List`: Kolekcja elementów uporządkowanych, która pozwala na przechowywanie wielu elementów o różnych typach.
       ```
       List<int> var_list = [1, 2, 3, 4, 5];
@@ -146,7 +146,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       ```
 
     <br>
-* **Instrukcje warunkowe:**
+* **Instrukcje warunkowe:** //TODO PRZEMYSLEC PETLE FOR
     * `if`: Instrukcja warunkowa, która wykonuje określony blok kodu, jeśli warunek jest spełniony.
       ```
       int a = 3;
@@ -192,82 +192,94 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
   <br>
 * **Funkcje:**
-    * funkcja niezwracająca wartości
-      ```
-      fn void printIfEven(int number) {
+<br> W języku, każda funkcja zaczyna się od słowa kluczowego `fn` (skrót od function), po którym następuje deklaracja typu zwracanego funkcji - jeśli funkcja nic nie zwraca, typ ten jest `void`. Każdy argument funkcji musi być również opisany przez swój typ. Ciało funkcji znajduje się w nawiasach klamrowych.
+
+    <br> Zmienne przekazywane do funkcji są przekazywane przez referencję, co oznacza, że funkcja może modyfikować ich wartość.
+
+    <br>Aby program działał poprawnie, musi zawierać dokładnie jedną specjalnie zdefiniowaną funkcję, zwyczajowo nazywaną `main`. Jest to funkcja, od której zaczyna się wykonywanie programu. W języku `main` zazwyczaj zwraca wartość całkowitą (typ `int`) jako kod wyjścia programu.<br><br>
+
+     * funkcja niezwracająca wartości
+
+       ```
+       //funkcja wypisująca na ekran czy podana liczba jest parzysta oraz jej wywołanie w main
+       fn void printIfEven(int number) {
           if (number / 2) * 2 != number {
               print("The number is odd.");
           } else {
               print("The number is even.");
           }
-      }
+       }
       
       
-      fn int main() {
+       fn int main() {
           int x = 26;
           printIfEven(x);
     
           return 0;
-      }
-      ```
+       }
+       ```
 
-  * funkcja bezargumentowa
-    ```
-    fn int getMaxInt() {
-        return 2147483647;
-    }
+    * funkcja bezargumentowa
+      ```
+      //funkcja zwracająca maksymalną możliwą liczbę typu int oraz jej wywowłanie w funkcji main
+      fn int getMaxInt() {
+          return 2147483647;
+      }
     
     
-    fn int main() {
-        int x = getmaxInt();
-        print(($String x))
-        return 0;
-    }
-    ```
-
-    <br>
-* **Klasy:**
-    * definicja klasy
-      Zakładamy, że wszystkie pola oraz metody są publiczne, język nie posiada modyfikatorów dostępu
-      ```
-      class Counter {
-        
-        Counter(int number) {
-        int number = 0;
-        }
-      
-        fn int getNumber() {
-            return this.number;
-        }
-      
-        fn void setNumber(int number) {
-            this.number = number;
-        }
-      
-        fn void increment() {
-             this.number = this.number + 1; 
-        }
-      
-        fn void decrement() {
-            this.number = this.number - 1;
-        }
-      
-        
-        fn void printNumber() {
-            print("current value: " + ($String this.number);
-        }
-      
-      }
-      
-      
       fn int main() {
-          int x = 1;
-          Counter counter = Counter(x);
-          counter.increment;
-          counter.printNumber();
+          int x = getmaxInt();
+          print(($String x))
+          return 0;
       }
       ```
+      
+      <br>
+* **Klasy:**
+    <br> W języku możliwe jest także tworzenie klas poprzez użycie słowa kluczowego `class` <br>
+    Wewnątrz klasy możemy tworzyć pola oraz metody, nie występują modyfikatory dostępu, zakładamy, że wszystkie pola oraz metody są publiczne.
+    Możemy odwoływać się do pól danej klasy wewnątrz tej klasy poprzez użycie słowa kluczowego `this`.<br><br>
 
+     * definicja klasy
+
+          ```
+          class Counter {
+        
+            Counter(int number) {
+            int number = 0;
+            }
+      
+            fn int getNumber() {
+                return this.number;
+            }
+      
+            fn void setNumber(int number) {
+                this.number = number;
+            }
+      
+            fn void increment() {
+                 this.number = this.number + 1; 
+            }
+      
+            fn void decrement() {
+                this.number = this.number - 1;
+            }
+      
+        
+            fn void printNumber() {
+                print("current value: " + ($String this.number);
+            }
+      
+          }
+      
+      
+          fn int main() {
+              int x = 1;
+              Counter counter = Counter(x);
+              counter.increment;
+              counter.printNumber();
+          }
+         ``` 
   <br>
 * **Funkcje wbudowane:**
     * print
@@ -281,7 +293,10 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
     <br>
 * **Operatory rzutowania:**
-    * int na float
+    <br> Z racji tego, że język jest statycznie typowany zostały utowrzone mechanizamy rzutowania. Aby rzutować zmienną na inny typ musimy użyć `$` oraz nazwy typu na jaki rzutujemy.<br>
+    W przypadku rzutowania `float` na `int` cyfry po przecinku są ucinane. 
+
+    * int na float: rzutowanie bezstratne
       ```
       fn int main() {
           int x = 2;
@@ -289,7 +304,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
           return 0;
       }
       ```
-    * float na int
+    * float na int: obcięcie cyfr po przecinku
       ```
       fn int main() {
           float x = 3.33;
@@ -331,7 +346,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       ```
 
     <br>
-* **Zapytania na słownikach:**
+* **Zapytania na słownikach:** //TODO PRZEMYSLEC TE ZAPYTANIA I OPISAC
     * zapytania deklaratywne
       ```
       Dictionary<String, int> var_dict = |
