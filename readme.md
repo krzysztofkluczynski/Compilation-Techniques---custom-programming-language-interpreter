@@ -5,7 +5,7 @@
 **Temat nr 8**: Język z wbudowanym typem słownika, którego zawartość można sortować.<br>
 
 ### **<br>Opis:**
-Tematem projektu jest realizacja interpreTERA języka z wbudowanym typem słownika. 
+Tematem projektu jest realizacja interpretera języka z wbudowanym typem słownika. 
 Zawartość struktury można sortować, wykonując dedykowaną do tego metodę, przyjmującą wyrażenie w stylu _lambda_ jako parametr określający sposób sortowania.
 Wykonanie tej metody powoduje zmiane kolejności iterowania po elementach struktury.
 Możliwe są także wszystkie podstawowe operacje na słowniku: 
@@ -16,7 +16,7 @@ Możliwe są także wszystkie podstawowe operacje na słowniku:
 * Sprawdzanie czy klucz znajduje się w słowniku
 * Iterowanie po słowniku
 
-Język pozwala także na wykonywanie zapytań w stylu LINQ, 
+Język pozwala ta kże na wykonywanie zapytań w stylu LINQ, 
 umożliwiających wyszukiwanie, filtrowanie oraz przejrzyste zwrócenie danych w sposób określony przez użytkownika.
 <br>
 <br>
@@ -43,7 +43,7 @@ Aby zbudować projekt należy wykonać komendę:
 mvn clean install
 ```
 
-Aby uruchomić interpreter koniczna jest zainstalowana Java 17. Uruchamiamy go przy użyciu wcześniej spakowanego pliku jar, za pomocą polecenia zawierającego jako argumenty ścieżki do pliku jar oraz pliku z naszym kodem:
+Aby uruchomić interpreter, konieczna jest zainstalowana Java 17. Uruchamiamy go przy użyciu wcześniej spakowanego pliku jar, za pomocą polecenia zawierającego jako argumenty ścieżki do pliku jar oraz pliku z naszym kodem:
 
 ```
 java -jar <jar file path> <file path>
@@ -53,14 +53,14 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
 
 ### **<br>Najważniejsze konstrukcje językowe wraz z przykładami:**
-* **Komenatrze**
+* **Komentarze**
   * Komentarz jednoliniowy
     ```
     //This is comment
     ``` 
     
     <br>
-* **Typy danych:** //TODO dopisac operacje dla kazdego z typow
+* **Typy danych:** 
     * `bool`: Reprezentuje wartości logiczne, które mogą być `true` lub `false`.
     * `int`: Reprezentuje liczby całkowite z zakresu od -2147483648 do 2147483648.
     * `float`: Reprezentuje liczby zmiennoprzecinkowe pojedynczej precyzji z zakresu od 1.40129846432481707e-45 do 3.40282346638528860e+38.
@@ -75,14 +75,37 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     <br>
 * **Kolekcje:** //TODO DOPISAC OPERACJE NA KAZDYM Z TYCH
     * `List`: Kolekcja elementów uporządkowanych, która pozwala na przechowywanie wielu elementów o różnych typach.
-      ```
-      List<int> var_list = [1, 2, 3, 4, 5];
-      ```
+    Dostępne operacje:
+      * `add` - pozwala na dodanie elementu do listy
+      * `delete` - pozwala na usunięcie elementu z listy 
+      * `get` - zwraca konkretny argument z listy, przyjmuje indeks jako parametr
+      * `set` - zmiana konkretnej wartości w tablicy, pierwszy argument to indeks, drugi to wartość
+        ```
+        List<int> var_list = [1, 2, 3, 4, 5];
+        
+        var_list.add(12); //dodanie elementu na koniec listy
+        var_list.delete(0) //usunięcie pierwszego elementu z listy
+        var_list.get(0) //uzyskanie pierwszego elementu z listy
+        var_list.set(0, 2) //ustawienie wartości znajdującej się na pozycji o indeskie 0 na 2
+        ```
     * `Tuple`: Krotka jest kolekcją elementów o różnych typach, które są traktowane jako pojedyncza jednostka.
-      ```
-      Tuple<String, int> var_tuple = #"dog", 3#;
-      ```
+    Dostępne operacje:
+        * `get` - zwraca wartość która znajduje się pod podanym jako parametr indeksem
+        * `set` - zmiana konkretnej wartości w tablicy
+    
+         ```
+         Tuple<String, int> var_tuple = #"dog", 3#;
+      
+        var_tuple.get(0) //uzyskanie pierwszego elementu z listy
+        var_tuple.set(0, 2) //ustawienie wartości znajdującej się na pozycji o indeskie 0 na 2
+         ```
     * `Dictionary`: Kolekcja par klucz-wartość, gdzie każdy klucz musi być unikalny, a wartości mogą być dowolnego typu.
+    Dostępne operacje:
+        * `add` - dodanie elementu do słownika, przyjmuje dwa argumenty, klucz i wartość
+        * `delete` - usuwa pare klucz-wartość ze słownika, argument to klucz z pary, która ma zostać usunięta
+        * `get` - zwraca wartość dla podanego klucza
+        * `set` - ustawia nową wartość dla podanego klucza, przyjmuje dwa argumenty, klucz i wartość
+        * `sort` - sortuje zawartość słownika według wskazanego przez użytkownika schematu
       ```
       Dictionary<String, int> var_dict = |
           "dog": 3,
@@ -90,13 +113,34 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
           "cow": 5,
           "hamster": 6 
       |;
+      
+      int a = var_dict.get("dog");
+      var_dict.delete("hamster");
+      var_dict.add("hamster", 6);
+      var_dict.set("sheep", 7);
+      
+      // Przykłady sortowania
+      // Sortowanie po wartościach rosnąco
+      var_dict.sort((a, b) => a.Value - b.Value);
+
+      // Sortowanie po wartościach malejąco
+      var_dict.sort((a, b) => b.Value - a.Value);
+
+      // Sortowanie po długości klucza rosnąco
+      var_dict.sort((a, b) => a.Key.length() - b.Key.length());
+
+      // Sortowanie po długości klucza malejąco
+      var_dict.sort((a, b) => b.Key.length() - a.Key.length());
+
+      // Sortowanie alfabetyczne kluczy
+      var_dict.sort((a, b) => a.Key.compare(b.Key));
       ```
 
     <br>
 * **Operatory logiczne:**
   * `and` - operator koniunkcji
   * `or` - operator alternatywy
-  * `not` - operaor negacji
+  * `not` - operator negacji
   
     Przykładowe operacje: 
 
@@ -111,6 +155,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
     <br>
 * **Operatory arytmetyczne:**
+    <br> Dostępne dla typów liczbowych, dodawanie również dla typu String.
   * `*`      - operator mnożenia
   * `/`       - operator dzielenia
   * `+`      - operator dodawania
@@ -125,6 +170,9 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     
     //zachowana jest kolejność działań zgodna z matematyką, czyli po wykonaniu poniższej linii zmienna result2 = 14
     int result2 = 2 + first * second;
+    
+    //możliwia jest operacja dodawania dla typu String
+    String hello = "Hello " + "World";
     ```
 
     <br>
