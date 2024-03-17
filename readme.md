@@ -70,6 +70,8 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       int var_int = 2;
       float var_float = 3.2;
       String var_string = "Hello";
+      
+      //Dla typu string zdefiniowana jest specjalna metoda pozwalająca porównać 
       ```
 
     <br>
@@ -99,42 +101,62 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
         var_tuple.get(0) //uzyskanie pierwszego elementu z listy
         var_tuple.set(0, 2) //ustawienie wartości znajdującej się na pozycji o indeskie 0 na 2
          ```
-    * `Dictionary`: Kolekcja par klucz-wartość, gdzie każdy klucz musi być unikalny, a wartości mogą być dowolnego typu.
-    Dostępne operacje:
-        * `add` - dodanie elementu do słownika, przyjmuje dwa argumenty, klucz i wartość
-        * `delete` - usuwa pare klucz-wartość ze słownika, argument to klucz z pary, która ma zostać usunięta
-        * `get` - zwraca wartość dla podanego klucza
-        * `set` - ustawia nową wartość dla podanego klucza, przyjmuje dwa argumenty, klucz i wartość
-        * `sort` - sortuje zawartość słownika według wskazanego przez użytkownika schematu
-      ```
-      Dictionary<String, int> var_dict = |
-          "dog": 3,
-          "cat": 4,
-          "cow": 5,
-          "hamster": 6 
-      |;
+      * `Dictionary`: Kolekcja par klucz-wartość, gdzie każdy klucz musi być unikalny, a wartości mogą być dowolnego typu.
+      Dostępne operacje:
+          * `add` - dodanie elementu do słownika, przyjmuje dwa argumenty, klucz i wartość
+          * `delete` - usuwa pare klucz-wartość ze słownika, argument to klucz z pary, która ma zostać usunięta
+          * `get` - zwraca wartość dla podanego klucza
+          * `set` - ustawia nową wartość dla podanego klucza, przyjmuje dwa argumenty, klucz i wartość
+          * `sort` - sortuje zawartość słownika według wskazanego przez użytkownika schematu
       
-      int a = var_dict.get("dog");
-      var_dict.delete("hamster");
-      var_dict.add("hamster", 6);
-      var_dict.set("sheep", 7);
+        ```
+        Dictionary<String, int> var_dict = |
+            "dog": 3,
+            "cat": 4,
+            "cow": 5,
+            "hamster": 6 
+        |;
       
-      // Przykłady sortowania
-      // Sortowanie po wartościach rosnąco
-      var_dict.sort((a, b) => a.Value - b.Value);
+        int a = var_dict.get("dog");
+        var_dict.delete("hamster");
+        var_dict.add("hamster", 6);
+        var_dict.set("sheep", 7);
+      
+        // Przykłady sortowania - dokładne omówienie poniżej
+        // Sortowanie po wartościach rosnąco
+        var_dict.sort((a, b) => a.Value - b.Value);
 
-      // Sortowanie po wartościach malejąco
-      var_dict.sort((a, b) => b.Value - a.Value);
+        // Sortowanie po wartościach malejąco
+        var_dict.sort((a, b) => b.Value - a.Value);
 
-      // Sortowanie po długości klucza rosnąco
-      var_dict.sort((a, b) => a.Key.length() - b.Key.length());
+        // Sortowanie po długości klucza rosnąco
+        var_dict.sort((a, b) => a.Key.length() - b.Key.length());
 
-      // Sortowanie po długości klucza malejąco
-      var_dict.sort((a, b) => b.Key.length() - a.Key.length());
+        // Sortowanie po długości klucza malejąco
+        var_dict.sort((a, b) => b.Key.length() - a.Key.length());
 
-      // Sortowanie alfabetyczne kluczy
-      var_dict.sort((a, b) => a.Key.compare(b.Key));
-      ```
+        // Sortowanie alfabetyczne kluczy z użyciem funkcji compare 
+        var_dict.sort((a, b) => a.Key.compare(b.Key)); 
+        ```
+        Omówienie przykładowych sortowań
+        1. Sortowanie po wartościach rosnąco:<br>
+        (a, b) => a.Value - b.Value oznacza, że elementy zostaną posortowane w kolejności rosnącej na podstawie ich wartości.
+        Jeśli wartość a jest mniejsza niż wartość b, wynik będzie ujemny, co spowoduje, że a zostanie umieszczone przed b w posortowanej kolejności. 
+        Jeśli wartość a jest większa niż wartość b, wynik będzie dodatni, co spowoduje umieszczenie b przed a. Jeśli są równe, wynik będzie zero, co oznacza, że ich kolejność nie ulega zmianie.
+
+        2. Sortowanie po wartościach malejąco:<br>
+        (a, b) => b.Value - a.Value to odwrócona kolejność porównania. Tutaj wartości są porównywane w odwrotnej kolejności, co powoduje sortowanie malejące.
+
+        3. Sortowanie po długości klucza rosnąco:<br>
+        (a, b) => a.Key.length() - b.Key.length() porównuje długości kluczy a i b. Elementy zostaną posortowane według długości ich klucza, od najkrótszego do najdłuższego.
+
+        4. Sortowanie po długości klucza malejąco:<br>
+        (a, b) => b.Key.length() - a.Key.length() to odwrócona kolejność porównania długości kluczy. Elementy zostaną posortowane według długości ich klucza, od najdłuższego do najkrótszego.
+        
+        5. Sortowanie alfabetyczne kluczy z użyciem funkcji compare:<br>
+        (a, b) => a.Key.compare(b.Key) wykorzystuje funkcję compare do porównania kluczy. Wartości zwracane przez compare decydują o kolejności sortowania.
+        Jeśli a.Key jest leksykograficznie mniejsze od b.Key, wynik będzie ujemny, co spowoduje, że a zostanie umieszczone przed b. Jeśli jest większe,
+        wynik będzie dodatni, co spowoduje umieszczenie b przed a. Jeśli są równe, wynik będzie zero, co oznacza, że ich kolejność nie ulega zmianie.
 
     <br>
 * **Operatory logiczne:**
@@ -186,7 +208,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
   
       ```
       int a = 2;
-      bool var = a < 1;
+      bool var = a < 1; 
       bool var1 = a != 2;
       bool var2 = a >= 2;
       
@@ -194,7 +216,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       ```
 
     <br>
-* **Instrukcje warunkowe:** //TODO PRZEMYSLEC PETLE FOR
+* **Instrukcje warunkowe:** 
     * `if`: Instrukcja warunkowa, która wykonuje określony blok kodu, jeśli warunek jest spełniony.
       ```
       int a = 3;
@@ -214,20 +236,31 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
             b = 0;  
       }
       ```
-    * `if-elseif`: Instrukcja warunkowa, która wykonuje różne bloki kodu w zależności od spełnienia warunków.
-      ```
-      int a = 2;
-      int b;
-      
-      if a == 2 {
-            b = 2;
-      } elseif a < 2 {
-            b = -3;  
-      } elseif a > 2 {
-            b = 3;
-      ```
 
-    <br>
+[//]: # (    * `if-elseif`: Instrukcja warunkowa, która wykonuje różne bloki kodu w zależności od spełnienia warunków.)
+
+[//]: # (      ```)
+
+[//]: # (      int a = 2;)
+
+[//]: # (      int b;)
+
+[//]: # (      )
+[//]: # (      if a == 2 {)
+
+[//]: # (            b = 2;)
+
+[//]: # (      } elseif a < 2 {)
+
+[//]: # (            b = -3;  )
+
+[//]: # (      } elseif a > 2 {)
+
+[//]: # (            b = 3;)
+
+[//]: # (      ```)
+
+
 * **Pętle warunkowe:**
     * `while`: Pętla, która wykonuje określony blok kodu dopóki podany warunek jest spełniony.
       ```
@@ -242,7 +275,9 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 * **Funkcje:**
 <br> W języku, każda funkcja zaczyna się od słowa kluczowego `fn` (skrót od function), po którym następuje deklaracja typu zwracanego funkcji - jeśli funkcja nic nie zwraca, typ ten jest `void`. Każdy argument funkcji musi być również opisany przez swój typ. Ciało funkcji znajduje się w nawiasach klamrowych.
 
-    <br> Zmienne przekazywane do funkcji są przekazywane przez referencję, co oznacza, że funkcja może modyfikować ich wartość.
+    <br>Zmienne przekazywane do funkcji są przekazywane przez referencję, co oznacza, że funkcja może modyfikować ich wartość.
+
+    <br>Nie ma możliwości przeciążania funkcji
 
     <br>Aby program działał poprawnie, musi zawierać dokładnie jedną specjalnie zdefiniowaną funkcję, zwyczajowo nazywaną `main`. Jest to funkcja, od której zaczyna się wykonywanie programu. W języku `main` zazwyczaj zwraca wartość całkowitą (typ `int`) jako kod wyjścia programu.<br><br>
 
@@ -267,68 +302,69 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
        }
        ```
 
-    * funkcja bezargumentowa
-      ```
-      //funkcja zwracająca maksymalną możliwą liczbę typu int oraz jej wywowłanie w funkcji main
-      fn int getMaxInt() {
-          return 2147483647;
-      }
+     * funkcja bezargumentowa
+       ```
+       //funkcja zwracająca maksymalną możliwą liczbę typu int oraz jej wywowłanie w funkcji main
+       fn int getMaxInt() {
+           return 2147483647;
+       }
     
     
-      fn int main() {
-          int x = getmaxInt();
-          print(($String x))
-          return 0;
-      }
-      ```
+       fn int main() {
+           int x = getmaxInt();
+           print(($String x))
+           return 0;
+       }
+       ```
       
-      <br>
-* **Klasy:**
-    <br> W języku możliwe jest także tworzenie klas poprzez użycie słowa kluczowego `class` <br>
-    Wewnątrz klasy możemy tworzyć pola oraz metody, nie występują modyfikatory dostępu, zakładamy, że wszystkie pola oraz metody są publiczne.
-    Możemy odwoływać się do pól danej klasy wewnątrz tej klasy poprzez użycie słowa kluczowego `this`.<br><br>
+       <br>
+     * **Klasy:**
+         <br> W języku możliwe jest także tworzenie klas poprzez użycie słowa kluczowego `class` <br>
+         Wewnątrz klasy możemy tworzyć pola oraz metody, nie występują modyfikatory dostępu, zakładamy, że wszystkie pola oraz metody są publiczne.
+         Możemy odwoływać się do pól danej klasy wewnątrz tej klasy poprzez użycie słowa kluczowego `this`.<br>
+         Nie występuje możliwość przeciążania metod<br><br>
 
-     * definicja klasy
+          * definicja klasy
 
-          ```
-          class Counter {
+               ```
+               class Counter {
         
-            Counter(int number) {
-            int number = 0;
-            }
+                 Counter(int number) {
+                 int number = 0;
+                 }
       
-            fn int getNumber() {
-                return this.number;
-            }
+                 fn int getNumber() {
+                     return this.number;
+                 }
       
-            fn void setNumber(int number) {
-                this.number = number;
-            }
+                 fn void setNumber(int number) {
+                     this.number = number;
+                 }
       
-            fn void increment() {
-                 this.number = this.number + 1; 
-            }
+                 fn void increment() {
+                      this.number = this.number + 1; 
+                 }
       
-            fn void decrement() {
-                this.number = this.number - 1;
-            }
+                 fn void decrement() {
+                     this.number = this.number - 1;
+                 }
       
         
-            fn void printNumber() {
-                print("current value: " + ($String this.number);
-            }
+                 fn void printNumber() {
+                     print("current value: " + ($String this.number);
+                 }
       
-          }
+               }
       
       
-          fn int main() {
-              int x = 1;
-              Counter counter = Counter(x);
-              counter.increment;
-              counter.printNumber();
-          }
-         ``` 
-  <br>
+               fn int main() {
+                   int x = 1;
+                   Counter counter = Counter(x);
+                   counter.increment;
+                   counter.printNumber();
+               }
+              ``` 
+       <br>
 * **Funkcje wbudowane:**
     * print
       <br>Funkcja print powoduje wypisanie tekstu w konsoli, przyjmuje jedynie argumenty typu String 
@@ -341,7 +377,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
     <br>
 * **Operatory rzutowania:**
-    <br> Z racji tego, że język jest statycznie typowany zostały utowrzone mechanizamy rzutowania. Aby rzutować zmienną na inny typ musimy użyć `$` oraz nazwy typu na jaki rzutujemy.<br>
+    <br> Z racji tego, że język jest statycznie typowany zostały utworzone mechanizmy rzutowania. Aby rzutować zmienną na inny typ musimy użyć `$` oraz nazwy typu na jaki rzutujemy.<br>
     W przypadku rzutowania `float` na `int` cyfry po przecinku są ucinane. 
 
     * int na float: rzutowanie bezstratne
@@ -427,9 +463,55 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
                             var_dict.value
                                 DESC
       ```
-  
+
+### **<br>Leksyka - zbiór symboli terminalnych:**
+```
+digit               = [0-9];
+non_zero_digit      = [1-9];
+zero                = "0";
+letter              = [a-zA-Z];
+add_sub_operator    = "+" | "-"
+mul_div_operator    = "*" | "/"
+assign_operant      = "="
+relation_operator   = "<" | "<=" | "==" | ">" | ">=" | "!="
+dot                 = "."
+comma               = ","
+colon               = ":"
+semicolon           = ";"        
+newline             = "\n" 
+white_space         = " "
+character           = .; //dowolny znak
+```
 
 ### **<br>EBNF:**
+```
+IDENTIFIER          = letter, {letter | digit};
+
+INTEGER             = zero 
+
+                    | non_zero_digit, {non_zero_digit}
+                    
+FLOATING_POINT      = INTEGER, dot ,digit, {digit} 
+    
+BOOLEAN             = "true"
+                    | "false"
+                    
+                    //wczesniejsza wersja: letter | digit | white_space
+STRING              = '"', {character}, '"' //jak pokazac, ze kazdy inny znak moze wejsc w sklad stringa, czy trzeba wszystkie zdefiniowac?
+
+BASE_TYPE           = "int"
+                    | "float"
+                    | "bool"
+                    | "String"
+                    
+COMPLEX_TYPE        = "List"
+                    | "Tuple"
+                    | "Dictionary"
+   
+COMMENT             = "//", {character}, newline  //ta sama sytuacja co w przypadku STRING
+
+
+```
 
 ### **<br>Obsługa błędów:**
 
@@ -455,6 +537,39 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 * Mechanizm sortowania słownika powinien być zoptymalizowany pod kątem wydajności
 
 ### **<br>Zwięzły opis realizacji:**
+Program będzie składał się z modułów, które będą odpowiedzialne za kolejne etapy analizy oraz przetwarzania plików wejściowych. 
+Cały proces będzie wspierany przez dodatkowe moduły m.in. moduł obsługi błędów. Poniżej krótkie omówienie modułów oraz ich podstawowych założeń
+
+**1. Analizator leksykalny (Lekser)**
+<br>Lekser jest kluczowym modułem odpowiedzialnym za analizę leksykalną tekstu źródłowego.
+Jego głównym zadaniem jest przekształcenie ciągu znaków na sekwencje tokenów, które stanowią podstawowe jednostki leksykalne języka programowania.
+
+<br>Proces działania leksera polega na czytaniu kodu źródłowego znak po znaku, aż do momentu wykrycia sekwencji odpowiadającej jednemu zdefiniowanemu tokenowi.
+Gdy token zostanie poprawnie zidentyfikowany, jest on przekazywany do parsera. Istotne jest, że lekser czyta nowe znaki tylko wtedy, gdy parser o to wyraźnie prosi.
+Taka strategia pomaga w optymalizacji całego procesu analizy tekstu źródłowego.
+
+Tokeny zdefiniowane w języku:
+
+
+**2. Analizator składniowy (Parser)**
+<br>Analizator składniowy, nazywany też parserem,
+jest kluczowym modułem współpracującym ściśle z analizatorem leksykalnym.
+Ten ostatni dostarcza parserowi kolejne tokeny, które są podstawowymi jednostkami leksykalnymi przetwarzanymi przez lekser.
+
+<br>Głównym zadaniem parsera jest sprawdzenie, czy otrzymane tokeny są zgodne ze zdefiniowaną gramatyką języka oraz utworzenie drzewa rozbioru składniowego.
+Poprzez analizę drzewa rozbioru składniowego możliwe jest rozpoznawanie zdefiniowanych konstrukcji językowych.
+Takie drzewo pozwala na reprezentację tych konstrukcji w sposób zrozumiały dla interpretera lub kompilatora.
+
+**3. Analizator semantyczny i interpreter**
+Analizator semantyczny, będący często ostatnim etapem interpretera własnego języka, jest modułem odpowiedzialnym za rozumienie znaczenia wyrażeń zgodnie z regułami semantycznymi języka.
+Głównym zadaniem analizatora semantycznego jest przetwarzanie drzewa rozbioru składniowego (parsowanego wcześniej przez parser) i weryfikacja zgodności semantycznej programu.
+Analizator semantyczny dokonuje takich czynności jak sprawdzanie typów danych, rozpoznawanie zmiennych, kontrola poprawności wyrażeń oraz wykrywanie błędów semantycznych.
+
+Interpreter ma za zadanie sekwencyjne wykonanie instrukcji zawartych drzewie zbudowanym przez parser
+
+**3. Moduły dodatkowe:**
+* Moduł obsługi błędów - odpowiada za identyfikację, zarządzanie i obsługę różnych rodzajów błędów w programie, co często obejmuje zgłaszanie wyjątków, obsługę błędów syntaktycznych i semantycznych. Współpracuje z każdym z głównych modułów programu
+* Moduł obslugi plików tekstowych - wspomaga operacje odczytywania zawartości z pliku tekstowego. Współpracuje z analizatorem leksykalnym
 
 ### **<br>Sposób testowania:**
 
