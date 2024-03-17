@@ -561,7 +561,7 @@ Poprzez analizę drzewa rozbioru składniowego możliwe jest rozpoznawanie zdefi
 Takie drzewo pozwala na reprezentację tych konstrukcji w sposób zrozumiały dla interpretera lub kompilatora.
 
 **3. Analizator semantyczny i interpreter**
-Analizator semantyczny, będący często ostatnim etapem interpretera własnego języka, jest modułem odpowiedzialnym za rozumienie znaczenia wyrażeń zgodnie z regułami semantycznymi języka.
+<br>Analizator semantyczny, będący często ostatnim etapem interpretera własnego języka, jest modułem odpowiedzialnym za rozumienie znaczenia wyrażeń zgodnie z regułami semantycznymi języka.
 Głównym zadaniem analizatora semantycznego jest przetwarzanie drzewa rozbioru składniowego (parsowanego wcześniej przez parser) i weryfikacja zgodności semantycznej programu.
 Analizator semantyczny dokonuje takich czynności jak sprawdzanie typów danych, rozpoznawanie zmiennych, kontrola poprawności wyrażeń oraz wykrywanie błędów semantycznych.
 
