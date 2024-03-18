@@ -16,7 +16,7 @@ Możliwe są także wszystkie podstawowe operacje na słowniku:
 * Sprawdzenie, czy klucz znajduje się w słowniku
 * Iterowanie po słowniku
 
-Język pozwala ta kże na wykonywanie zapytań w stylu LINQ, 
+Język pozwala także na wykonywanie zapytań w stylu LINQ, 
 umożliwiających wyszukiwanie, filtrowanie oraz przejrzyste zwrócenie danych w sposób określony przez użytkownika.
 <br>
 <br>
