@@ -575,10 +575,10 @@ Interpreter ma za zadanie sekwencyjne wykonanie instrukcji zawartych drzewie zbu
 Każdy z modułów będzie posiadał testy jednostkowe weryfikujące jego poprawne działanie oraz obsługę wyjątków. Testowanie będzie odbywać się za pomocą biblioteki JUnit<br>
 <br> Poniżej przedstawiono kilka przykładów testów, jakie mogą być wykonane, mają one na celu jedynie przedstawienie zamysłu z jakim zostaną zaimplementowane te właściwe.
 
-1. Lekser
+* **Lekser**
    <br>Testy leksera będą sprawdzać, czy moduł poprawnie przekształca strumień znaków na sekwencję tokenów, co zweryfikuje poprawną analizę leksykalną.  W trakcie testów sprawdzane będą różne przypadki, w tym sytuacje związane z różnymi rodzajami tokenów oraz ewentualne zachowanie wobec błędów leksykalnych.
     ```java
-   public class LexerTest {
+    public class LexerTest {
 
     @Test
     public void testLexicalAnalysis() {
@@ -593,10 +593,11 @@ Każdy z modułów będzie posiadał testy jednostkowe weryfikujące jego popraw
         );
         List<Token> actualTokens = lexer.analyze(input);
         assertEquals(expectedTokens, actualTokens);
+     }
     }
-   }
     ```
-2. Parser
+  
+* **Parser**
 <br> Tutaj sam zamysł testowania będzie wyglądał podobnie jak w przypadku leksera. Zamiast sekwencji znaków parser dostanie sekwencję tokenów i na jej podstawie będzie generował drzewo składniowe.
    ```java
    public class ParserTest {
@@ -618,7 +619,7 @@ Każdy z modułów będzie posiadał testy jednostkowe weryfikujące jego popraw
    }
    ```
 
-3. Analizator semantyczny i interpreter
+* **Analizator semantyczny i interpreter**
 <br>Testy jednostkowe mogą obejmować sprawdzanie poprawności wykonania pojedynczych instrukcji,
 ewaluację wyrażeń, czy też odpowiednie zachowanie interpretera w różnych scenariuszach.<br><br>
 
