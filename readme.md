@@ -13,7 +13,7 @@ Możliwe są także wszystkie podstawowe operacje na słowniku:
 * Usuwanie elementów
 * Modyfikowanie elementów 
 * Wyszukiwanie elementów według klucza
-* Sprawdzanie czy klucz znajduje się w słowniku
+* Sprawdzenie, czy klucz znajduje się w słowniku
 * Iterowanie po słowniku
 
 Język pozwala ta kże na wykonywanie zapytań w stylu LINQ, 
@@ -107,6 +107,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
           * `delete` - usuwa pare klucz-wartość ze słownika, argument to klucz z pary, która ma zostać usunięta
           * `get` - zwraca wartość dla podanego klucza
           * `set` - ustawia nową wartość dla podanego klucza, przyjmuje dwa argumenty, klucz i wartość
+          * `ifexists` - sprawdzenie czy klucz występuje w słowniku
           * `sort` - sortuje zawartość słownika według wskazanego przez użytkownika schematu
       
         ```
@@ -118,6 +119,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
         |;
       
         int a = var_dict.get("dog");
+        bool b = var_dict.ifexists("hamster")
         var_dict.delete("hamster");
         var_dict.add("hamster", 6);
         var_dict.set("sheep", 7);
@@ -237,28 +239,28 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       }
       ```
 
-[//]: # (    * `if-elseif`: Instrukcja warunkowa, która wykonuje różne bloki kodu w zależności od spełnienia warunków.)
+    * `if-elseif`: Instrukcja warunkowa, która wykonuje różne bloki kodu w zależności od spełnienia warunków.
 
-[//]: # (      ```)
+      ```
 
-[//]: # (      int a = 2;)
+      int a = 2;
 
-[//]: # (      int b;)
+      int b;
 
-[//]: # (      )
-[//]: # (      if a == 2 {)
+      
+      if a == 2 {
 
-[//]: # (            b = 2;)
+            b = 2;
 
-[//]: # (      } elseif a < 2 {)
+      } elseif a < 2 {
 
-[//]: # (            b = -3;  )
+            b = -3;  
 
-[//]: # (      } elseif a > 2 {)
+      } elseif a > 2 {
 
-[//]: # (            b = 3;)
+            b = 3;
 
-[//]: # (      ```)
+      ```
 
 
 * **Pętle warunkowe:**
@@ -267,7 +269,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       int x = 2;
     
       while x != 5 {
-          x = x + 1
+          x = x + 1;
       }
       ```
 
@@ -277,7 +279,9 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
     <br>Zmienne przekazywane do funkcji są przekazywane przez referencję, co oznacza, że funkcja może modyfikować ich wartość.
 
-    <br>Nie ma możliwości przeciążania funkcji
+    <br>Nie ma możliwości przeciążania funkcji.
+
+    <br>Funkcje mogą być wywoływane rekursywnie - funkcja może wywołać samą siebie podczas wykonywania. Maksymalne ogranicznie na liczbę wywołań rekurencyjnych wynosi 200(patrz sekcję "Obsługa błędów").
 
     <br>Aby program działał poprawnie, musi zawierać dokładnie jedną specjalnie zdefiniowaną funkcję, zwyczajowo nazywaną `main`. Jest to funkcja, od której zaczyna się wykonywanie programu. W języku `main` zazwyczaj zwraca wartość całkowitą (typ `int`) jako kod wyjścia programu.<br><br>
 
@@ -515,6 +519,146 @@ COMMENT             = "//", {character}, newline  //ta sama sytuacja co w przypa
 
 ## **<br>Obsługa błędów:**
 
+Błędy programu są komunikowane użytkownikowi poprzez komunikaty wyświetlane w konsoli.
+Wszystkie błędy są traktowane równorzędnie i powodują zatrzymanie wykonywania programu.
+Poniżej znajduje się format komunikatu o błędzie:
+
+```
+ERROR in <Line Number>:<Column Number> | <Error message>
+```
+
+### Przykładowe błędy
+* Niepoprawna składnia
+  ```
+  fn int main() {
+    int x = 3 //brak średnika
+    iny y = 4; //literówka
+    return 0;
+  }
+  ```
+  ```
+  ERROR in <Line Number>:<Column Number> | Syntax Error
+  ```
+* Niedozwolona operacja na typach
+  ```
+  fn int main() {
+    int x = 3 //brak średnika
+    print("The number is: " + x)
+    return 0;
+  }
+  ```
+  
+  ```
+   ERROR in <Line Number>:<Column Number> | operator "+" not applicable to types String and int
+  ```
+  
+* Odwołanie się do nieistniejącej zmiennej/funkcji
+    ```
+    fn int main() {
+      int x = 3;
+      float y = a + ($float x);
+      return 0;
+  }
+  ```
+
+  ```
+   ERROR in <Line Number>:<Column Number> | variable "a" undefined
+  ```
+* przypisanie niepoprawnej wartości do typu
+    ```
+    fn int main() {
+      int x = 3;
+      float y = 4;
+      return 0;
+  }
+  ```
+
+  ```
+  ERROR in <Line Number>:<Column Number> | cannot assign value of type int to type float
+  ```
+
+* próba niejawnej konwersji
+    ```
+    fn int main() {
+      int x = 3;
+      String a = x;
+      return 0;
+  }
+  ```
+
+  ```
+  ERROR in <Line Number>:<Column Number> | cannot assign value of type int to type float
+  ```
+* Utworzenie funkcji/zmiennej/klasy o tej samej nazwie
+    ```
+    fn int add(int x, int y) {
+      return x+y;
+    }  
+    
+    fn float add(float x, float y) {
+      return x+y;
+    }
+  
+    fn int main() {
+      int x = 3;
+      String a = x;
+      return 0;
+  }
+  ```
+
+  ```
+  ERROR in <Line Number>:<Column Number> | function "add" redefined
+  ```
+
+* Brak zdefiniowanej funkcji main w programie
+
+  ```
+  ERROR in <Line Number>:<Column Number> | Missing definition of the main function in the program
+  ```
+
+* Definicja zmiennych poza {} (utworzenie zmiennej globalnej)
+  ```
+  ERROR in <Line Number>:<Column Number> | Variable defined outside scope (global variable creation)
+  ```
+* Odwołanie się do zmiennej spoza {}
+  ```
+  ERROR in <Line Number>:<Column Number> | Accessing variable beyond scope
+  ```
+* Brak return w funkcji
+  ```
+  ERROR in <Line Number>:<Column Number> | Missing return statement in non-void function
+  ```
+* Niepoprawny typ danych zwracany przez funkcję
+  ```
+  fn int add(int x, int y) {
+      return ($float x) + (float $y);
+  }
+
+
+
+  fn int main() {
+  int x = 3;
+  String a = x;
+  return 0;
+  }
+  ```
+  ```
+  ERROR in <Line Number>:<Column Number> | Function returns a different data type than declared
+  ```
+* Zbyt długi łańcuch String
+  ```
+  ERROR in <Line Number>:<Column Number> | String too long (max size is 100)
+  ```
+* Wartość int poza zakresem
+  ```
+  ERROR in <Line Number>:<Column Number> |  int outside the allowed range
+  ```
+* Wartość float poza zakresem
+  ```
+  ERROR in <Line Number>:<Column Number> | float outside the allowed range
+  ```
+
+
 ## **<br>Wymagania funkcjonalne:**
 * Interpreter pozwala na uruchomienie kodu zapisanego w pliku tekstowym
 * Język obsługuje podstawowe typy danych(int, float, bool) oraz konstrukcje językowe (pętle, instrukcje warunkowe)
@@ -548,7 +692,80 @@ Jego głównym zadaniem jest przekształcenie ciągu znaków na sekwencje token�
 Gdy token zostanie poprawnie zidentyfikowany, jest on przekazywany do parsera. Istotne jest, że lekser czyta nowe znaki tylko wtedy, gdy parser o to wyraźnie prosi.
 Taka strategia pomaga w optymalizacji całego procesu analizy tekstu źródłowego.
 
-Tokeny zdefiniowane w języku:
+Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
+* Operatory arytmetyczne
+  * Plus `+` 
+  * Minus `-`
+  * Multiply `*`
+  * Divide `/`
+* Operatory porównania
+  * Equal `=`
+  * NotEqual `!=`
+  * Greater `>`
+  * Less `<`
+  * LessEqual `<=`
+  * GreaterEqual `>=`
+* Operatory logiczne
+  * And `and`
+  * Or `or`
+  * Not `not`
+* Typy
+  * Integer `int`
+  * Float `float`
+  * Bool `bool`
+  * String `String`
+  * Dictionary `Dictionary`
+  * List `List`
+  * Tuple `Tuple`
+  * Void `void`
+* Nawiasy
+  * BraceOpen `{`
+  * BraceClose `}`
+  * BracketOpen `(`
+  * BracketClose `)`
+  * SquareBracketOpen `[`
+  * SquareBracketClose `]`
+  * Hashtag `#`
+  * Pipe `|`
+  * LessForTypeDefinitionOpen `<` //czy potrzebujemy definiowac to oddzielnie? to ten sam znak co Less
+  * GreaterForTypeDefinitionClose `>`
+* Pętle i instrukcje warunkowe
+  * While `while`
+  * If `if`
+  * Elseif `elseif`
+  * Else `else`
+* Zapytania na słownikach
+  * Select `SELECT`
+  * KeyInfo `Key`
+  * ValueInfo `Value`
+  * FROM `FROM`
+  * Where `WHERE`
+  * Order `ORDER`
+  * By `BY`
+  * Ascending `ASC`
+  * Descending `DSC`
+* Inne
+  * Comment `//`
+  * MainFunction `main`
+  * Class `class`
+  * Function `fn`
+  * Return `return`
+  * Cast `$`
+  * StringQuote `"`
+  * Semicolon `;`
+  * Colon `:`
+  * Comma `,`
+  * Dot `.`
+  * Identifier
+  * BoolTrueValue `True`
+  * BoolFalseValue = `False`
+  * StringValue 
+  * IntValue
+  * FloatValue
+  * Newline
+  * EndOfFile
+
+Każdy token w programie musi mieć zdefiniowany swój typ oraz pozycje w pliku (numer linii i kolumna).
 
 
 **2. Analizator składniowy (Parser)**
