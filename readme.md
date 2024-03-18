@@ -4,7 +4,7 @@
 **Prowadząca**: Agnieszka Malanowska<br>
 **Temat nr 8**: Język z wbudowanym typem słownika, którego zawartość można sortować.<br>
 
-### **<br>Opis:**
+## **<br>Opis:**
 Tematem projektu jest realizacja interpretera języka z wbudowanym typem słownika. 
 Zawartość struktury można sortować, wykonując dedykowaną do tego metodę, przyjmującą wyrażenie w stylu _lambda_ jako parametr określający sposób sortowania.
 Wykonanie tej metody powoduje zmiane kolejności iterowania po elementach struktury.
@@ -35,7 +35,7 @@ Korzystanie z LTS wersji Java zapewnia stabilność, bezpieczeństwo oraz długo
 * **Zakres zmiennych**, zmienne są widoczne jedynie w bloku kodu między nawiasami klamrowymi {}, gdy zostały w nim zainicjowane lub przekazane jako parametr w przypadku funkcji.
 
 
-### **<br>Instrukcja uruchomienia:**
+## **<br>Instrukcja uruchomienia:**
 
 Aby zbudować projekt należy wykonać komendę:
 
@@ -52,7 +52,7 @@ java -jar <jar file path> <file path>
 Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
 
-### **<br>Najważniejsze konstrukcje językowe wraz z przykładami:**
+## **<br>Najważniejsze konstrukcje językowe wraz z przykładami:**
 * **Komentarze**
   * Komentarz jednoliniowy
     ```
@@ -464,7 +464,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
                                 DESC
       ```
 
-### **<br>Leksyka - zbiór symboli terminalnych:**
+## **<br>Leksyka - zbiór symboli terminalnych:**
 ```
 digit               = [0-9];
 non_zero_digit      = [1-9];
@@ -483,7 +483,7 @@ white_space         = " "
 character           = .; //dowolny znak
 ```
 
-### **<br>EBNF:**
+## **<br>EBNF:**
 ```
 IDENTIFIER          = letter, {letter | digit};
 
@@ -513,9 +513,9 @@ COMMENT             = "//", {character}, newline  //ta sama sytuacja co w przypa
 
 ```
 
-### **<br>Obsługa błędów:**
+## **<br>Obsługa błędów:**
 
-### **<br>Wymagania funkcjonalne:**
+## **<br>Wymagania funkcjonalne:**
 * Interpreter pozwala na uruchomienie kodu zapisanego w pliku tekstowym
 * Język obsługuje podstawowe typy danych(int, float, bool) oraz konstrukcje językowe (pętle, instrukcje warunkowe)
 * Język pozwala na wykonywanie podstawowych operacji arytmetycznych i logicznych na zmiennych
@@ -529,14 +529,14 @@ COMMENT             = "//", {character}, newline  //ta sama sytuacja co w przypa
 * Zmienne są mutowalne
 * Zmienne są przekazywane do funkcji przez referencję
 
-### **<br>Wymagania niefunkcjonalne:**
+## **<br>Wymagania niefunkcjonalne:**
 * Interpreter powinien zapewniać deterministyczne działanie, co oznacza, że ten sam kod źródłowy zawsze produkuje te same wyniki przy identycznych warunkach wejściowych, zapewniając stabilność działania aplikacji.
 * Interpreter powinien być łatwy do rozszerzania o dodatkowe funkcje i biblioteki, co umożliwia tworzenie bardziej zaawansowanych programów w oparciu o ten język.
 * Interpreter powinien być odpowiednio udokumentowany, aby ułatwić użytkownikom korzystanie z niego, opisując składnię języka, dostępne funkcje, typy danych itp.
 * Język zawiera jedynie podstawowe konstrukcje przez co jest prosty do nauki
 * Mechanizm sortowania słownika powinien być zoptymalizowany pod kątem wydajności
 
-### **<br>Zwięzły opis realizacji:**
+## **<br>Zwięzły opis realizacji:**
 Program będzie składał się z modułów, które będą odpowiedzialne za kolejne etapy analizy oraz przetwarzania plików wejściowych. 
 Cały proces będzie wspierany przez dodatkowe moduły m.in. moduł obsługi błędów. Poniżej krótkie omówienie modułów oraz ich podstawowych założeń
 
@@ -571,7 +571,7 @@ Interpreter ma za zadanie sekwencyjne wykonanie instrukcji zawartych drzewie zbu
 * Moduł obsługi błędów - odpowiada za identyfikację, zarządzanie i obsługę różnych rodzajów błędów w programie, co często obejmuje zgłaszanie wyjątków, obsługę błędów syntaktycznych i semantycznych. Współpracuje z każdym z głównych modułów programu
 * Moduł obslugi plików tekstowych - wspomaga operacje odczytywania zawartości z pliku tekstowego. Współpracuje z analizatorem leksykalnym
 
-### **<br>Sposób testowania:**
+## **<br>Sposób testowania:**
 Każdy z modułów będzie posiadał testy jednostkowe weryfikujące jego poprawne działanie oraz obsługę wyjątków. Testowanie będzie odbywać się za pomocą biblioteki JUnit<br>
 <br> Poniżej przedstawiono kilka przykładów testów, jakie mogą być wykonane, mają one na celu jedynie przedstawienie zamysłu z jakim zostaną zaimplementowane te właściwe.
 
@@ -623,7 +623,6 @@ Każdy z modułów będzie posiadał testy jednostkowe weryfikujące jego popraw
 <br>Testy jednostkowe mogą obejmować sprawdzanie poprawności wykonania pojedynczych instrukcji,
 ewaluację wyrażeń, czy też odpowiednie zachowanie interpretera w różnych scenariuszach.<br><br>
 
-Test analizatora semantycznego:
    ```java
       public class SemanticAnalyzerTest {
 
@@ -635,4 +634,4 @@ Test analizatora semantycznego:
        }
    }
    ```
-W przypadku interpretera możemy sprawdzać, czy poprawnie wykonuje on całe programy w różnych przypadkach użycia. Mogą to być testy jednostkowe, które obejmują wykonanie skryptów o złożonej strukturze. Takie testy mogą pełnić rolę testów integracyjnych
+   W przypadku interpretera możemy sprawdzać, czy poprawnie wykonuje on całe programy w różnych przypadkach użycia. Mogą to być testy jednostkowe, które obejmują wykonanie skryptów o złożonej strukturze. Takie testy mogą pełnić rolę testów integracyjnych
