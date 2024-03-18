@@ -61,12 +61,12 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     
     <br>
 * **Typy danych:** 
-    * `bool`: Reprezentuje wartości logiczne, które mogą być `true` lub `false`.
+    * `bool`: Reprezentuje wartości logiczne, które mogą być `True` lub `False`.
     * `int`: Reprezentuje liczby całkowite z zakresu od -2147483648 do 2147483648.
     * `float`: Reprezentuje liczby zmiennoprzecinkowe pojedynczej precyzji z zakresu od 1.40129846432481707e-45 do 3.40282346638528860e+38.
     * `String`: Reprezentuje sekwencję znaków, która może zawierać litery, cyfry, białe znaki oraz znaki specjalne, o maksymalnej długości 200 znaków.
       ```
-      bool var_bool = true;
+      bool var_bool = True;
       int var_int = 2;
       float var_float = 3.2;
       String var_string = "Hello";
@@ -75,7 +75,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       ```
 
     <br>
-* **Kolekcje:** //TODO DOPISAC OPERACJE NA KAZDYM Z TYCH
+* **Kolekcje:**
     * `List`: Kolekcja elementów uporządkowanych, która pozwala na przechowywanie wielu elementów o różnych typach.
     Dostępne operacje:
       * `add` - pozwala na dodanie elementu do listy
@@ -169,12 +169,12 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     Przykładowe operacje: 
 
     ```
-    bool var_true = true;
-    bool var_false = false;
+    bool var_true = True;
+    bool var_false = False;
     
     //operatory można łączyć w bardziej zaawanasowane wyrażenia używając nawiasów
-    bool a = var_true and (not var_false); // a = true
-    bool b = var_true and (var_true or var_false); // b = false
+    bool a = var_true and (not var_false); // a = True
+    bool b = var_true and (var_true or var_false); // b = False
     ```
 
     <br>
@@ -257,8 +257,8 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
             b = -3;  
 
       } elseif a > 2 {
-
             b = 3;
+      }
 
       ```
 
@@ -325,7 +325,6 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
      * **Klasy:**
          <br> W języku możliwe jest także tworzenie klas poprzez użycie słowa kluczowego `class` <br>
          Wewnątrz klasy możemy tworzyć pola oraz metody, nie występują modyfikatory dostępu, zakładamy, że wszystkie pola oraz metody są publiczne.
-         Możemy odwoływać się do pól danej klasy wewnątrz tej klasy poprzez użycie słowa kluczowego `this`.<br>
          Nie występuje możliwość przeciążania metod<br><br>
 
           * definicja klasy
@@ -338,24 +337,24 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
                  }
       
                  fn int getNumber() {
-                     return this.number;
+                     return number;
                  }
       
-                 fn void setNumber(int number) {
-                     this.number = number;
+                 fn void setNumber(int pNumber) {
+                     number = pNumber;
                  }
       
                  fn void increment() {
-                      this.number = this.number + 1; 
+                      number = number + 1; 
                  }
       
                  fn void decrement() {
-                     this.number = this.number - 1;
+                     number = number - 1;
                  }
       
         
                  fn void printNumber() {
-                     print("current value: " + ($String this.number);
+                     print("current value: " + ($String number);
                  }
       
                }
@@ -364,7 +363,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
                fn int main() {
                    int x = 1;
                    Counter counter = Counter(x);
-                   counter.increment;
+                   counter.increment();
                    counter.printNumber();
                }
               ``` 
@@ -381,7 +380,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
     <br>
 * **Operatory rzutowania:**
-    <br> Z racji tego, że język jest statycznie typowany zostały utworzone mechanizmy rzutowania. Aby rzutować zmienną na inny typ musimy użyć `$` oraz nazwy typu na jaki rzutujemy.<br>
+    <br> Z racji tego, że język jest statycznie typowany, zostały utworzone mechanizmy rzutowania. Aby rzutować zmienną na inny typ, musimy użyć `$` oraz nazwy typu, na jaki rzutujemy.<br>
     W przypadku rzutowania `float` na `int` cyfry po przecinku są ucinane. 
 
     * int na float: rzutowanie bezstratne
@@ -428,13 +427,13 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       ```
       fn int main() {
           String x = "3.2";
-          float y = ($String x);
+          float y = (float x);
           return 0;
       }
       ```
 
     <br>
-* **Zapytania na słownikach:** //TODO PRZEMYSLEC TE ZAPYTANIA I OPISAC
+* **Zapytania na słownikach:** 
     * zapytania deklaratywne
       ```
       Dictionary<String, int> var_dict = |
@@ -564,11 +563,12 @@ ERROR in <Line Number>:<Column Number> | <Error message>
   ```
    ERROR in <Line Number>:<Column Number> | variable "a" undefined
   ```
-* przypisanie niepoprawnej wartości do typu
+* przypisanie niepoprawnej wartości do typu / typ deklarowany różny od przekazanego (również w przypadku złożonych struktur i wartości zwracanych przez funkcję)
     ```
     fn int main() {
-      int x = 3;
-      float y = 4;
+      Dictionary<String, int> = |
+          12: "cat"
+      |
       return 0;
   }
   ```
@@ -628,7 +628,7 @@ ERROR in <Line Number>:<Column Number> | <Error message>
   ```
   ERROR in <Line Number>:<Column Number> | Missing return statement in non-void function
   ```
-* Niepoprawny typ danych zwracany przez funkcję
+* Zadeklarowany i przekazany typ danych są różne w przypadku funkcji i 
   ```
   fn int add(int x, int y) {
       return ($float x) + (float $y);
@@ -637,13 +637,25 @@ ERROR in <Line Number>:<Column Number> | <Error message>
 
 
   fn int main() {
-  int x = 3;
-  String a = x;
-  return 0;
+    int x = add(1, 2);
   }
   ```
   ```
-  ERROR in <Line Number>:<Column Number> | Function returns a different data type than declared
+  ERROR in <Line Number>:<Column Number> | 
+  ```
+  * Wywołanie funkcji ze złą liczbą argumentów
+  ```
+  fn int add(int x, int y) {
+      return ($float x) + (float $y);
+  }
+
+
+  fn int main() {
+    int x = add(1, 2);
+  }
+  ```
+  ```
+  ERROR in <Line Number>:<Column Number> | Wrong number of arguments, expected 2
   ```
 * Zbyt długi łańcuch String
   ```
