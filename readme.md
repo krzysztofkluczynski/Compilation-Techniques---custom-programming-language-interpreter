@@ -572,4 +572,66 @@ Interpreter ma za zadanie sekwencyjne wykonanie instrukcji zawartych drzewie zbu
 * Moduł obslugi plików tekstowych - wspomaga operacje odczytywania zawartości z pliku tekstowego. Współpracuje z analizatorem leksykalnym
 
 ### **<br>Sposób testowania:**
+Każdy z modułów będzie posiadał testy jednostkowe weryfikujące jego poprawne działanie oraz obsługę wyjątków. Testowanie będzie odbywać się za pomocą biblioteki JUnit<br>
+<br> Poniżej przedstawiono kilka przykładów testów, jakie mogą być wykonane, mają one na celu jedynie przedstawienie zamysłu z jakim zostaną zaimplementowane te właściwe.
 
+1. Lekser
+   <br>Testy leksera będą sprawdzać, czy moduł poprawnie przekształca strumień znaków na sekwencję tokenów, co zweryfikuje poprawną analizę leksykalną.  W trakcie testów sprawdzane będą różne przypadki, w tym sytuacje związane z różnymi rodzajami tokenów oraz ewentualne zachowanie wobec błędów leksykalnych.
+    ```java
+   public class LexerTest {
+
+    @Test
+    public void testLexicalAnalysis() {
+        Lexer lexer = new Lexer();
+        String input = "int x = 10;";
+        List<Token> expectedTokens = Arrays.asList(
+            new Token(TokenType.INT_KEYWORD, "int"),
+            new Token(TokenType.IDENTIFIER, "x"),
+            new Token(TokenType.ASSIGNMENT_OPERATOR, "="),
+            new Token(TokenType.INTEGER_LITERAL, "10"),
+            new Token(TokenType.SEMICOLON, ";")
+        );
+        List<Token> actualTokens = lexer.analyze(input);
+        assertEquals(expectedTokens, actualTokens);
+    }
+   }
+    ```
+2. Parser
+<br> Tutaj sam zamysł testowania będzie wyglądał podobnie jak w przypadku leksera. Zamiast sekwencji znaków parser dostanie sekwencję tokenów i na jej podstawie będzie generował drzewo składniowe.
+   ```java
+   public class ParserTest {
+
+       @Test
+       public void testSyntaxAnalysis() {
+           Parser parser = new Parser();
+           List<Token> tokens = Arrays.asList(
+               new Token(TokenType.INT_KEYWORD, "int"),
+               new Token(TokenType.IDENTIFIER, "x"),
+               new Token(TokenType.ASSIGNMENT_OPERATOR, "="),
+               new Token(TokenType.INTEGER_LITERAL, "10"),
+               new Token(TokenType.SEMICOLON, ";")
+           );
+           SyntaxTree expectedTree = ... // Zakładając, że mamy zdefiniowane oczekiwane drzewo składniowe
+           SyntaxTree actualTree = parser.parse(tokens);
+           assertEquals(expectedTree, actualTree);
+       }
+   }
+   ```
+
+3. Analizator semantyczny i interpreter
+<br>Testy jednostkowe mogą obejmować sprawdzanie poprawności wykonania pojedynczych instrukcji,
+ewaluację wyrażeń, czy też odpowiednie zachowanie interpretera w różnych scenariuszach.<br><br>
+
+Test analizatora semantycznego:
+   ```java
+      public class SemanticAnalyzerTest {
+
+       @Test
+       public void testSemanticAnalysis() {
+           SemanticAnalyzer analyzer = new SemanticAnalyzer();
+           SyntaxTree tree = ... // Zakładając, że mamy zdefiniowane drzewo składniowe do analizy semantycznej
+           assertTrue(analyzer.analyze(tree)); // Sprawdzamy czy analiza semantyczna jest poprawna, metoda anaylze zwraca true jesli tak
+       }
+   }
+   ```
+W przypadku interpretera możemy sprawdzać, czy poprawnie wykonuje on całe programy w różnych przypadkach użycia. Mogą to być testy jednostkowe, które obejmują wykonanie skryptów o złożonej strukturze. Takie testy mogą pełnić rolę testów integracyjnych
