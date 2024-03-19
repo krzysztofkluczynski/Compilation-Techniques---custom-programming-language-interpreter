@@ -71,12 +71,11 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       float var_float = 3.2;
       String var_string = "Hello";
       
-      //Dla typu string zdefiniowana jest specjalna metoda pozwalająca porównać 
       ```
 
     <br>
 * **Kolekcje:**
-    * `List`: Kolekcja elementów uporządkowanych, która pozwala na przechowywanie wielu elementów o różnych typach.
+    * `List`: Kolekcja elementów uporządkowanych, która pozwala na przechowywanie wielu elementów o tym samym.
     Dostępne operacje:
       * `add` - pozwala na dodanie elementu do listy
       * `delete` - pozwala na usunięcie elementu z listy 
@@ -159,7 +158,8 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
         (a, b) => a.Key.compare(b.Key) wykorzystuje funkcję compare do porównania kluczy. Wartości zwracane przez compare decydują o kolejności sortowania.
         Jeśli a.Key jest leksykograficznie mniejsze od b.Key, wynik będzie ujemny, co spowoduje, że a zostanie umieszczone przed b. Jeśli jest większe,
         wynik będzie dodatni, co spowoduje umieszczenie b przed a. Jeśli są równe, wynik będzie zero, co oznacza, że ich kolejność nie ulega zmianie.
-
+        <br>// Czy można zapisać lepiej/czytelniej powyzsze lambdy?
+        
     <br>
 * **Operatory logiczne:**
   * `and` - operator koniunkcji
@@ -325,7 +325,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
      * **Klasy:**
          <br> W języku możliwe jest także tworzenie klas poprzez użycie słowa kluczowego `class` <br>
          Wewnątrz klasy możemy tworzyć pola oraz metody, nie występują modyfikatory dostępu, zakładamy, że wszystkie pola oraz metody są publiczne.
-         Nie występuje możliwość przeciążania metod<br><br>
+         Nie występuje możliwość przeciążania metod.<br><br>
 
           * definicja klasy
 
@@ -427,7 +427,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       ```
       fn int main() {
           String x = "3.2";
-          float y = (float x);
+          float y = ($float x);
           return 0;
       }
       ```
@@ -499,7 +499,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
  
  declaration             = (type, identifier) ";" ;
  
- assignment              = [type], identifier, "=", (expression) | query_statement";";
+ assignment              = [type], identifier, "=", (expression) | query_statement, ";"; //czy mozna lepiej rozpisać/umiejscowić query statement w tej gramatyce?
  
  function_call           = expression, "(", arguments-list, ")", ";";
  
@@ -523,8 +523,6 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
  
  conjunction             = relation_term, { "and", relation_term };
  
- negation                = [ "not" ], relation_term;
- 
  relation_term           = additive_term, [ relation_operator , additive_term ];
  
  additive_term           = multiplicative_term, { add_sub_operator, multiplicative_term };
@@ -535,7 +533,8 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
  
  arguments-list          = [ expression, { ",", expression } ]; //lista argumentow podawana przy wywolaniu funkcji
    
- factor                  = literal 
+ factor                  = [negation],
+                         |literal 
                          | "(", expression, ")" 
                          | identifier, ".", identifier
                          | identifier, ".", function_call //wywolanie metody na obiekcie
