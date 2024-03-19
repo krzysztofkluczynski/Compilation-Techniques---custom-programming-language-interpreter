@@ -7,9 +7,9 @@
 ## **<br>Opis:**
 Tematem projektu jest realizacja interpretera języka z wbudowanym typem słownika. 
 Zawartość struktury można sortować, wykonując dedykowaną do tego metodę, przyjmującą wyrażenie w stylu _lambda_ jako parametr określający sposób sortowania.
-Wykonanie tej metody powoduje zmiane kolejności iterowania po elementach struktury.
+Wykonanie tej metody powoduje zmianę kolejności iterowania po elementach struktury.
 Możliwe są także wszystkie podstawowe operacje na słowniku: 
-* Dodawnia elementów
+* Dodawania elementów
 * Usuwanie elementów
 * Modyfikowanie elementów 
 * Wyszukiwanie elementów według klucza
@@ -28,8 +28,8 @@ Korzystanie z LTS wersji Java zapewnia stabilność, bezpieczeństwo oraz długo
 
 ### **<br>Cechy języka:**
 * **Statyczne typowanie**, wszystkie typy danych muszą być jasno zadeklarowane zgodnie ze składnią języka
-* **Silne typowanie**, automatyczne konwersje międzu typami nie są obsługiwane, takie operacje wymagają jasnego zdefiniowania za pomocą wbudowanych w język mechanizmów 
-* **Referencje**, argumenty są przekazywane do funkcji oraz metod przez referencję(podobnie jak w języku Python)
+* **Silne typowanie**, automatyczne konwersje między typami nie są obsługiwane, takie operacje wymagają jasnego zdefiniowania za pomocą wbudowanych w język mechanizmów 
+* **Referencje**, argumenty są przekazywane do funkcji oraz metod przez referencję (podobnie jak w języku Python)
 * **Mutowalność**, zmienne są mutowalne
 * **Funkcja main**, plik źródłowy musi zawierać jedną bezargumentową funkcję main zwracającą int
 * **Zakres zmiennych**, zmienne są widoczne jedynie w bloku kodu między nawiasami klamrowymi {}, gdy zostały w nim zainicjowane lub przekazane jako parametr w przypadku funkcji.
@@ -37,7 +37,7 @@ Korzystanie z LTS wersji Java zapewnia stabilność, bezpieczeństwo oraz długo
 
 ## **<br>Instrukcja uruchomienia:**
 
-Aby zbudować projekt należy wykonać komendę:
+Aby zbudować projekt, należy wykonać komendę:
 
 ```
 mvn clean install
@@ -92,11 +92,11 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
         ```
     * `Tuple`: Krotka jest kolekcją elementów o różnych typach, które są traktowane jako pojedyncza jednostka.
     Dostępne operacje:
-        * `get` - zwraca wartość która znajduje się pod podanym jako parametr indeksem
+        * `get` - zwraca wartość, która znajduje się pod podanym jako parametr indeksem
         * `set` - zmiana konkretnej wartości w tablicy
     
          ```
-         Tuple<String, int> var_tuple = #"dog", 3#;
+         Tuple<String, int> var_tuple = ("dog", 3);
       
         var_tuple.get(0) //uzyskanie pierwszego elementu z listy
         var_tuple.set(0, 2) //ustawienie wartości znajdującej się na pozycji o indeskie 0 na 2
@@ -107,7 +107,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
           * `delete` - usuwa pare klucz-wartość ze słownika, argument to klucz z pary, która ma zostać usunięta
           * `get` - zwraca wartość dla podanego klucza
           * `set` - ustawia nową wartość dla podanego klucza, przyjmuje dwa argumenty, klucz i wartość
-          * `ifexists` - sprawdzenie czy klucz występuje w słowniku
+          * `ifexists` - sprawdzenie, czy klucz występuje w słowniku
           * `sort` - sortuje zawartość słownika według wskazanego przez użytkownika schematu
       
         ```
@@ -190,10 +190,10 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     int third = 2;
     
     // dzielenie dwóch zmiennych typu integer również zwraca integer, czyli po wykonaniu poniższej linii zmienna result1 = 1
-    int result1 = second / third;  
+    int resultOne = second / third;  
     
     //zachowana jest kolejność działań zgodna z matematyką, czyli po wykonaniu poniższej linii zmienna result2 = 14
-    int result2 = 2 + first * second;
+    int resultTwo = 2 + first * second;
     
     //możliwia jest operacja dodawania dla typu String
     String hello = "Hello " + "World";
@@ -223,7 +223,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       ```
       int a = 3;
         
-      if a != 2 {
+      if (a != 2) {
           a = a + 2;
       }
       ```
@@ -232,7 +232,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       int a = 2;
       int b;
       
-      if a >= 2 {
+      if (a >= 2) {
             b = 2;
       } else {
             b = 0;  
@@ -248,15 +248,15 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       int b;
 
       
-      if a == 2 {
+      if (a == 2) {
 
             b = 2;
 
-      } elseif a < 2 {
+      } elseif (a < 2) {
 
             b = -3;  
 
-      } elseif a > 2 {
+      } else {
             b = 3;
       }
 
@@ -264,11 +264,11 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
 
 * **Pętle warunkowe:**
-    * `while`: Pętla, która wykonuje określony blok kodu dopóki podany warunek jest spełniony.
+    * `while`: Pętla, która wykonuje określony blok kodu, dopóki podany warunek jest spełniony.
       ```
       int x = 2;
     
-      while x != 5 {
+      while (x != 5) {
           x = x + 1;
       }
       ```
@@ -281,7 +281,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
     <br>Nie ma możliwości przeciążania funkcji.
 
-    <br>Funkcje mogą być wywoływane rekursywnie - funkcja może wywołać samą siebie podczas wykonywania. Maksymalne ogranicznie na liczbę wywołań rekurencyjnych wynosi 200(patrz sekcję "Obsługa błędów").
+    <br>Funkcje mogą być wywoływane rekursywnie - funkcja może wywołać samą siebie podczas wykonywania. Maksymalne ograniczenie na liczbę wywołań rekurencyjnych wynosi 200 (patrz sekcję "Obsługa błędów").
 
     <br>Aby program działał poprawnie, musi zawierać dokładnie jedną specjalnie zdefiniowaną funkcję, zwyczajowo nazywaną `main`. Jest to funkcja, od której zaczyna się wykonywanie programu. W języku `main` zazwyczaj zwraca wartość całkowitą (typ `int`) jako kod wyjścia programu.<br><br>
 
@@ -290,7 +290,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
        ```
        //funkcja wypisująca na ekran czy podana liczba jest parzysta oraz jej wywołanie w main
        fn void printIfEven(int number) {
-          if (number / 2) * 2 != number {
+          if ((number / 2) * 2 != number) {
               print("The number is odd.");
           } else {
               print("The number is even.");
@@ -333,7 +333,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
                class Counter {
         
                  Counter(int number) {
-                 int number = 0;
+                     int number = 0;
                  }
       
                  fn int getNumber() {
@@ -370,7 +370,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
        <br>
 * **Funkcje wbudowane:**
     * print
-      <br>Funkcja print powoduje wypisanie tekstu w konsoli, przyjmuje jedynie argumenty typu String 
+      <br>Funkcja print powoduje wypisanie tekstu w konsoli, przyjmuje jedynie argumenty typu String. 
       ```
       fn int main() {
           print("Hello");
@@ -445,8 +445,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       
       List<Tuple<String, int>> query_result = 
                                 SELECT 
-                            var_dict.key
-                            var_dict.value
+                            (var_dict.key, var_dict.value)
                                 FROM
                             var dict
                                 WHERE
@@ -457,7 +456,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
       List<String> query_result2 = 
                                 SELECT 
-                            var_dict.key
+                            (var_dict.key)
                                 FROM
                             var dict
                                 WHERE
@@ -467,54 +466,129 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
                                 DESC
       ```
 
-## **<br>Leksyka - zbiór symboli terminalnych:**
+## **<br>Gramatyka:**
 ```
-digit               = [0-9];
-non_zero_digit      = [1-9];
-zero                = "0";
-letter              = [a-zA-Z];
-add_sub_operator    = "+" | "-"
-mul_div_operator    = "*" | "/"
-assign_operant      = "="
-relation_operator   = "<" | "<=" | "==" | ">" | ">=" | "!="
-dot                 = "."
-comma               = ","
-colon               = ":"
-semicolon           = ";"        
-newline             = "\n" 
-white_space         = " "
-character           = .; //dowolny znak
-```
+ program                 = {definition}
+ definition              = function_defintion | comment | class_definition
+ function_definition     = "fn", type, identifier, "(", parameters-list, ")", block;
+ class_definition        = "class", identifier, "{" , class_member, "}";
 
-## **<br>EBNF:**
-```
-IDENTIFIER          = letter, {letter | digit};
+ block                   = "{", { statement }, "}";
+ statement               = comment
+                         | conditional
+                         | loop
+                         | block
+                         | declaration
+                         | assignment
+                         | function_call
+                         | return_statement;
+                        
+ class_member            = declaration 
+                         | method_declaration 
+                         | constructor_declaration //czy konstruktor jest wymagany? wystarcza settery zdefiniowane przez uzytkownika?
+                        
+ constructor_declaration = "constructor", "(", parameters-list, ")", block;
+ 
+ method_declaration      = function_definition;                       
+                        
+ conditional             = "if", "(", expression, ")", block,
+                          { "elseif", "(", expression, ")", block },
+                          [ "else", block ];
+                                                                         
+ loop                    = "while", "(", expression, ")", block;
+ 
+ declaration             = (type, identifier) ";" ;
+ 
+ assignment              = [type], identifier, "=", (expression) | query_statement";";
+ 
+ function_call           = expression, "(", arguments-list, ")", ";";
+ 
+ return_statement        = "return", [ expression ], ";";
 
-INTEGER             = zero 
+ 
+ 
+ query_statement         = "SELECT", select_clause, "FROM", identifier, [where_clause], [order_by_clause];
+ 
+ select_clause           = "(", select_item, { ",", select_item }, ")";
+ 
+ select_item             = identifier , ".", ("key" | "value);
 
-                    | non_zero_digit, {non_zero_digit}
-                    
-FLOATING_POINT      = INTEGER, dot ,digit, {digit} 
-    
-BOOLEAN             = "true"
-                    | "false"
-                    
-                    //wczesniejsza wersja: letter | digit | white_space
-STRING              = '"', {character}, '"' //jak pokazac, ze kazdy inny znak moze wejsc w sklad stringa, czy trzeba wszystkie zdefiniowac?
+ where_clause            = "WHERE", expression;
 
-BASE_TYPE           = "int"
-                    | "float"
-                    | "bool"
-                    | "String"
-                    
-COMPLEX_TYPE        = "List"
-                    | "Tuple"
-                    | "Dictionary"
+ order_by_clause         = "ORDER BY", identifier, ("ASC" | "DESC"), ";";
+ 
+ lambda_expression       = "(", identifier, ",", identifier, ")", "=>", expression;
+ 
+ expression              = conjunction, { "or", conjunction }; 
+ 
+ conjunction             = relation_term, { "and", relation_term };
+ 
+ negation                = [ "not" ], relation_term;
+ 
+ relation_term           = additive_term, [ relation_operator , additive_term ];
+ 
+ additive_term           = multiplicative_term, { add_sub_operator, multiplicative_term };
+ 
+ multiplicative_term     = factor, { mul_div_operator, factor };
+ 
+ parameters-list         = [ type, identifier, { ",", type, identifier } ]; //lista parameterow w deklaracji funkcji/metody
+ 
+ arguments-list          = [ expression, { ",", expression } ]; //lista argumentow podawana przy wywolaniu funkcji
    
-COMMENT             = "//", {character}, newline  //ta sama sytuacja co w przypadku STRING
+ factor                  = literal 
+                         | "(", expression, ")" 
+                         | identifier, ".", identifier
+                         | identifier, ".", function_call //wywolanie metody na obiekcie
+                         | "sort", ".", "(", lambda_expression, ")"; //wywolanie sortowania na slowniku, czy mozna zrobic lepiej?
+                         | identifier 
+                         | cast_expression 
+                         | object-creation;
 
+ object-creation         = identifier, "(", [arguments-list], ")"; //dodanie słowa kluczowego new mprzy tworzeniu?
 
+ cast_expression         = "$", type, (identifier | literal);
+
+                     
+ //CZESC LEKSYKALNA - ?
+ type                    = type_basic | type_complex
+
+ type_complex            = dictionary_declaration | tuple_declaration | list_declaration
+ type_basic              = "int" | "float" | "string" | "boolean";
+
+ dictionary_declaration  = "Dictionary", "<", type_basic, ",", type_basic, ">";
+ tuple_declaration       = "Tuple", "<", type_basic, ",", type_basic, ">";
+ list_declaration        = "List", "<", type_basic, ">" ;
+
+ literal                 = boolean | string | integer | float | complex_literal;
+ complex_literal         = dictionary_literal | tuple_literal | list_literal
+
+ dictionary_literal      = "|", {literal, ":", literal, ","}, "|";
+ tuple_literal           =  "(", literal, ",", literal, ")";
+ list_literal            = list_type = "[", [literal, {",", literal}], "]";
+
+ boolean                 = "true" | "false";
+ string                  = '"', { character - newline }, '"';
+ float                   = ["-"], integer, ".", [ integer ];
+ integer                 = ["-"], digit_positive, { digit };
+
+ identifier              = letter, { identifier_chars };
+ identifier_chars        = alphanumeric | "_";
+ alphanumeric            = letter | digit;
+
+ add_sub_operator        = "+" | "-"
+ mul_div_operator        = "*" | "/"
+ assign_operant          = "="
+ relation_operator       = "<" | "<=" | "==" | ">" | ">=" | "!="
+
+ digit                   = [0-9];
+ non_zero_digit          = [1-9];
+ zero                    = "0";
+ letter                  = [a-zA-Z];
+ comment                 = "//", { character - newline }, newline;
+ newline                 = "\n"
+ character               = .; //dowolny znak unicode
 ```
+
 
 ## **<br>Obsługa błędów:**
 
@@ -563,7 +637,7 @@ ERROR in <Line Number>:<Column Number> | <Error message>
   ```
    ERROR in <Line Number>:<Column Number> | variable "a" undefined
   ```
-* przypisanie niepoprawnej wartości do typu / typ deklarowany różny od przekazanego (również w przypadku złożonych struktur i wartości zwracanych przez funkcję)
+* przypisanie niepoprawnej wartości do typu LUB typ deklarowany różny od przekazanego (również w przypadku złożonych struktur i wartości zwracanych przez funkcję)
     ```
     fn int main() {
       Dictionary<String, int> = |
@@ -587,7 +661,7 @@ ERROR in <Line Number>:<Column Number> | <Error message>
   ```
 
   ```
-  ERROR in <Line Number>:<Column Number> | cannot assign value of type int to type float
+  ERROR in <Line Number>:<Column Number> | cannot assign type int to type String
   ```
 * Utworzenie funkcji/zmiennej/klasy o tej samej nazwie
     ```
@@ -628,21 +702,7 @@ ERROR in <Line Number>:<Column Number> | <Error message>
   ```
   ERROR in <Line Number>:<Column Number> | Missing return statement in non-void function
   ```
-* Zadeklarowany i przekazany typ danych są różne w przypadku funkcji i 
-  ```
-  fn int add(int x, int y) {
-      return ($float x) + (float $y);
-  }
 
-
-
-  fn int main() {
-    int x = add(1, 2);
-  }
-  ```
-  ```
-  ERROR in <Line Number>:<Column Number> | 
-  ```
   * Wywołanie funkcji ze złą liczbą argumentów
   ```
   fn int add(int x, int y) {
@@ -689,7 +749,7 @@ ERROR in <Line Number>:<Column Number> | <Error message>
 * Interpreter powinien zapewniać deterministyczne działanie, co oznacza, że ten sam kod źródłowy zawsze produkuje te same wyniki przy identycznych warunkach wejściowych, zapewniając stabilność działania aplikacji.
 * Interpreter powinien być łatwy do rozszerzania o dodatkowe funkcje i biblioteki, co umożliwia tworzenie bardziej zaawansowanych programów w oparciu o ten język.
 * Interpreter powinien być odpowiednio udokumentowany, aby ułatwić użytkownikom korzystanie z niego, opisując składnię języka, dostępne funkcje, typy danych itp.
-* Język zawiera jedynie podstawowe konstrukcje przez co jest prosty do nauki
+* Język zawiera jedynie podstawowe konstrukcje, przez co jest prosty do nauki
 * Mechanizm sortowania słownika powinien być zoptymalizowany pod kątem wydajności
 
 ## **<br>Zwięzły opis realizacji:**
@@ -737,9 +797,8 @@ Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
   * BracketClose `)`
   * SquareBracketOpen `[`
   * SquareBracketClose `]`
-  * Hashtag `#`
   * Pipe `|`
-  * LessForTypeDefinitionOpen `<` //czy potrzebujemy definiowac to oddzielnie? to ten sam znak co Less
+  * LessForTypeDefinitionOpen `<` //czy potrzebujemy definiować to oddzielnie? to ten sam znak co Less
   * GreaterForTypeDefinitionClose `>`
 * Pętle i instrukcje warunkowe
   * While `while`
@@ -769,11 +828,11 @@ Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
   * Comma `,`
   * Dot `.`
   * Identifier
-  * BoolTrueValue `True`
-  * BoolFalseValue = `False`
-  * StringValue 
-  * IntValue
-  * FloatValue
+  * BoolTrueLiteral `True`
+  * BoolFalseLiteral = `False`
+  * StringLiteral 
+  * IntLiteral
+  * FloatLiteral
   * Newline
   * EndOfFile
 
@@ -814,11 +873,11 @@ Każdy z modułów będzie posiadał testy jednostkowe weryfikujące jego popraw
         Lexer lexer = new Lexer();
         String input = "int x = 10;";
         List<Token> expectedTokens = Arrays.asList(
-            new Token(TokenType.INT_KEYWORD, "int"),
+            new Token(TokenType.Integet, "int"),
             new Token(TokenType.IDENTIFIER, "x"),
-            new Token(TokenType.ASSIGNMENT_OPERATOR, "="),
-            new Token(TokenType.INTEGER_LITERAL, "10"),
-            new Token(TokenType.SEMICOLON, ";")
+            new Token(TokenType.AssignOperator, "="),
+            new Token(TokenType.IntegerLiteral, "10"),
+            new Token(TokenType.Semicolon, ";")
         );
         List<Token> actualTokens = lexer.analyze(input);
         assertEquals(expectedTokens, actualTokens);
@@ -859,7 +918,7 @@ ewaluację wyrażeń, czy też odpowiednie zachowanie interpretera w różnych s
        public void testSemanticAnalysis() {
            SemanticAnalyzer analyzer = new SemanticAnalyzer();
            SyntaxTree tree = ... // Zakładając, że mamy zdefiniowane drzewo składniowe do analizy semantycznej
-           assertTrue(analyzer.analyze(tree)); // Sprawdzamy czy analiza semantyczna jest poprawna, metoda anaylze zwraca true jesli tak
+           assertTrue(analyzer.analyze(tree)); // Sprawdzamy, czy analiza semantyczna jest poprawna, metoda anaylze zwraca true, jeśli tak
        }
    }
    ```
