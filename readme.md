@@ -100,65 +100,65 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
         var_tuple.get(0) //uzyskanie pierwszego elementu z listy
         var_tuple.set(0, 2) //ustawienie wartości znajdującej się na pozycji o indeskie 0 na 2
          ```
-      * `Dictionary`: Kolekcja par klucz-wartość, gdzie każdy klucz musi być unikalny, a wartości mogą być dowolnego typu.
-      Dostępne operacje:
-          * `add` - dodanie elementu do słownika, przyjmuje dwa argumenty, klucz i wartość
-          * `delete` - usuwa pare klucz-wartość ze słownika, argument to klucz z pary, która ma zostać usunięta
-          * `get` - zwraca wartość dla podanego klucza
-          * `set` - ustawia nową wartość dla podanego klucza, przyjmuje dwa argumenty, klucz i wartość
-          * `ifexists` - sprawdzenie, czy klucz występuje w słowniku
-          * `sort` - sortuje zawartość słownika według wskazanego przez użytkownika schematu
+    * `Dictionary`: Kolekcja par klucz-wartość, gdzie każdy klucz musi być unikalny, a wartości mogą być dowolnego typu.
+    Dostępne operacje:
+        * `add` - dodanie elementu do słownika, przyjmuje dwa argumenty, klucz i wartość
+        * `delete` - usuwa pare klucz-wartość ze słownika, argument to klucz z pary, która ma zostać usunięta
+        * `get` - zwraca wartość dla podanego klucza
+        * `set` - ustawia nową wartość dla podanego klucza, przyjmuje dwa argumenty, klucz i wartość
+        * `ifexists` - sprawdzenie, czy klucz występuje w słowniku
+        * `sort` - sortuje zawartość słownika według wskazanego przez użytkownika schematu
       
-        ```
-        Dictionary<String, int> var_dict = |
-            "dog": 3,
-            "cat": 4,
-            "cow": 5,
-            "hamster": 6 
-        |;
+      ```
+      Dictionary<String, int> var_dict = |
+          "dog": 3,
+          "cat": 4,
+          "cow": 5,
+          "hamster": 6 
+      |;
       
-        int a = var_dict.get("dog");
-        bool b = var_dict.ifexists("hamster")
-        var_dict.delete("hamster");
-        var_dict.add("hamster", 6);
-        var_dict.set("sheep", 7);
+      int a = var_dict.get("dog");
+      bool b = var_dict.ifexists("hamster")
+      var_dict.delete("hamster");
+      var_dict.add("hamster", 6);
+      var_dict.set("sheep", 7);
       
-        // Przykłady sortowania - dokładne omówienie poniżej
-        // Sortowanie po wartościach rosnąco
-        var_dict.sort((a, b) => a.Value - b.Value);
+      // Przykłady sortowania - dokładne omówienie poniżej
+      // Sortowanie po wartościach rosnąco
+      var_dict.sort((a, b) => a.Value - b.Value);
 
-        // Sortowanie po wartościach malejąco
-        var_dict.sort((a, b) => b.Value - a.Value);
+      // Sortowanie po wartościach malejąco
+      var_dict.sort((a, b) => b.Value - a.Value);
 
-        // Sortowanie po długości klucza rosnąco
-        var_dict.sort((a, b) => a.Key.length() - b.Key.length());
+      // Sortowanie po długości klucza rosnąco
+      var_dict.sort((a, b) => a.Key.length() - b.Key.length());
 
-        // Sortowanie po długości klucza malejąco
-        var_dict.sort((a, b) => b.Key.length() - a.Key.length());
+      // Sortowanie po długości klucza malejąco
+      var_dict.sort((a, b) => b.Key.length() - a.Key.length());
 
-        // Sortowanie alfabetyczne kluczy z użyciem funkcji compare 
-        var_dict.sort((a, b) => a.Key.compare(b.Key)); 
-        ```
-        Omówienie przykładowych sortowań
-        1. Sortowanie po wartościach rosnąco:<br>
-        (a, b) => a.Value - b.Value oznacza, że elementy zostaną posortowane w kolejności rosnącej na podstawie ich wartości.
-        Jeśli wartość a jest mniejsza niż wartość b, wynik będzie ujemny, co spowoduje, że a zostanie umieszczone przed b w posortowanej kolejności. 
-        Jeśli wartość a jest większa niż wartość b, wynik będzie dodatni, co spowoduje umieszczenie b przed a. Jeśli są równe, wynik będzie zero, co oznacza, że ich kolejność nie ulega zmianie.
+      // Sortowanie alfabetyczne kluczy z użyciem funkcji compare 
+      var_dict.sort((a, b) => a.Key.compare(b.Key)); 
+      ```
+      Omówienie przykładowych sortowań
+      1. Sortowanie po wartościach rosnąco:<br>
+      (a, b) => a.Value - b.Value oznacza, że elementy zostaną posortowane w kolejności rosnącej na podstawie ich wartości.
+      Jeśli wartość a jest mniejsza niż wartość b, wynik będzie ujemny, co spowoduje, że a zostanie umieszczone przed b w posortowanej kolejności. 
+      Jeśli wartość a jest większa niż wartość b, wynik będzie dodatni, co spowoduje umieszczenie b przed a. Jeśli są równe, wynik będzie zero, co oznacza, że ich kolejność nie ulega zmianie.
 
-        2. Sortowanie po wartościach malejąco:<br>
-        (a, b) => b.Value - a.Value to odwrócona kolejność porównania. Tutaj wartości są porównywane w odwrotnej kolejności, co powoduje sortowanie malejące.
+      2. Sortowanie po wartościach malejąco:<br>
+      (a, b) => b.Value - a.Value to odwrócona kolejność porównania. Tutaj wartości są porównywane w odwrotnej kolejności, co powoduje sortowanie malejące.
 
-        3. Sortowanie po długości klucza rosnąco:<br>
-        (a, b) => a.Key.length() - b.Key.length() porównuje długości kluczy a i b. Elementy zostaną posortowane według długości ich klucza, od najkrótszego do najdłuższego.
+      3. Sortowanie po długości klucza rosnąco:<br>
+      (a, b) => a.Key.length() - b.Key.length() porównuje długości kluczy a i b. Elementy zostaną posortowane według długości ich klucza, od najkrótszego do najdłuższego.
 
-        4. Sortowanie po długości klucza malejąco:<br>
-        (a, b) => b.Key.length() - a.Key.length() to odwrócona kolejność porównania długości kluczy. Elementy zostaną posortowane według długości ich klucza, od najdłuższego do najkrótszego.
+      4. Sortowanie po długości klucza malejąco:<br>
+      (a, b) => b.Key.length() - a.Key.length() to odwrócona kolejność porównania długości kluczy. Elementy zostaną posortowane według długości ich klucza, od najdłuższego do najkrótszego.
         
-        5. Sortowanie alfabetyczne kluczy z użyciem funkcji compare:<br>
-        (a, b) => a.Key.compare(b.Key) wykorzystuje funkcję compare do porównania kluczy. Wartości zwracane przez compare decydują o kolejności sortowania.
-        Jeśli a.Key jest leksykograficznie mniejsze od b.Key, wynik będzie ujemny, co spowoduje, że a zostanie umieszczone przed b. Jeśli jest większe,
-        wynik będzie dodatni, co spowoduje umieszczenie b przed a. Jeśli są równe, wynik będzie zero, co oznacza, że ich kolejność nie ulega zmianie.
-        <br>// Czy można zapisać lepiej/czytelniej powyzsze lambdy?
+      5. Sortowanie alfabetyczne kluczy z użyciem funkcji compare:<br>
+      (a, b) => a.Key.compare(b.Key) wykorzystuje funkcję compare do porównania kluczy. Wartości zwracane przez compare decydują o kolejności sortowania.
+      Jeśli a.Key jest leksykograficznie mniejsze od b.Key, wynik będzie ujemny, co spowoduje, że a zostanie umieszczone przed b. Jeśli jest większe,
+      wynik będzie dodatni, co spowoduje umieszczenie b przed a. Jeśli są równe, wynik będzie zero, co oznacza, że ich kolejność nie ulega zmianie.
+      <br>// Czy można zapisać lepiej/czytelniej powyzsze lambdy?
         
     <br>
 * **Operatory logiczne:**
@@ -275,14 +275,10 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
   <br>
 * **Funkcje:**
-<br> W języku, każda funkcja zaczyna się od słowa kluczowego `fn` (skrót od function), po którym następuje deklaracja typu zwracanego funkcji - jeśli funkcja nic nie zwraca, typ ten jest `void`. Każdy argument funkcji musi być również opisany przez swój typ. Ciało funkcji znajduje się w nawiasach klamrowych.
-
+    <br>W języku, każda funkcja zaczyna się od słowa kluczowego `fn` (skrót od function), po którym następuje deklaracja typu zwracanego funkcji - jeśli funkcja nic nie zwraca, typ ten jest `void`. Każdy argument funkcji musi być również opisany przez swój typ. Ciało funkcji znajduje się w nawiasach klamrowych.
     <br>Zmienne przekazywane do funkcji są przekazywane przez referencję, co oznacza, że funkcja może modyfikować ich wartość.
-
     <br>Nie ma możliwości przeciążania funkcji.
-
     <br>Funkcje mogą być wywoływane rekursywnie - funkcja może wywołać samą siebie podczas wykonywania. Maksymalne ograniczenie na liczbę wywołań rekurencyjnych wynosi 200 (patrz sekcję "Obsługa błędów").
-
     <br>Aby program działał poprawnie, musi zawierać dokładnie jedną specjalnie zdefiniowaną funkcję, zwyczajowo nazywaną `main`. Jest to funkcja, od której zaczyna się wykonywanie programu. W języku `main` zazwyczaj zwraca wartość całkowitą (typ `int`) jako kod wyjścia programu.<br><br>
 
      * funkcja niezwracająca wartości
