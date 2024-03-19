@@ -835,6 +835,7 @@ Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
   * Function `fn`
   * Return `return`
   * Cast `$`
+  * Lambda `=>`
   * StringQuote `"`
   * Semicolon `;`
   * Colon `:`
