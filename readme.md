@@ -318,52 +318,52 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
        ```
       
        <br>
-     * **Klasy:**
-         <br> W języku możliwe jest także tworzenie klas poprzez użycie słowa kluczowego `class` <br>
-         Wewnątrz klasy możemy tworzyć pola oraz metody, nie występują modyfikatory dostępu, zakładamy, że wszystkie pola oraz metody są publiczne.
-         Nie występuje możliwość przeciążania metod.<br><br>
+* **Klasy:**
+    <br> W języku możliwe jest także tworzenie klas poprzez użycie słowa kluczowego `class` <br>
+    Wewnątrz klasy możemy tworzyć pola oraz metody, nie występują modyfikatory dostępu, zakładamy, że wszystkie pola oraz metody są publiczne.
+    Nie występuje możliwość przeciążania metod.<br><br>
 
-          * definicja klasy
+     * definicja klasy
 
-               ```
-               class Counter {
+          ```
+          class Counter {
         
-                 constructor(int pNumber) {
-                     int number = pNumber;
-                 }
+            constructor(int pNumber) {
+                int number = pNumber;
+            }
       
-                 fn int getNumber() {
-                     return number;
-                 }
+            fn int getNumber() {
+                return number;
+            }
       
-                 fn void setNumber(int pNumber) {
-                     number = pNumber;
-                 }
+            fn void setNumber(int pNumber) {
+                number = pNumber;
+            }
       
-                 fn void increment() {
-                      number = number + 1; 
-                 }
+            fn void increment() {
+                 number = number + 1; 
+            }
       
-                 fn void decrement() {
-                     number = number - 1;
-                 }
+            fn void decrement() {
+                number = number - 1;
+            }
       
         
-                 fn void printNumber() {
-                     print("current value: " + ($String number);
-                 }
+            fn void printNumber() {
+                print("current value: " + ($String number);
+            }
       
-               }
+          }
       
       
-               fn int main() {
-                   int x = 1;
-                   Counter counter = Counter(x);
-                   counter.increment();
-                   counter.printNumber();
-               }
-              ``` 
-       <br>
+          fn int main() {
+              int x = 1;
+              Counter counter = Counter(x);
+              counter.increment();
+              counter.printNumber();
+          }
+         ``` 
+  <br>
 * **Funkcje wbudowane:**
     * print
       <br>Funkcja print powoduje wypisanie tekstu w konsoli, przyjmuje jedynie argumenty typu String. 
