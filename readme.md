@@ -519,6 +519,8 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
  
  lambda_expression       = "(", identifier, ",", identifier, ")", "=>", expression;
  
+ 
+ 
  expression              = conjunction, { "or", conjunction }; 
  
  conjunction             = relation_term, { "and", relation_term };
@@ -537,7 +539,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
                          |literal 
                          | "(", expression, ")" 
                          | identifier, ".", identifier
-                         | identifier, ".", function_call //wywolanie metody na obiekcie
+                         | identifier, ".", function_call //wywolanie metody na obiekcie?
                          | "sort", ".", "(", lambda_expression, ")"; //wywolanie sortowania na slowniku, czy mozna zrobic lepiej?
                          | identifier 
                          | cast_expression 
@@ -545,10 +547,9 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
  object-creation         = identifier, "(", [arguments-list], ")"; //dodanie słowa kluczowego new mprzy tworzeniu?
 
- cast_expression         = "$", type, (identifier | literal);
+ cast_expression         = "(", $", type, (identifier | literal), ")";
 
-                     
- //CZESC LEKSYKALNA - ?
+ //CZĘŚĆ LEKSYKALNA?                    
  type                    = type_basic | type_complex
 
  type_complex            = dictionary_declaration | tuple_declaration | list_declaration
