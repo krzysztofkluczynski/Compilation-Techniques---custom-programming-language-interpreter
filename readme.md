@@ -189,10 +189,10 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     int second = 3;
     int third = 2;
     
-    // dzielenie dwóch zmiennych typu integer również zwraca integer, czyli po wykonaniu poniższej linii zmienna result1 = 1
+    // dzielenie dwóch zmiennych typu integer również zwraca integer, czyli po wykonaniu poniższej linii zmienna resultOne = 1
     int resultOne = second / third;  
     
-    //zachowana jest kolejność działań zgodna z matematyką, czyli po wykonaniu poniższej linii zmienna result2 = 14
+    //zachowana jest kolejność działań zgodna z matematyką, czyli po wykonaniu poniższej linii zmienna resultTwo = 14
     int resultTwo = 2 + first * second;
     
     //możliwia jest operacja dodawania dla typu String
@@ -332,8 +332,8 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
                ```
                class Counter {
         
-                 Counter(int number) {
-                     int number = 0;
+                 constructor(int pNumber) {
+                     int number = pNumber;
                  }
       
                  fn int getNumber() {
@@ -470,7 +470,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 ```
  program                 = {definition}
  definition              = function_defintion | comment | class_definition
- function_definition     = "fn", type, identifier, "(", parameters-list, ")", block;
+ function_definition     = "fn",  type | "void", identifier, "(", parameters-list, ")", block;
  class_definition        = "class", identifier, "{" , class_member, "}";
 
  block                   = "{", { statement }, "}";
@@ -535,11 +535,11 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
  
  arguments-list          = [ expression, { ",", expression } ]; //lista argumentow podawana przy wywolaniu funkcji
    
- factor                  = [negation],
+ factor                  = ["not"],
                          |literal 
                          | "(", expression, ")" 
-                         | identifier, ".", identifier
-                         | identifier, ".", function_call //wywolanie metody na obiekcie?
+                         | identifier, ".", identifier //odwolanie sie do pola obiketu
+                         | identifier, ".", function_call //wywolanie metody na obiekcie
                          | "sort", ".", "(", lambda_expression, ")"; //wywolanie sortowania na slowniku, czy mozna zrobic lepiej?
                          | identifier 
                          | cast_expression 
@@ -692,6 +692,15 @@ ERROR in <Line Number>:<Column Number> | <Error message>
 
 * Definicja zmiennych poza {} (utworzenie zmiennej globalnej)
   ```
+  int global_variable;
+  
+  fn int main() {
+    int x = 3;
+    String a = x;
+    return 0;
+  }
+  ```
+  ```
   ERROR in <Line Number>:<Column Number> | Variable defined outside scope (global variable creation)
   ```
 * Odwołanie się do zmiennej spoza {}
@@ -728,6 +737,10 @@ ERROR in <Line Number>:<Column Number> | <Error message>
 * Wartość float poza zakresem
   ```
   ERROR in <Line Number>:<Column Number> | float outside the allowed range
+  ```
+* Przekroczenie maksymalnej liczby wywołań rekurencji
+  ```
+  ERROR in <Line Number>:<Column Number> | Maximum recursion depth exceeded.
   ```
 
 
