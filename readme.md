@@ -464,9 +464,9 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       ```
 
 ## **<br>Gramatyka:**
-Poniżej opisana jest gramatyka naszego języka Posiada ona kilka "skrótów" ułatwiających jej analizę i izrozumienie ( np. definicja character jako dowolnego znaku unicode czy pominięcie definicji spacji). Niestety takie ułatwienia uniemożliwiają testowanie jej za pomocą gotowych narzędzi.
+Poniżej opisana jest gramatyka naszego języka. Posiada ona kilka "skrótów" ułatwiających jej analizę i zrozumienie ( np. definicja character jako dowolnego znaku unicode czy pominięcie definicji spacji). Niestety takie ułatwienia uniemożliwiają testowanie jej za pomocą gotowych narzędzi.
 Dlatego w głównym folderze projektu znajduje się też plik gramatic.txt,
-który posiada jedynie kilka zmian, m.in lepiej zdefiniowanie letter (wypisany cały alfabet zamiast [a-zA-Z]) oraz brak zdefiniowanego character. 
+który posiada jedynie kilka zmian względem tego co widać poniżej, m.in lepiej zdefiniowanie letter (wypisany cały alfabet zamiast [a-zA-Z]) oraz brak zdefiniowanego character. 
 Pomaga to w testowaniu naszej gramatyki za pomocą narzędzi takich jak https://mdkrajnak.github.io/ebnftest/.
 Niestety nie da się ominąć braku definicji znaków białych, przez co podczas testowania w polu "Test Input" należy umieszczać cały kod ciągiem.
 ```
