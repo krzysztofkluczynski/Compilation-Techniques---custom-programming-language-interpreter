@@ -77,14 +77,14 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       int x = var_string.length() //zwraca długość łańcucha znaków
       int y = a.compare(b) //zwraca -1 lub 0 lub 1 w zależności od kolejności alfabetycznej słów
       
-      //Wartości zwracane przez compare decydują o kolejności sortowania.
+      //Wartości zwracane przez compare decydują o kolejności sortowania w metodzie sort słownika.
       //Jeśli a jest leksykograficznie mniejsze(pierwsze w kolejności alfabetycznej) od b, wynik będzie ujemny, co spowoduje, że a zostanie umieszczone przed b. 
       //Jeśli jest większe, wynik będzie dodatni, co spowoduje umieszczenie b przed a. Jeśli są równe, wynik będzie zero, co oznacza, że ich kolejność nie ulega zmianie.
       ```
 
     <br>
 * **Kolekcje:**
-    * `List`: Kolekcja elementów uporządkowanych, która pozwala na przechowywanie wielu elementów o tym samym.
+    * `List`: Kolekcja elementów uporządkowanych, która pozwala na przechowywanie wielu elementów o tym samym typie.
     Dostępne operacje:
       * `add` - pozwala na dodanie elementu do listy
       * `delete` - pozwala na usunięcie elementu z listy 
@@ -98,7 +98,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
         var_list.get(0); //uzyskanie pierwszego elementu z listy
         var_list.set(0, 2); //ustawienie wartości znajdującej się na pozycji o indeskie 0 na 2
         ```
-    * `Tuple`: Krotka jest kolekcją elementów o różnych typach, które są traktowane jako pojedyncza jednostka.
+    * `Tuple`: Krotka jest kolekcją dwóch elementów o różnych typach, które są traktowane jako pojedyncza jednostka.
     Dostępne operacje:
         * `get` - zwraca wartość, która znajduje się pod podanym jako parametr indeksem
         * `set` - zmiana konkretnej wartości w tablicy
@@ -168,7 +168,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       (a, b) => a.Key.compare(b.Key) wykorzystuje funkcję compare do porównania kluczy. Wartości zwracane przez compare decydują o kolejności sortowania.
       Jeśli a.Key jest leksykograficznie mniejsze od b.Key, wynik będzie ujemny, co spowoduje, że a zostanie umieszczone przed b. Jeśli jest większe,
       wynik będzie dodatni, co spowoduje umieszczenie b przed a. Jeśli są równe, wynik będzie zero, co oznacza, że ich kolejność nie ulega zmianie.
-      <br>// Czy można zapisać lepiej/czytelniej powyzsze lambdy?
+      <br>
         
     <br>
 * **Operatory logiczne:**
@@ -182,9 +182,8 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     bool var_true = True;
     bool var_false = False;
     
-    //operatory można łączyć w bardziej zaawanasowane wyrażenia używając nawiasów
-    bool a = var_true and (not var_false); // a = True
-    bool b = var_true and (var_true or var_false); // b = False
+    bool a = var_true and var_false; // a = False
+    bool b = var_true or not var_false; // b = True
     ```
 
     <br>
@@ -287,7 +286,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       ```
       List<int> list = [1, 2, 3, 4, 5, 6, 7, 8];
     
-      for (int x : list) {
+      for (int x : list) {  //inkrementacja każdego elementu w liście
           x = x + 1;
       }
       
@@ -299,7 +298,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       |;
       
           
-      for (Tuple<String, int> i : var_doct) { //być może będzie potrzeba utworzenia iteratora?
+      for (Tuple<String, int> i : var_doct) { 
           i.set(1, 0); //zeruje wszystke wartości w słowniku
       }
       ```
@@ -315,7 +314,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
      * funkcja niezwracająca wartości
 
        ```
-       //funkcja wypisująca na ekran czy podana liczba jest parzysta oraz jej wywołanie w main
+       //funkcja wypisująca na ekran czy podana liczba jest większa niż 0
        fn void printIfEven(int number) {
           if ((number > 0) {
               print("The number is bigger than 0.");
@@ -467,10 +466,10 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 ## **<br>Gramatyka:**
 ```
  program                    = {definition}
- definition                 = function_defintion
+ definition                 = function_definition
  function_definition        = "fn",  type | "void", identifier, "(", parameters-list, ")", block;
  
- parameters-list            = [ type, identifier, { ",", type,  identifier } ]; //lista parameterow w deklaracji funkcji/metody
+ parameters-list            = [ type, identifier, { ",", type,  identifier } ]; 
 
  block                      = "{", { statement }, "}";
  
@@ -484,31 +483,28 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
  conditional                = "if", "(", expression, ")", block,
                             [ { "elseif", "(", expression, ")", block } ],
                             [ "else", block ];
-
-                                                                        
+                                                                       
  while_loop                 = "while", "(", expression, ")", block;
  
  for_loop                   = "for", "(", type, identifier ":" ,identifier, ")", block;
  
  declaration_or_assignment  = [type], identifier, ["=", expression | query_statement], ";";
-  
- function_call              = identifier, "(", arguments-list, ")", ";";
  
- arguments-list             = [ expression, { ",", expression } ]; //lista argumentow podawana przy wywolaniu funkcji
- 
- return_statement           = "return", [ expression ], ";";
-
  query_statement            = "SELECT", select_clause, "FROM", identifier, [where_clause], [order_by_clause];
- 
  
  select_clause              = "(", exppression, { ",", expression }, ")";
  
  where_clause               = "WHERE", expression;
 
  order_by_clause            = "ORDER BY", identifier, ("ASC" | "DESC"), ";";
+  
+ function_call              = identifier, "(", arguments-list, ")", ";";
+ 
+ arguments-list             = [ expression, { ",", expression } ]; 
+ 
+ return_statement           = "return", [ expression ], ";";
  
  lambda_expression          = "(", identifier, ",", identifier, ")", "=>", expression;
- 
  
  expression                 = conjunction, { "or", conjunction }; 
  
@@ -525,7 +521,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
                             | ["-"]
                             | literal 
                             | expression 
-                            | identifier, [ ".", (identifier | function_call | identifier, "(" lambda_expression ")") ];
+                            | identifier, [ ".", (identifier | function_call | identifier, "(" lambda_expression ")") ]
                             | cast_expression; 
 
  cast_expression            = "$", type_basic, expression;
@@ -535,7 +531,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
  type_complex               = dictionary_declaration | tuple_declaration | list_declaration
  type_basic                 = "int" | "float" | "string" | "boolean";
 
- dictionary_declaration     = "Dictionary", "<", type, ",", type, ">";  //może kolekcje powinny przechowywać tylko typy proste?
+ dictionary_declaration     = "Dictionary", "<", type, ",", type, ">";  
  tuple_declaration          = "Tuple", "<", type, ",", type, ">";
  list_declaration           = "List", "<", type, ">" ;
 
@@ -547,8 +543,8 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
  list_literal               =  "[", [literal, {",", literal}], "]";
 
  boolean                    = "true" | "false";
- string                     = '"', { character - newline }, '"';
- float                      = integer, ".", digit, { digit } ; //może można uprościć 
+ string                     = '"', { character  }, '"'; //chialbym wykluczyc znak nowej linii?
+ float                      = integer, ".", digit, { digit } ; 
  integer                    = digit_positive, { digit } 
                             | zero;
 
@@ -566,13 +562,13 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
  zero                       = "0";
  letter                     = [a-zA-Z];
  
- character                  = .; //dowolny znak unicode
+ character                  = dowolny znak unicode
 ```
 
 
 ## **<br>Obsługa błędów:**
 
-Błędy programu są komunikowane użytkownikowi poprzez komunikaty wyświetlane w konsoli.
+Błędy programu są przekazywane użytkownikowi poprzez komunikaty wyświetlane w konsoli.
 Wszystkie błędy są traktowane równorzędnie i powodują zatrzymanie wykonywania programu.
 Poniżej znajduje się format komunikatu o błędzie:
 
@@ -639,7 +635,7 @@ ERROR in <Line Number>:<Column Number> | <Error message>
     ERROR in <Line Number>:<Column Number> |  Attempted use of reserved keyword
     ```
 
-  * `EndOfFileReachedException` Dojście do końca pliku 
+  * `EndOfFileReachedException` - Dojście do końca pliku 
     ```
      fn int main() {
        String example = "aaa
@@ -665,11 +661,11 @@ ERROR in <Line Number>:<Column Number> | <Error message>
 
 <br><br><br>
 * #### Parser
-  * `UnexpectedTokenException` - Niepoprawna składania tokenów;
+  * `UnexpectedTokenException` - Niepoprawna składania tokenów / nieoczekiwany token
     ```
     fn int main() {
       x = 5;
-      while [x != 5] {
+      while [x != 5] { //w wyrazeniu if nawaisy powinny być  ()
       x = x + 1;
       }
       return 0;
@@ -692,7 +688,7 @@ ERROR in <Line Number>:<Column Number> | <Error message>
      ERROR in <Line Number>:<Column Number> | variable "a" undefined
     ```
 
-  * `IdentiferRedefinedException` - Utworzenie funkcji/zmiennej/klasy o tej samej nazwie
+  * `IdentiferRedefinedException` - Utworzenie funkcji/zmiennej o tej samej nazwie
       ```
       fn int add(int x, int y) {
         return x+y;
@@ -739,7 +735,7 @@ ERROR in <Line Number>:<Column Number> | <Error message>
     ERROR in <Line Number>:<Column Number> | Variable defined outside scope (global variable creation)
     ```
   * `VariableBeyondScopeException` - Odwołanie się do zmiennej spoza {}
-      ```
+    ```
     fn int add(int x, iny y) {
       int b = x + y;
       return b;
@@ -751,7 +747,7 @@ ERROR in <Line Number>:<Column Number> | <Error message>
       return 0;
     }
     ```
-    ```
+  
     ```
     ERROR in <Line Number>:<Column Number> | Accessing variable beyond scope
     ```
@@ -774,7 +770,7 @@ ERROR in <Line Number>:<Column Number> | <Error message>
     ```
     ERROR in <Line Number>:<Column Number> | Wrong number of arguments, expected 2
     ```
-  * `MissingBracketsExceptions` - Brak nawiasu
+  * `MissingBracketsExceptions` - Brak nawiasu zamykającego
      ```
     fn int main() {
       String example = "aaa"
@@ -827,10 +823,9 @@ ERROR in <Line Number>:<Column Number> | <Error message>
 * Język obsługuje podstawowe typy danych(int, float, bool) oraz konstrukcje językowe (pętle, instrukcje warunkowe)
 * Język pozwala na wykonywanie podstawowych operacji arytmetycznych i logicznych na zmiennych
 * Język posiada kolekcje - listy i słowniki
-* Na słownikach możliwe jest wywołanie metody sort(), która zmieni kolejność elementów w słowniku zgodnie z wyrażeniem, które poda użytkownik jako parametr
+* Na słownikach możliwe jest wywołanie metody sort(), która zmieni kolejność elementów w słowniku zgodnie z wyrażeniem, które poda użytkownik
 * Na słownikach możliwe jest wykonanie zapytania w stylu LINQ(deklaratywnie), które zwróci przefiltrowane wartości we wskazanej kolejności
 * Język umożlwia tworzenie własnych funkcji
-* Język umożliwia tworzenie własnych klas
 * Język jest statycznie typowany
 * Język jest silnie typowany
 * Zmienne są mutowalne
@@ -842,6 +837,7 @@ ERROR in <Line Number>:<Column Number> | <Error message>
 * Interpreter powinien być odpowiednio udokumentowany, aby ułatwić użytkownikom korzystanie z niego, opisując składnię języka, dostępne funkcje, typy danych itp.
 * Język zawiera jedynie podstawowe konstrukcje, przez co jest prosty do nauki
 * Mechanizm sortowania słownika powinien być zoptymalizowany pod kątem wydajności
+* Każdy z modułów powinien być dokładnie przetestowany (wstępny opis sposobu testowania poniżej)
 
 ## **<br>Zwięzły opis realizacji:**
 Program będzie składał się z modułów, które będą odpowiedzialne za kolejne etapy analizy oraz przetwarzania plików wejściowych. 
@@ -904,12 +900,9 @@ Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
   * Else `else`
 * Zapytania na słownikach
   * Select `SELECT`
-  * KeyInfo `Key`
-  * ValueInfo `Value`
   * FROM `FROM`
   * Where `WHERE`
-  * Order `ORDER`
-  * By `BY`
+  * Order `ORDER BY` //jako jeden token?
   * Ascending `ASC`
   * Descending `DSC`
 * Inne
