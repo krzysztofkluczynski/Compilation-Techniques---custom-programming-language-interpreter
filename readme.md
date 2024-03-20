@@ -69,12 +69,17 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       bool var_bool = True;
       int var_int = 2;
       float var_float = 3.2;
-      String var_string = "Hello";
+      String a = "Hello";
+      String b = "World";
+
       
       //String posiada dwie wbudowane metody, które można wywołać na obiketach tego typu
       int x = var_string.length() //zwraca długość łańcucha znaków
-      int y = var_string.compare("Something) //zwraca 
+      int y = a.compare(b) //zwraca -1 lub 0 lub 1 w zależności od kolejności alfabetycznej słów
       
+      //Wartości zwracane przez compare decydują o kolejności sortowania.
+      //Jeśli a jest leksykograficznie mniejsze(pierwsze w kolejności alfabetycznej) od b, wynik będzie ujemny, co spowoduje, że a zostanie umieszczone przed b. 
+      //Jeśli jest większe, wynik będzie dodatni, co spowoduje umieszczenie b przed a. Jeśli są równe, wynik będzie zero, co oznacza, że ich kolejność nie ulega zmianie.
       ```
 
     <br>
@@ -89,9 +94,9 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
         List<int> var_list = [1, 2, 3, 4, 5];
         
         var_list.add(12); //dodanie elementu na koniec listy
-        var_list.delete(0) //usunięcie pierwszego elementu z listy
-        var_list.get(0) //uzyskanie pierwszego elementu z listy
-        var_list.set(0, 2) //ustawienie wartości znajdującej się na pozycji o indeskie 0 na 2
+        var_list.delete(0); //usunięcie pierwszego elementu z listy
+        var_list.get(0); //uzyskanie pierwszego elementu z listy
+        var_list.set(0, 2); //ustawienie wartości znajdującej się na pozycji o indeskie 0 na 2
         ```
     * `Tuple`: Krotka jest kolekcją elementów o różnych typach, które są traktowane jako pojedyncza jednostka.
     Dostępne operacje:
@@ -343,7 +348,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
        }
        
        
-     * funkcja zmieniająca wartość
+     * funkcja zmieniająca wartość przekazanego przez referencję argumentu
        ```
        //funkcja wykonująca inkrementację dla przekazanego typu int
        fn void increment(int x) {
@@ -496,10 +501,8 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
  query_statement            = "SELECT", select_clause, "FROM", identifier, [where_clause], [order_by_clause];
  
  
- select_clause              = "(", select_item, { ",", select_item }, ")";
+ select_clause              = "(", exppression, { ",", expression }, ")";
  
- select_item                = expression , expression;
-
  where_clause               = "WHERE", expression;
 
  order_by_clause            = "ORDER BY", identifier, ("ASC" | "DESC"), ";";
@@ -525,7 +528,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
                             | identifier, [ ".", (identifier | function_call | identifier, "(" lambda_expression ")") ];
                             | cast_expression; 
 
- cast_expression            = "$", type_basic, expression; //wczesniej zamiast expression mieliśmy identifier | literal
+ cast_expression            = "$", type_basic, expression;
 
  type                       = type_basic | type_complex
 
@@ -545,8 +548,9 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
  boolean                    = "true" | "false";
  string                     = '"', { character - newline }, '"';
- float                      = integer, ".", digit, [ di ; //czy można to uprościć
- integer                    = digit_positive, { digit };
+ float                      = integer, ".", digit, { digit } ; //może można uprościć 
+ integer                    = digit_positive, { digit } 
+                            | zero;
 
  identifier                 = letter, { identifier_chars };
  identifier_chars           = alphanumeric | "_";
@@ -577,7 +581,8 @@ ERROR in <Line Number>:<Column Number> | <Error message>
 ```
 
 ### Przykładowe błędy
-  * Niepoprawna składnia
+* #### Lekser:
+  * `TokenProcessingException` - Niepoprawna składnia lub błąd w rozpoznawaniu tokena
     ```
     fn int main() {
       int x = 3 //brak średnika
@@ -588,7 +593,7 @@ ERROR in <Line Number>:<Column Number> | <Error message>
     ```
     ERROR in <Line Number>:<Column Number> | Syntax Error
     ```
-  * Zbyt długi łańcuch String
+  * `StringOverflowException` - Zbyt długi łańcuch String
      ```
     fn int main() {
       String x = "aaaaaaaa..." //maksymalna długośc to 200 znaków, więc dla czytelności ten przykład pozostaje z ...
@@ -598,7 +603,7 @@ ERROR in <Line Number>:<Column Number> | <Error message>
     ```
     ERROR in <Line Number>:<Column Number> | String too long (max size is 100)
     ```
-  * Wartość int poza zakresem
+  * `IntOutsideRangeException` - Wartość int poza zakresem
        ```
     fn int main() {
       int x = 99999999999999999;
@@ -608,49 +613,77 @@ ERROR in <Line Number>:<Column Number> | <Error message>
     ```
     ERROR in <Line Number>:<Column Number> |  int outside the allowed range
     ```
-  * Wartość float poza zakresem
+  * `FloatOutsideRangeException` - Wartość float poza zakresem
     ```
     ERROR in <Line Number>:<Column Number> | float outside the allowed range
     ```
-  * Wartość int poza zakresem
+  * `IdentiferTooLongException` - Zbyt długi identyfikator
        ```
     fn int main() {
-      int x = 99999999999999999;
+      int aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa = 2;
       return 0;
     }
     ```
     ```
     ERROR in <Line Number>:<Column Number> |  int outside the allowed range
-    ```    
-  * Użycie słów kluczowych jako identyfikatory
-       ```
+    ```
+
+  * `KeywordUsageException` - Użycie słów kluczowych jako identyfikatory
+    ```
     fn int main() {
-      int x = 99999999999999999;
+      int float = 1;
       return 0;
     }
     ```
     ```
     ERROR in <Line Number>:<Column Number> |  Attempted use of reserved keyword
     ```
-<br><br><br>    
-  * Niedozwolona operacja na typach
+
+  * `EndOfFileReachedException` Dojście do końca pliku 
+    ```
+     fn int main() {
+       String example = "aaa
+       return 0;
+    }
+    ```
+    ```
+    ERROR in <Line Number>:<Column Number> |  Missing closing bracket
+    ```
+    
+  * `UnknownSymbolException` - nieznany symbol
     ```
     fn int main() {
-      int x = 3 //brak średnika
-      print("The number is: " + x)
+      int some%variable = 5; 
+      return 0;
+    
+    }
+    ```
+    ```
+    ERROR in <Line Number>:<Column Number> |  Unknown type of symbol
+    ```
+    
+
+<br><br><br>
+* #### Parser
+  * `UnexpectedTokenException` - Niepoprawna składania tokenów;
+    ```
+    fn int main() {
+      x = 5;
+      while [x != 5] {
+      x = x + 1;
+      }
       return 0;
     }
     ```
-  
     ```
-     ERROR in <Line Number>:<Column Number> | operator "+" not applicable to types String and int
+    ERROR in <Line Number>:<Column Number> | Unexpected token
     ```
   
-  * Odwołanie się do nieistniejącej zmiennej/funkcji
+  * `UndefinedIdentiferException` Odwołanie się do nieistniejącej zmiennej/funkcji
       ```
       fn int main() {
         int x = 3;
-        float y = a + ($float x);
+        float y = a + $float x;
         return 0;
     }
     ```
@@ -658,33 +691,8 @@ ERROR in <Line Number>:<Column Number> | <Error message>
     ```
      ERROR in <Line Number>:<Column Number> | variable "a" undefined
     ```
-  * przypisanie niepoprawnej wartości do typu LUB typ deklarowany różny od przekazanego (również w przypadku złożonych struktur i wartości zwracanych przez funkcję)
-    ```
-      fn int main() {
-        Dictionary<String, int> = |
-            12: "cat"
-        |
-        return 0;
-    }
-    ```
 
-    ```
-    ERROR in <Line Number>:<Column Number> | cannot assign value of type int to type float
-    ```
-
-  * próba niejawnej konwersji
-      ```
-      fn int main() {
-        int x = 3;
-        String a = x;
-        return 0;
-    }
-    ```
-
-    ```
-    ERROR in <Line Number>:<Column Number> | cannot assign type int to type String
-    ```
-  * Utworzenie funkcji/zmiennej/klasy o tej samej nazwie
+  * `IdentiferRedefinedException` - Utworzenie funkcji/zmiennej/klasy o tej samej nazwie
       ```
       fn int add(int x, int y) {
         return x+y;
@@ -705,13 +713,19 @@ ERROR in <Line Number>:<Column Number> | <Error message>
     ERROR in <Line Number>:<Column Number> | function "add" redefined
     ```
 
-  * Brak zdefiniowanej funkcji main w programie
-
+  * `MissingMainFunctionException` - Brak zdefiniowanej funkcji main w programie
+    ```
+    int x = 5;
+  
+    fn int add(int x, int y) {
+      return x+y;
+    }
+    ```
     ```
     ERROR in <Line Number>:<Column Number> | Missing definition of the main function in the program
     ```
 
-  * Definicja zmiennych poza {} (utworzenie zmiennej globalnej)
+  * `GlobalVariableException` - Definicja zmiennych poza {} (utworzenie zmiennej globalnej)
     ```
     int global_variable;
   
@@ -724,16 +738,29 @@ ERROR in <Line Number>:<Column Number> | <Error message>
     ```
     ERROR in <Line Number>:<Column Number> | Variable defined outside scope (global variable creation)
     ```
-  * Odwołanie się do zmiennej spoza {}
+  * `VariableBeyondScopeException` - Odwołanie się do zmiennej spoza {}
+      ```
+    fn int add(int x, iny y) {
+      int b = x + y;
+      return b;
+    }
+  
+    fn int main() {
+      z = add(2, 3);
+      print($String b); 
+      return 0;
+    }
+    ```
+    ```
     ```
     ERROR in <Line Number>:<Column Number> | Accessing variable beyond scope
     ```
-  * Brak return w funkcji
+  * `MissingReturnstatementException` - Brak return w funkcji
     ```
     ERROR in <Line Number>:<Column Number> | Missing return statement in non-void function
     ```
 
-  * Wywołanie funkcji ze złą liczbą argumentów
+  * `InvalidNumberofArgumentsException` - Wywołanie funkcji ze złą liczbą argumentów
     ```
     fn int add(int x, int y) {
         return ($float x) + (float $y);
@@ -747,10 +774,51 @@ ERROR in <Line Number>:<Column Number> | <Error message>
     ```
     ERROR in <Line Number>:<Column Number> | Wrong number of arguments, expected 2
     ```
+  * `MissingBracketsExceptions` - Brak nawiasu
+     ```
+    fn int main() {
+      String example = "aaa"
+      return 0;
     
-  * Przekroczenie maksymalnej liczby wywołań rekurencji
+    ```
+    ```
+    ERROR in <Line Number>:<Column Number> |  Missing closing bracket
+    ```
+
+  <br><br>
+* #### Interpreter
+    
+  * `RecursionDepthExceedException` - Przekroczenie maksymalnej liczby wywołań rekurencji
     ```
     ERROR in <Line Number>:<Column Number> | Maximum recursion depth exceeded.
+    ```
+    
+  * `UnsupportedOperationException ` - Niedozwolona operacja na typach
+    ```
+    fn int main() {
+      int x = 3;
+      print("The number is: " + x)
+      bool x = 2 * True;
+      return 0;
+    }
+    ```
+
+    ```
+     ERROR in <Line Number>:<Column Number> | operator "+" not applicable to types String and int
+    ```
+    
+  * `TypesDoNotMatchException` - przypisanie niepoprawnej wartości do typu LUB typ deklarowany różny od przekazanego (również w przypadku złożonych struktur i wartości zwracanych przez funkcję)
+    ```
+      fn int main() {
+        Dictionary<String, int> = |
+            12: "cat"
+        |
+        return 0;
+    }
+    ```
+
+    ```
+    ERROR in <Line Number>:<Column Number> | cannot assign value of type int to type float
     ```
 
 
