@@ -316,7 +316,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
        ```
        //funkcja wypisująca na ekran czy podana liczba jest większa niż 0
        fn void printIfEven(int number) {
-          if ((number > 0) {
+          if (number > 0) {
               print("The number is bigger than 0.");
           } else {
               print("The number is less than 0.");
@@ -455,19 +455,24 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
                                 SELECT 
                             (var_dict.key)
                                 FROM
-                            var dict
+                            var_dict
                                 WHERE
-                            (var_dict.value != 3) and (var_dict.value > 0)
+                            (var_dict.value != 3 and var_dict.value > 0)
                                 ORDER BY
                             var_dict.value
                                 DESC
       ```
 
 ## **<br>Gramatyka:**
+Poniżej opisana jest gramatyka naszego języka Posiada ona kilka "skrótów" ułatwiających jej analizę i izrozumienie ( np. definicja character jako dowolnego znaku unicode czy pominięcie definicji spacji). Niestety takie ułatwienia uniemożliwiają testowanie jej za pomocą gotowych narzędzi.
+Dlatego w głównym folderze projektu znajduje się też plik gramatic.txt,
+który posiada jedynie kilka zmian, m.in lepiej zdefiniowanie letter (wypisany cały alfabet zamiast [a-zA-Z]) oraz brak zdefiniowanego character. 
+Pomaga to w testowaniu naszej gramatyki za pomocą narzędzi takich jak https://mdkrajnak.github.io/ebnftest/.
+Niestety nie da się ominąć braku definicji znaków białych, przez co podczas testowania w polu "Test Input" należy umieszczać cały kod ciągiem.
 ```
  program                    = {definition}
  definition                 = function_definition
- function_definition        = "fn",  type | "void", identifier, "(", parameters-list, ")", block;
+ function_definition        = "fn",  (type | "void"), identifier, "(", parameters-list, ")", block;
  
  parameters-list            = [ type, identifier, { ",", type,  identifier } ]; 
 
@@ -488,15 +493,15 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
  
  for_loop                   = "for", "(", type, identifier ":" ,identifier, ")", block;
  
- declaration_or_assignment  = [type], identifier, ["=", expression | query_statement], ";";
+ declaration_or_assignment  = [type], identifier, ["=", (expression | query_statement)], ";";
  
  query_statement            = "SELECT", select_clause, "FROM", identifier, [where_clause], [order_by_clause];
  
- select_clause              = "(", exppression, { ",", expression }, ")";
+ select_clause              = "(", expression, { ",", expression }, ")";
  
- where_clause               = "WHERE", expression;
+ where_clause               = "WHERE", "(", expression, ")";
 
- order_by_clause            = "ORDER BY", identifier, ("ASC" | "DESC"), ";";
+ order_by_clause            = "ORDER BY", expression, ("ASC" | "DESC");  //czy tutaj na pewno expression, moze identifer.identifer
   
  function_call              = identifier, "(", arguments-list, ")", ";";
  
@@ -529,7 +534,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
  type                       = type_basic | type_complex
 
  type_complex               = dictionary_declaration | tuple_declaration | list_declaration
- type_basic                 = "int" | "float" | "string" | "boolean";
+ type_basic                 = "int" | "float" | "String" | "boolean";
 
  dictionary_declaration     = "Dictionary", "<", type, ",", type, ">";  
  tuple_declaration          = "Tuple", "<", type, ",", type, ">";
@@ -538,14 +543,14 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
  literal                    = boolean | string | integer | float | complex_literal;
  complex_literal            = dictionary_literal | tuple_literal | list_literal
 
- dictionary_literal         = "|", {literal, ":", literal, ","}, "|";
+ dictionary_literal         = "|", {literal, ":", literal, [","]}, "|";
  tuple_literal              =  "(", literal, ",", literal, ")";
  list_literal               =  "[", [literal, {",", literal}], "]";
 
- boolean                    = "true" | "false";
+ boolean                    = "True" | "False";
  string                     = '"', { character  }, '"'; //chialbym wykluczyc znak nowej linii?
  float                      = integer, ".", digit, { digit } ; 
- integer                    = digit_positive, { digit } 
+ integer                    = non_zero_digit, { digit } 
                             | zero;
 
  identifier                 = letter, { identifier_chars };
@@ -562,7 +567,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
  zero                       = "0";
  letter                     = [a-zA-Z];
  
- character                  = dowolny znak unicode
+ //character                = dowolny znak unicode
 ```
 
 
@@ -908,7 +913,6 @@ Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
 * Inne
   * Comment `//`
   * MainFunction `main`
-  * Class `class`
   * Function `fn`
   * Return `return`
   * Cast `$`
