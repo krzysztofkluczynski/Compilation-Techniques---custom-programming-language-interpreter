@@ -71,6 +71,10 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       float var_float = 3.2;
       String var_string = "Hello";
       
+      //String posiada dwie wbudowane metody, które można wywołać na obiketach tego typu
+      int x = var_string.length() //zwraca długość łańcucha znaków
+      int y = var_string.compare("Something) //zwraca 
+      
       ```
 
     <br>
@@ -137,7 +141,8 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       var_dict.sort((a, b) => b.Key.length() - a.Key.length());
 
       // Sortowanie alfabetyczne kluczy z użyciem funkcji compare 
-      var_dict.sort((a, b) => a.Key.compare(b.Key)); 
+      var_dict.sort((a, b) => a.Key.compare(b.Key));
+       
       ```
       Omówienie przykładowych sortowań
       1. Sortowanie po wartościach rosnąco:<br>
@@ -181,9 +186,9 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 * **Operatory arytmetyczne:**
     <br> Dostępne dla typów liczbowych, dodawanie również dla typu String.
   * `*`      - operator mnożenia
-  * `/`       - operator dzielenia
+  * `/`      - operator dzielenia
   * `+`      - operator dodawania
-  * `-`    - operator odejmowania
+  * `-`      - operator odejmowania
     ```
     int first = 4;
     int second = 3;
@@ -263,13 +268,34 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       ```
 
 
-* **Pętle warunkowe:**
+* **Pętle:**
     * `while`: Pętla, która wykonuje określony blok kodu, dopóki podany warunek jest spełniony.
       ```
       int x = 2;
     
       while (x != 5) {
           x = x + 1;
+      }
+      ```
+
+    * `for`: Pętla, która pozwala iterować po listach oraz słownikach.
+      ```
+      List<int> list = [1, 2, 3, 4, 5, 6, 7, 8];
+    
+      for (int x : list) {
+          x = x + 1;
+      }
+      
+      Dictionary<String, int> var_dict = |
+          "dog": 3,
+          "cat": 4,
+          "cow": 5,
+          "hamster": 6 
+      |;
+      
+          
+      for (Tuple<String, int> i : var_doct) { //być może będzie potrzeba utworzenia iteratora?
+          i.set(1, 0); //zeruje wszystke wartości w słowniku
       }
       ```
 
@@ -286,10 +312,10 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
        ```
        //funkcja wypisująca na ekran czy podana liczba jest parzysta oraz jej wywołanie w main
        fn void printIfEven(int number) {
-          if ((number / 2) * 2 != number) {
-              print("The number is odd.");
+          if ((number > 0) {
+              print("The number is bigger than 0.");
           } else {
-              print("The number is even.");
+              print("The number is less than 0.");
           }
        }
       
@@ -312,58 +338,29 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
     
        fn int main() {
            int x = getmaxInt();
-           print(($String x))
+           print($String x)
+           return 0;
+       }
+       
+       
+     * funkcja zmieniająca wartość
+       ```
+       //funkcja wykonująca inkrementację dla przekazanego typu int
+       fn void increment(int x) {
+           x = x + 1;
+       }
+
+
+       fn int main() {
+           int x = 256;
+           increment(x);
+           print($String x); // x = 257
            return 0;
        }
        ```
       
        <br>
-* **Klasy:**
-    <br> W języku możliwe jest także tworzenie klas poprzez użycie słowa kluczowego `class` <br>
-    Wewnątrz klasy możemy tworzyć pola oraz metody, nie występują modyfikatory dostępu, zakładamy, że wszystkie pola oraz metody są publiczne.
-    Nie występuje możliwość przeciążania metod.<br><br>
 
-     * definicja klasy
-
-          ```
-          class Counter {
-        
-            constructor(int pNumber) {
-                int number = pNumber;
-            }
-      
-            fn int getNumber() {
-                return number;
-            }
-      
-            fn void setNumber(int pNumber) {
-                number = pNumber;
-            }
-      
-            fn void increment() {
-                 number = number + 1; 
-            }
-      
-            fn void decrement() {
-                number = number - 1;
-            }
-      
-        
-            fn void printNumber() {
-                print("current value: " + ($String number);
-            }
-      
-          }
-      
-      
-          fn int main() {
-              int x = 1;
-              Counter counter = Counter(x);
-              counter.increment();
-              counter.printNumber();
-          }
-         ``` 
-  <br>
 * **Funkcje wbudowane:**
     * print
       <br>Funkcja print powoduje wypisanie tekstu w konsoli, przyjmuje jedynie argumenty typu String. 
@@ -383,15 +380,15 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       ```
       fn int main() {
           int x = 2;
-          float y = ($float x); // y = 2.0
+          float y = $float x; // y = 2.0
           return 0;
       }
       ```
     * float na int: obcięcie cyfr po przecinku
       ```
       fn int main() {
-          float x = 3.33;
-          int y = ($int x); // y = 3
+          float x = 3.93;
+          int y = $int x; // y = 3
           return 0;
       }
       ```
@@ -399,7 +396,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       ```
       fn int main() {
           int x = 3;
-          String y = ($String x);
+          String y = $String x;
           return 0;
       }
       ```
@@ -407,7 +404,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       ```
       fn int main() {
           float x = 3.2;
-          String y = ($String x);
+          String y = $String x;
           return 0;
       }
       ```
@@ -415,7 +412,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       ```
       fn int main() {
           String x = "3";
-          int y = ($String x);
+          int y = $String x;
           return 0;
       }
       ```
@@ -423,14 +420,14 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       ```
       fn int main() {
           String x = "3.2";
-          float y = ($float x);
+          float y = $float x;
           return 0;
       }
       ```
 
     <br>
 * **Zapytania na słownikach:** 
-    * zapytania deklaratywne
+    * Możliwe jest wykonanie zapytania na strukturze słownika w sposób deklaratywny. Wynik może zostać przypisany do innej kolekcji
       ```
       Dictionary<String, int> var_dict = |
           "dog": 3,
@@ -439,13 +436,13 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
           "hamster": 6
       |;
       
-      List<Tuple<String, int>> query_result = 
+      List<Tuple<String, int>> query_result =    /moze lepiej to przypisać do słownika niz listy krotek?
                                 SELECT 
-                            (var_dict.key, var_dict.value)
+                            ("key_" + var_dict.key, var_dict.value * 3)
                                 FROM
                             var dict
                                 WHERE
-                            var_dict.value > 2
+                            (var_dict.value > 2)
                                 ORDER BY
                             var_dict.value
                                 ASC
@@ -456,7 +453,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
                                 FROM
                             var dict
                                 WHERE
-                            var_dict.value > 2
+                            (var_dict.value != 3) and (var_dict.value > 0)
                                 ORDER BY
                             var_dict.value
                                 DESC
@@ -464,125 +461,108 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
 ## **<br>Gramatyka:**
 ```
- program                 = {definition}
- definition              = function_defintion | comment | class_definition
- function_definition     = "fn",  type | "void", identifier, "(", parameters-list, ")", block;
- class_definition        = "class", identifier, "{" , class_member, "}";
+ program                    = {definition}
+ definition                 = function_defintion
+ function_definition        = "fn",  type | "void", identifier, "(", parameters-list, ")", block;
+ 
+ parameters-list            = [ type, identifier, { ",", type,  identifier } ]; //lista parameterow w deklaracji funkcji/metody
 
- block                   = "{", { statement }, "}";
- statement               = comment
-                         | conditional
-                         | loop
-                         | block
-                         | declaration
-                         | assignment
-                         | function_call
-                         | return_statement;
-                        
- class_member            = declaration 
-                         | method_declaration 
-                         | constructor_declaration //czy konstruktor jest wymagany? wystarcza settery zdefiniowane przez uzytkownika?
-                        
- constructor_declaration = "constructor", "(", parameters-list, ")", block;
+ block                      = "{", { statement }, "}";
  
- method_declaration      = function_definition;                       
-                        
- conditional             = "if", "(", expression, ")", block,
-                          { "elseif", "(", expression, ")", block },
-                          [ "else", block ];
-                                                                         
- loop                    = "while", "(", expression, ")", block;
- 
- declaration             = (type, identifier) ";" ;
- 
- assignment              = [type], identifier, "=", (expression) | query_statement, ";"; //czy mozna lepiej rozpisać/umiejscowić query statement w tej gramatyce?
- 
- function_call           = expression, "(", arguments-list, ")", ";";
- 
- return_statement        = "return", [ expression ], ";";
+ statement                  = conditional
+                            | while_loop
+                            | for_loop
+                            | declaration_or_assignment
+                            | function_call
+                            | return_statement;
+                                                 
+ conditional                = "if", "(", expression, ")", block,
+                            [ { "elseif", "(", expression, ")", block } ],
+                            [ "else", block ];
 
+                                                                        
+ while_loop                 = "while", "(", expression, ")", block;
  
+ for_loop                   = "for", "(", type, identifier ":" ,identifier, ")", block;
  
- query_statement         = "SELECT", select_clause, "FROM", identifier, [where_clause], [order_by_clause];
+ declaration_or_assignment  = [type], identifier, ["=", expression | query_statement], ";";
+  
+ function_call              = identifier, "(", arguments-list, ")", ";";
  
- select_clause           = "(", select_item, { ",", select_item }, ")";
+ arguments-list             = [ expression, { ",", expression } ]; //lista argumentow podawana przy wywolaniu funkcji
  
- select_item             = identifier , ".", ("key" | "value);
+ return_statement           = "return", [ expression ], ";";
 
- where_clause            = "WHERE", expression;
+ query_statement            = "SELECT", select_clause, "FROM", identifier, [where_clause], [order_by_clause];
+ 
+ 
+ select_clause              = "(", select_item, { ",", select_item }, ")";
+ 
+ select_item                = expression , expression;
 
- order_by_clause         = "ORDER BY", identifier, ("ASC" | "DESC"), ";";
+ where_clause               = "WHERE", expression;
+
+ order_by_clause            = "ORDER BY", identifier, ("ASC" | "DESC"), ";";
  
- lambda_expression       = "(", identifier, ",", identifier, ")", "=>", expression;
+ lambda_expression          = "(", identifier, ",", identifier, ")", "=>", expression;
  
  
+ expression                 = conjunction, { "or", conjunction }; 
  
- expression              = conjunction, { "or", conjunction }; 
+ conjunction                = relation_term, { "and", relation_term };
  
- conjunction             = relation_term, { "and", relation_term };
+ relation_term              = additive_term, [ relation_operator , additive_term ];
  
- relation_term           = additive_term, [ relation_operator , additive_term ];
+ additive_term              = multiplicative_term, { add_sub_operator, multiplicative_term };
  
- additive_term           = multiplicative_term, { add_sub_operator, multiplicative_term };
+ multiplicative_term        = factor, { mul_div_operator, factor };
  
- multiplicative_term     = factor, { mul_div_operator, factor };
- 
- parameters-list         = [ type, identifier, { ",", type, identifier } ]; //lista parameterow w deklaracji funkcji/metody
- 
- arguments-list          = [ expression, { ",", expression } ]; //lista argumentow podawana przy wywolaniu funkcji
    
- factor                  = ["not"],
-                         |literal 
-                         | "(", expression, ")" 
-                         | identifier, ".", identifier //odwolanie sie do pola obiketu
-                         | identifier, ".", function_call //wywolanie metody na obiekcie
-                         | "sort", ".", "(", lambda_expression, ")"; //wywolanie sortowania na slowniku, czy mozna zrobic lepiej?
-                         | identifier 
-                         | cast_expression 
-                         | object-creation;
+ factor                     = ["not"],
+                            | ["-"]
+                            | literal 
+                            | expression 
+                            | identifier, [ ".", (identifier | function_call | identifier, "(" lambda_expression ")") ];
+                            | cast_expression; 
 
- object-creation         = identifier, "(", [arguments-list], ")"; //dodanie słowa kluczowego new mprzy tworzeniu?
+ cast_expression            = "$", type_basic, expression; //wczesniej zamiast expression mieliśmy identifier | literal
 
- cast_expression         = "(", $", type, (identifier | literal), ")";
+ type                       = type_basic | type_complex
 
- //CZĘŚĆ LEKSYKALNA?                    
- type                    = type_basic | type_complex
+ type_complex               = dictionary_declaration | tuple_declaration | list_declaration
+ type_basic                 = "int" | "float" | "string" | "boolean";
 
- type_complex            = dictionary_declaration | tuple_declaration | list_declaration
- type_basic              = "int" | "float" | "string" | "boolean";
+ dictionary_declaration     = "Dictionary", "<", type, ",", type, ">";  //może kolekcje powinny przechowywać tylko typy proste?
+ tuple_declaration          = "Tuple", "<", type, ",", type, ">";
+ list_declaration           = "List", "<", type, ">" ;
 
- dictionary_declaration  = "Dictionary", "<", type_basic, ",", type_basic, ">";
- tuple_declaration       = "Tuple", "<", type_basic, ",", type_basic, ">";
- list_declaration        = "List", "<", type_basic, ">" ;
+ literal                    = boolean | string | integer | float | complex_literal;
+ complex_literal            = dictionary_literal | tuple_literal | list_literal
 
- literal                 = boolean | string | integer | float | complex_literal;
- complex_literal         = dictionary_literal | tuple_literal | list_literal
+ dictionary_literal         = "|", {literal, ":", literal, ","}, "|";
+ tuple_literal              =  "(", literal, ",", literal, ")";
+ list_literal               =  "[", [literal, {",", literal}], "]";
 
- dictionary_literal      = "|", {literal, ":", literal, ","}, "|";
- tuple_literal           =  "(", literal, ",", literal, ")";
- list_literal            = list_type = "[", [literal, {",", literal}], "]";
+ boolean                    = "true" | "false";
+ string                     = '"', { character - newline }, '"';
+ float                      = integer, ".", digit, [ di ; //czy można to uprościć
+ integer                    = digit_positive, { digit };
 
- boolean                 = "true" | "false";
- string                  = '"', { character - newline }, '"';
- float                   = ["-"], integer, ".", [ integer ];
- integer                 = ["-"], digit_positive, { digit };
+ identifier                 = letter, { identifier_chars };
+ identifier_chars           = alphanumeric | "_";
+ alphanumeric               = letter | digit;
 
- identifier              = letter, { identifier_chars };
- identifier_chars        = alphanumeric | "_";
- alphanumeric            = letter | digit;
+ add_sub_operator           = "+" | "-"
+ mul_div_operator           = "*" | "/"
+ assign_operant             = "="
+ relation_operator          = "<" | "<=" | "==" | ">" | ">=" | "!="
 
- add_sub_operator        = "+" | "-"
- mul_div_operator        = "*" | "/"
- assign_operant          = "="
- relation_operator       = "<" | "<=" | "==" | ">" | ">=" | "!="
-
- digit                   = [0-9];
- non_zero_digit          = [1-9];
- zero                    = "0";
- letter                  = [a-zA-Z];
- comment                 = "//", { character - newline }, newline;
- newline                 = "\n"
- character               = .; //dowolny znak unicode
+ digit                      = [0-9];
+ non_zero_digit             = [1-9];
+ zero                       = "0";
+ letter                     = [a-zA-Z];
+ 
+ character                  = .; //dowolny znak unicode
 ```
 
 
@@ -597,147 +577,181 @@ ERROR in <Line Number>:<Column Number> | <Error message>
 ```
 
 ### Przykładowe błędy
-* Niepoprawna składnia
-  ```
-  fn int main() {
-    int x = 3 //brak średnika
-    iny y = 4; //literówka
-    return 0;
-  }
-  ```
-  ```
-  ERROR in <Line Number>:<Column Number> | Syntax Error
-  ```
-* Niedozwolona operacja na typach
-  ```
-  fn int main() {
-    int x = 3 //brak średnika
-    print("The number is: " + x)
-    return 0;
-  }
-  ```
-  
-  ```
-   ERROR in <Line Number>:<Column Number> | operator "+" not applicable to types String and int
-  ```
-  
-* Odwołanie się do nieistniejącej zmiennej/funkcji
+  * Niepoprawna składnia
     ```
     fn int main() {
-      int x = 3;
-      float y = a + ($float x);
+      int x = 3 //brak średnika
+      iny y = 4; //literówka
       return 0;
-  }
-  ```
-
-  ```
-   ERROR in <Line Number>:<Column Number> | variable "a" undefined
-  ```
-* przypisanie niepoprawnej wartości do typu LUB typ deklarowany różny od przekazanego (również w przypadku złożonych struktur i wartości zwracanych przez funkcję)
-    ```
-    fn int main() {
-      Dictionary<String, int> = |
-          12: "cat"
-      |
-      return 0;
-  }
-  ```
-
-  ```
-  ERROR in <Line Number>:<Column Number> | cannot assign value of type int to type float
-  ```
-
-* próba niejawnej konwersji
-    ```
-    fn int main() {
-      int x = 3;
-      String a = x;
-      return 0;
-  }
-  ```
-
-  ```
-  ERROR in <Line Number>:<Column Number> | cannot assign type int to type String
-  ```
-* Utworzenie funkcji/zmiennej/klasy o tej samej nazwie
-    ```
-    fn int add(int x, int y) {
-      return x+y;
-    }  
-    
-    fn float add(float x, float y) {
-      return x+y;
     }
+    ```
+    ```
+    ERROR in <Line Number>:<Column Number> | Syntax Error
+    ```
+  * Zbyt długi łańcuch String
+     ```
+    fn int main() {
+      String x = "aaaaaaaa..." //maksymalna długośc to 200 znaków, więc dla czytelności ten przykład pozostaje z ...
+      return 0;
+    }
+    ```
+    ```
+    ERROR in <Line Number>:<Column Number> | String too long (max size is 100)
+    ```
+  * Wartość int poza zakresem
+       ```
+    fn int main() {
+      int x = 99999999999999999;
+      return 0;
+    }
+    ```
+    ```
+    ERROR in <Line Number>:<Column Number> |  int outside the allowed range
+    ```
+  * Wartość float poza zakresem
+    ```
+    ERROR in <Line Number>:<Column Number> | float outside the allowed range
+    ```
+  * Wartość int poza zakresem
+       ```
+    fn int main() {
+      int x = 99999999999999999;
+      return 0;
+    }
+    ```
+    ```
+    ERROR in <Line Number>:<Column Number> |  int outside the allowed range
+    ```    
+  * Użycie słów kluczowych jako identyfikatory
+       ```
+    fn int main() {
+      int x = 99999999999999999;
+      return 0;
+    }
+    ```
+    ```
+    ERROR in <Line Number>:<Column Number> |  Attempted use of reserved keyword
+    ```
+<br><br><br>    
+  * Niedozwolona operacja na typach
+    ```
+    fn int main() {
+      int x = 3 //brak średnika
+      print("The number is: " + x)
+      return 0;
+    }
+    ```
+  
+    ```
+     ERROR in <Line Number>:<Column Number> | operator "+" not applicable to types String and int
+    ```
+  
+  * Odwołanie się do nieistniejącej zmiennej/funkcji
+      ```
+      fn int main() {
+        int x = 3;
+        float y = a + ($float x);
+        return 0;
+    }
+    ```
+
+    ```
+     ERROR in <Line Number>:<Column Number> | variable "a" undefined
+    ```
+  * przypisanie niepoprawnej wartości do typu LUB typ deklarowany różny od przekazanego (również w przypadku złożonych struktur i wartości zwracanych przez funkcję)
+    ```
+      fn int main() {
+        Dictionary<String, int> = |
+            12: "cat"
+        |
+        return 0;
+    }
+    ```
+
+    ```
+    ERROR in <Line Number>:<Column Number> | cannot assign value of type int to type float
+    ```
+
+  * próba niejawnej konwersji
+      ```
+      fn int main() {
+        int x = 3;
+        String a = x;
+        return 0;
+    }
+    ```
+
+    ```
+    ERROR in <Line Number>:<Column Number> | cannot assign type int to type String
+    ```
+  * Utworzenie funkcji/zmiennej/klasy o tej samej nazwie
+      ```
+      fn int add(int x, int y) {
+        return x+y;
+      }  
+    
+      fn float add(float x, float y) {
+        return x+y;
+      }
+  
+      fn int main() {
+        int x = 3;
+        String a = x;
+        return 0;
+    }
+    ```
+
+    ```
+    ERROR in <Line Number>:<Column Number> | function "add" redefined
+    ```
+
+  * Brak zdefiniowanej funkcji main w programie
+
+    ```
+    ERROR in <Line Number>:<Column Number> | Missing definition of the main function in the program
+    ```
+
+  * Definicja zmiennych poza {} (utworzenie zmiennej globalnej)
+    ```
+    int global_variable;
   
     fn int main() {
       int x = 3;
       String a = x;
       return 0;
-  }
-  ```
-
-  ```
-  ERROR in <Line Number>:<Column Number> | function "add" redefined
-  ```
-
-* Brak zdefiniowanej funkcji main w programie
-
-  ```
-  ERROR in <Line Number>:<Column Number> | Missing definition of the main function in the program
-  ```
-
-* Definicja zmiennych poza {} (utworzenie zmiennej globalnej)
-  ```
-  int global_variable;
-  
-  fn int main() {
-    int x = 3;
-    String a = x;
-    return 0;
-  }
-  ```
-  ```
-  ERROR in <Line Number>:<Column Number> | Variable defined outside scope (global variable creation)
-  ```
-* Odwołanie się do zmiennej spoza {}
-  ```
-  ERROR in <Line Number>:<Column Number> | Accessing variable beyond scope
-  ```
-* Brak return w funkcji
-  ```
-  ERROR in <Line Number>:<Column Number> | Missing return statement in non-void function
-  ```
+    }
+    ```
+    ```
+    ERROR in <Line Number>:<Column Number> | Variable defined outside scope (global variable creation)
+    ```
+  * Odwołanie się do zmiennej spoza {}
+    ```
+    ERROR in <Line Number>:<Column Number> | Accessing variable beyond scope
+    ```
+  * Brak return w funkcji
+    ```
+    ERROR in <Line Number>:<Column Number> | Missing return statement in non-void function
+    ```
 
   * Wywołanie funkcji ze złą liczbą argumentów
-  ```
-  fn int add(int x, int y) {
-      return ($float x) + (float $y);
-  }
+    ```
+    fn int add(int x, int y) {
+        return ($float x) + (float $y);
+    }
 
 
-  fn int main() {
-    int x = add(1, 2);
-  }
-  ```
-  ```
-  ERROR in <Line Number>:<Column Number> | Wrong number of arguments, expected 2
-  ```
-* Zbyt długi łańcuch String
-  ```
-  ERROR in <Line Number>:<Column Number> | String too long (max size is 100)
-  ```
-* Wartość int poza zakresem
-  ```
-  ERROR in <Line Number>:<Column Number> |  int outside the allowed range
-  ```
-* Wartość float poza zakresem
-  ```
-  ERROR in <Line Number>:<Column Number> | float outside the allowed range
-  ```
-* Przekroczenie maksymalnej liczby wywołań rekurencji
-  ```
-  ERROR in <Line Number>:<Column Number> | Maximum recursion depth exceeded.
-  ```
+    fn int main() {
+      int x = add(1, 2);
+    }
+    ```
+    ```
+    ERROR in <Line Number>:<Column Number> | Wrong number of arguments, expected 2
+    ```
+    
+  * Przekroczenie maksymalnej liczby wywołań rekurencji
+    ```
+    ERROR in <Line Number>:<Column Number> | Maximum recursion depth exceeded.
+    ```
 
 
 ## **<br>Wymagania funkcjonalne:**
@@ -747,8 +761,8 @@ ERROR in <Line Number>:<Column Number> | <Error message>
 * Język posiada kolekcje - listy i słowniki
 * Na słownikach możliwe jest wywołanie metody sort(), która zmieni kolejność elementów w słowniku zgodnie z wyrażeniem, które poda użytkownik jako parametr
 * Na słownikach możliwe jest wykonanie zapytania w stylu LINQ(deklaratywnie), które zwróci przefiltrowane wartości we wskazanej kolejności
-* język umożlwia tworzenie własnych funkcji
-* język umożliwia tworzenie własnych klas
+* Język umożlwia tworzenie własnych funkcji
+* Język umożliwia tworzenie własnych klas
 * Język jest statycznie typowany
 * Język jest silnie typowany
 * Zmienne są mutowalne
@@ -772,6 +786,11 @@ Jego głównym zadaniem jest przekształcenie ciągu znaków na sekwencje token�
 <br>Proces działania leksera polega na czytaniu kodu źródłowego znak po znaku, aż do momentu wykrycia sekwencji odpowiadającej jednemu zdefiniowanemu tokenowi.
 Gdy token zostanie poprawnie zidentyfikowany, jest on przekazywany do parsera. Istotne jest, że lekser czyta nowe znaki tylko wtedy, gdy parser o to wyraźnie prosi.
 Taka strategia pomaga w optymalizacji całego procesu analizy tekstu źródłowego.
+
+Moduł leksera będzie zawierał **przynajmniej** dwie klasy:
+* Lexer - klasa odpowiedzialna za analizę tekstu źródłowego i generowanie tokenów
+* Token - klasa reprezentująca pojedyńczy token wygenerowany przez lekser. Każdy token w programie musi mieć zdefiniowany swój typ oraz pozycje w pliku (numer linii i kolumna). Typ tokenu będzie wyrażony za pomocą _enum_.
+
 
 Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
 * Operatory arytmetyczne
@@ -811,6 +830,7 @@ Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
   * GreaterForTypeDefinitionClose `>`
 * Pętle i instrukcje warunkowe
   * While `while`
+  * For `for`
   * If `if`
   * Elseif `elseif`
   * Else `else`
@@ -843,16 +863,18 @@ Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
   * StringLiteral 
   * IntLiteral
   * FloatLiteral
-  * Newline
   * EndOfFile
 
-Każdy token w programie musi mieć zdefiniowany swój typ oraz pozycje w pliku (numer linii i kolumna).
-
-
+  
 **2. Analizator składniowy (Parser)**
 <br>Analizator składniowy, nazywany też parserem,
 jest kluczowym modułem współpracującym ściśle z analizatorem leksykalnym.
 Ten ostatni dostarcza parserowi kolejne tokeny, które są podstawowymi jednostkami leksykalnymi przetwarzanymi przez lekser.
+
+Moduł parsera będzie zawierał **przynajmniej** trzy klasy:
+* Parser: Klasa zajmująca się syntaktyczną analizą tokenów wygenerowanych przez lekser i budowaniem drzewa składniowego.
+* AST (Abstract Syntax Tree): Klasa reprezentująca abstrakcyjne drzewo składniowe, które jest wynikiem działania parsera.
+* AST Node: Klasa reprezentująca węzeł drzewa składniowego, zawierająca informacje o rodzaju węzła i jego dzieciach.
 
 <br>Głównym zadaniem parsera jest sprawdzenie, czy otrzymane tokeny są zgodne ze zdefiniowaną gramatyką języka oraz utworzenie drzewa rozbioru składniowego.
 Poprzez analizę drzewa rozbioru składniowego możliwe jest rozpoznawanie zdefiniowanych konstrukcji językowych.
@@ -863,11 +885,14 @@ Takie drzewo pozwala na reprezentację tych konstrukcji w sposób zrozumiały dl
 Głównym zadaniem analizatora semantycznego jest przetwarzanie drzewa rozbioru składniowego (parsowanego wcześniej przez parser) i weryfikacja zgodności semantycznej programu.
 Analizator semantyczny dokonuje takich czynności jak sprawdzanie typów danych, rozpoznawanie zmiennych, kontrola poprawności wyrażeń oraz wykrywanie błędów semantycznych.
 
-Interpreter ma za zadanie sekwencyjne wykonanie instrukcji zawartych drzewie zbudowanym przez parser
+Interpreter ma za zadanie sekwencyjne wykonanie instrukcji zawartych drzewie zbudowanym przez parser.
+Moduł interpretera będzie posiadał **przynajmniej** dwie główne klasy:
+* Interpreter Engine: Klasa odpowiedzialna za interpretację drzewa składniowego i wykonanie odpowiednich operacji w zależności od analizowanego kodu
+* Interpreter: Główna klasa programu, odpowiedzialna za koordynację działania wszystkich modułów oraz interpretację kodu źródłowego.
 
 **3. Moduły dodatkowe:**
 * Moduł obsługi błędów - odpowiada za identyfikację, zarządzanie i obsługę różnych rodzajów błędów w programie, co często obejmuje zgłaszanie wyjątków, obsługę błędów syntaktycznych i semantycznych. Współpracuje z każdym z głównych modułów programu
-* Moduł obslugi plików tekstowych - wspomaga operacje odczytywania zawartości z pliku tekstowego. Współpracuje z analizatorem leksykalnym
+* Moduł obsługi plików tekstowych - wspomaga operacje odczytywania zawartości z pliku tekstowego. Współpracuje z analizatorem leksykalnym
 
 ## **<br>Sposób testowania:**
 Każdy z modułów będzie posiadał testy jednostkowe weryfikujące jego poprawne działanie oraz obsługę wyjątków. Testowanie będzie odbywać się za pomocą biblioteki JUnit<br>
@@ -883,7 +908,7 @@ Każdy z modułów będzie posiadał testy jednostkowe weryfikujące jego popraw
         Lexer lexer = new Lexer();
         String input = "int x = 10;";
         List<Token> expectedTokens = Arrays.asList(
-            new Token(TokenType.Integet, "int"),
+            new Token(TokenType.Integer, "int"),
             new Token(TokenType.IDENTIFIER, "x"),
             new Token(TokenType.AssignOperator, "="),
             new Token(TokenType.IntegerLiteral, "10"),
