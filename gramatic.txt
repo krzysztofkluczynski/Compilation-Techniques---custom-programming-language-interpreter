@@ -1,0 +1,96 @@
+ program                    = {definition}
+ definition                 = function_definition
+ function_definition        = "fn", (type | "void"), identifier, "(", parameters-list, ")", block;
+
+ parameters-list            = [ type, identifier, { ",", type,  identifier } ];
+
+ block                      = "{", { statement }, "}";
+
+ statement                  = conditional
+                            | while_loop
+                            | for_loop
+                            | declaration_or_assignment
+                            | function_call
+                            | return_statement;
+
+ conditional                = "if", "(", expression, ")", block,
+                            [ { "elseif", "(", expression, ")", block } ],
+                            [ "else", block ];
+
+ while_loop                 = "while", "(", expression, ")", block;
+
+ for_loop                   = "for", "(", type, identifier ":" ,identifier, ")", block;
+
+ declaration_or_assignment  = [type], identifier, ["=", (expression | query_statement)], ";";
+
+ query_statement            = "SELECT", select_clause, "FROM", identifier, [where_clause], [order_by_clause];
+
+ select_clause              = "(", expression, { ",", expression }, ")";
+
+ where_clause               = "WHERE", "(", expression, ")";
+
+ order_by_clause            = "ORDER BY", expression, ("ASC" | "DESC");
+
+ function_call              = identifier, "(", arguments-list, ")", ";";
+
+ arguments-list             = [ expression, { ",", expression } ];
+
+ return_statement           = "return", [ expression ], ";";
+
+ lambda_expression          = "(", identifier, ",", identifier, ")", "=>", expression;
+
+ expression                 = conjunction, { "or", conjunction };
+
+ conjunction                = relation_term, { "and", relation_term };
+
+ relation_term              = additive_term, [ relation_operator , additive_term ];
+
+ additive_term              = multiplicative_term, { add_sub_operator, multiplicative_term };
+
+ multiplicative_term        = factor, { mul_div_operator, factor };
+
+
+ factor                     = ["not"],
+                            | ["-"]
+                            | literal
+                            | expression
+                            | identifier, [ ".", (identifier | function_call | identifier, "(" lambda_expression ")") ]
+                            | cast_expression;
+
+ cast_expression            = "$", type_basic, expression;
+
+ type                       = type_basic | type_complex
+
+ type_complex               = dictionary_declaration | tuple_declaration | list_declaration
+ type_basic                 = "int" | "float" | "String" | "boolean";
+
+ dictionary_declaration     = "Dictionary", "<", type, ",", type, ">";
+ tuple_declaration          = "Tuple", "<", type, ",", type, ">";
+ list_declaration           = "List", "<", type, ">" ;
+
+ literal                    = boolean | string | integer | float | complex_literal;
+ complex_literal            = dictionary_literal | tuple_literal | list_literal
+
+ dictionary_literal         = "|", {literal, ":", literal, [","]}, "|";
+ tuple_literal              =  "(", literal, ",", literal, ")";
+ list_literal               =  "[", [literal, {",", literal}], "]";
+
+ boolean                    = "True" | "False";
+ string                     = '"', { letter}, '"';
+ float                      = integer, ".", digit, { digit } ;
+ integer                    = non_zero_digit, { digit }
+                            | zero;
+
+ identifier                 = letter, { identifier_chars };
+ identifier_chars           = alphanumeric | "_";
+ alphanumeric               = letter | digit;
+
+ add_sub_operator           = "+" | "-"
+ mul_div_operator           = "*" | "/"
+ assign_operant             = "="
+ relation_operator          = "<" | "<=" | "==" | ">" | ">=" | "!="
+
+ digit                      = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+ non_zero_digit             = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+ zero                       = "0";
+letter                      = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" | "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z";
