@@ -134,40 +134,45 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       
       // Przykłady sortowania - dokładne omówienie poniżej
       // Sortowanie po wartościach rosnąco
-      var_dict.sort((a, b) => a.Value - b.Value);
+      var_dict.sort((Tuple<String, int> a,Tuple<String, int> b) => a.get(1) > b.get(1)); //jezeli wartość a jest wieksze od wartości b to a powinno być pierwsze w kolejności
 
       // Sortowanie po wartościach malejąco
-      var_dict.sort((a, b) => b.Value - a.Value);
+      var_dict.sort((Tuple<String, int> a,Tuple<String, int> b) => a.get(1) < b.get(1)); //jezeli wartość a jest mniejsza od wartości b to to a powinno byc pierwsze
 
       // Sortowanie po długości klucza rosnąco
-      var_dict.sort((a, b) => a.Key.length() - b.Key.length());
+      var_dict.sort((Tuple<String, int> a,Tuple<String, int> b) => a.get(0).length() > b.get(0).length(); 
 
       // Sortowanie po długości klucza malejąco
-      var_dict.sort((a, b) => b.Key.length() - a.Key.length());
+      var_dict.sort((Tuple<String, int> a,Tuple<String, int> b) => a.get(1).length() > b.get(1)); 
 
       // Sortowanie alfabetyczne kluczy z użyciem funkcji compare 
-      var_dict.sort((a, b) => a.Key.compare(b.Key));
+      var_dict.sort((a, b) => ((Tuple<String, int> a,Tuple<String, int> b) => a.compare(b)); 
        
       ```
       Omówienie przykładowych sortowań
       1. Sortowanie po wartościach rosnąco:<br>
-      (a, b) => a.Value - b.Value oznacza, że elementy zostaną posortowane w kolejności rosnącej na podstawie ich wartości.
-      Jeśli wartość a jest mniejsza niż wartość b, wynik będzie ujemny, co spowoduje, że a zostanie umieszczone przed b w posortowanej kolejności. 
-      Jeśli wartość a jest większa niż wartość b, wynik będzie dodatni, co spowoduje umieszczenie b przed a. Jeśli są równe, wynik będzie zero, co oznacza, że ich kolejność nie ulega zmianie.
+         sort((Tuple<String, int> a, Tuple<String, int> b) => a.get(1) > b.get(1));
+         oznacza, że elementy zostaną posortowane w kolejności rosnącej na podstawie ich wartości.
+         Ta lambda sortuje słownik w kolejności rosnącej według wartości. W każdej iteracji algorytmu porównuje wartości (int) dwóch kolejnych elementów (a i b). Jeśli wartość elementu a jest większa niż wartość elementu b, elementy są zamieniane miejscami. Proces jest powtarzany, aż cały słownik zostanie posortowany od elementu o najmniejszej wartości do największej.
 
       2. Sortowanie po wartościach malejąco:<br>
-      (a, b) => b.Value - a.Value to odwrócona kolejność porównania. Tutaj wartości są porównywane w odwrotnej kolejności, co powoduje sortowanie malejące.
+         sort((Tuple<String, int> a, Tuple<String, int> b) => a.get(1) < b.get(1));
+         to odwrócona kolejność porównania. Tutaj wartości są porównywane w odwrotnej kolejności, co powoduje sortowanie malejące.
+         W tym przypadku, lambda sortuje słownik w kolejności malejącej według wartości. Algorytm porównuje wartości dwóch elementów, i jeżeli wartość a jest mniejsza od wartości b, dokonuje zamiany ich miejscami. Celem jest uporządkowanie elementów od największej do najmniejszej wartości.
 
       3. Sortowanie po długości klucza rosnąco:<br>
-      (a, b) => a.Key.length() - b.Key.length() porównuje długości kluczy a i b. Elementy zostaną posortowane według długości ich klucza, od najkrótszego do najdłuższego.
+         sort((Tuple<String, int> a, Tuple<String, int> b) => a.get(0).length() > b.get(0).length());
+         porównuje długości kluczy a i b. Elementy zostaną posortowane według długości ich klucza, od najkrótszego do najdłuższego.
+         Tutaj słownik jest sortowany rosnąco według długości kluczy. Funkcja lambda porównuje długości kluczy (string) dwóch elementów. Jeśli klucz elementu a jest dłuższy niż klucz elementu b, elementy są zamieniane miejscami. Proces jest kontynuowany do momentu, gdy wszystkie klucze są uporządkowane od najkrótszego do najdłuższego. 
 
       4. Sortowanie po długości klucza malejąco:<br>
-      (a, b) => b.Key.length() - a.Key.length() to odwrócona kolejność porównania długości kluczy. Elementy zostaną posortowane według długości ich klucza, od najdłuższego do najkrótszego.
+         sort((Tuple<String, int> a, Tuple<String, int> b) => a.get(0).length() < b.get(0).length());
+         to odwrócona kolejność porównania długości kluczy. Elementy zostaną posortowane według długości ich klucza, od najdłuższego do najkrótszego.
+         W tym scenariuszu, algorytm sortuje słownik malejąco według długości kluczy. Porównuje długości kluczy dwóch elementów, i jeżeli klucz a jest krótszy od klucza b, dokonuje zamiany ich miejscami. Cel jest taki, aby klucze zostały uporządkowane od najdłuższego do najkrótszego.
         
       5. Sortowanie alfabetyczne kluczy z użyciem funkcji compare:<br>
-      (a, b) => a.Key.compare(b.Key) wykorzystuje funkcję compare do porównania kluczy. Wartości zwracane przez compare decydują o kolejności sortowania.
-      Jeśli a.Key jest leksykograficznie mniejsze od b.Key, wynik będzie ujemny, co spowoduje, że a zostanie umieszczone przed b. Jeśli jest większe,
-      wynik będzie dodatni, co spowoduje umieszczenie b przed a. Jeśli są równe, wynik będzie zero, co oznacza, że ich kolejność nie ulega zmianie.
+         sort((Tuple<String, int> a, Tuple<String, int> b) => a.get(0).compare(b.get(0));
+         wykorzystuje funkcję compare do porównania kluczy. Ta funkcja lambda sortuje słownik alfabetycznie na podstawie kluczy. Wykorzystuje funkcję compare, aby porównać klucze dwóch elementów leksykograficznie. Jeśli klucz a powinien występować przed kluczem b w kolejności alfabetycznej, elementy pozostają na swoich miejscach; w przeciwnym razie są zamieniane. Celem jest uporządkowanie kluczy od A do Z.
       <br>
         
     <br>
@@ -248,7 +253,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       }
       ```
 
-    * `if-elseif`: Instrukcja warunkowa, która wykonuje różne bloki kodu w zależności od spełnienia warunków.
+    * `if-elif`: Instrukcja warunkowa, która wykonuje różne bloki kodu w zależności od spełnienia warunków.
 
       ```
 
@@ -261,7 +266,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
 
             b = 2;
 
-      } elseif (a < 2) {
+      } elif (a < 2) {
 
             b = -3;  
 
@@ -486,8 +491,8 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
                             | return_statement;
                                                  
  conditional                = "if", "(", expression, ")", block,
-                            [ { "elseif", "(", expression, ")", block } ],
-                            [ "else", block ];
+                            [ { "elif", "(", expression, ")", block },  //czy to jest poprawne? moze lepiej zdefiniowac blok elif oddzielnie
+                            "else", block ];
                                                                        
  while_loop                 = "while", "(", expression, ")", block;
  
@@ -501,7 +506,7 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
  
  where_clause               = "WHERE", "(", expression, ")";
 
- order_by_clause            = "ORDER BY", expression, ("ASC" | "DESC");  //czy tutaj na pewno expression, moze identifer.identifer
+ order_by_clause            = "ORDER BY", expression, ("ASC" | "DESC");  //czy tutaj identifier.identifer jest poprawnym rozwiązaniem zamiast expression?
   
  function_call              = identifier, "(", arguments-list, ")", ";";
  
@@ -509,7 +514,7 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
  
  return_statement           = "return", [ expression ], ";";
  
- lambda_expression          = "(", identifier, ",", identifier, ")", "=>", expression;
+ lambda_expression          = "(", parameters-list ")", "=>", expression; //zmiana na parameters-list
  
  expression                 = conjunction, { "or", conjunction }; 
  
@@ -548,7 +553,7 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
  list_literal               =  "[", [literal, {",", literal}], "]";
 
  boolean                    = "True" | "False";
- string                     = '"', { character  }, '"'; //chialbym wykluczyc znak nowej linii?
+ string                     = '"', { character  }, '"'; 
  float                      = integer, ".", digit, { digit } ; 
  integer                    = non_zero_digit, { digit } 
                             | zero;
@@ -583,17 +588,15 @@ ERROR in <Line Number>:<Column Number> | <Error message>
 
 ### Przykładowe błędy
 * #### Lekser:
-  * `TokenProcessingException` - Niepoprawna składnia lub błąd w rozpoznawaniu tokena
-    ```
+
+  * `UnknownTokenException` - nieznany token
+     ```
     fn int main() {
-      int x = 3 //brak średnika
-      iny y = 4; //literówka
+      float x = 1. //bład w definicji literału
       return 0;
     }
     ```
-    ```
-    ERROR in <Line Number>:<Column Number> | Syntax Error
-    ```
+
   * `StringOverflowException` - Zbyt długi łańcuch String
      ```
     fn int main() {
@@ -629,27 +632,16 @@ ERROR in <Line Number>:<Column Number> | <Error message>
     ERROR in <Line Number>:<Column Number> |  int outside the allowed range
     ```
 
-  * `KeywordUsageException` - Użycie słów kluczowych jako identyfikatory
-    ```
-    fn int main() {
-      int float = 1;
-      return 0;
-    }
-    ```
-    ```
-    ERROR in <Line Number>:<Column Number> |  Attempted use of reserved keyword
-    ```
-
   * `EndOfFileReachedException` - Dojście do końca pliku 
-    ```
+     ```
      fn int main() {
        String example = "aaa
        return 0;
-    }
-    ```
-    ```
-    ERROR in <Line Number>:<Column Number> |  Missing closing bracket
-    ```
+     }
+     ```
+     ```
+     ERROR in <Line Number>:<Column Number> |  Reached end of file
+     ```
     
   * `UnknownSymbolException` - nieznany symbol
     ```
@@ -662,11 +654,22 @@ ERROR in <Line Number>:<Column Number> | <Error message>
     ```
     ERROR in <Line Number>:<Column Number> |  Unknown type of symbol
     ```
-    
+
 
 <br><br><br>
 * #### Parser
-  * `UnexpectedTokenException` - Niepoprawna składania tokenów / nieoczekiwany token
+  * `TokenProcessingException` - Niepoprawna składnia 
+    ```
+    fn int main() {
+      int x = 3 //brak srednika
+      iny y = 4; //literówka
+      return 0;
+    }
+    ```
+    ```
+    ERROR in <Line Number>:<Column Number> | Syntax Error
+    ```
+  * `UnexpectedTokenException` -  nieoczekiwany token / Niepoprawna składania tokenów
     ```
     fn int main() {
       x = 5;
@@ -679,52 +682,7 @@ ERROR in <Line Number>:<Column Number> | <Error message>
     ```
     ERROR in <Line Number>:<Column Number> | Unexpected token
     ```
-  
-  * `UndefinedIdentiferException` Odwołanie się do nieistniejącej zmiennej/funkcji
-      ```
-      fn int main() {
-        int x = 3;
-        float y = a + $float x;
-        return 0;
-    }
-    ```
 
-    ```
-     ERROR in <Line Number>:<Column Number> | variable "a" undefined
-    ```
-
-  * `IdentiferRedefinedException` - Utworzenie funkcji/zmiennej o tej samej nazwie
-      ```
-      fn int add(int x, int y) {
-        return x+y;
-      }  
-    
-      fn float add(float x, float y) {
-        return x+y;
-      }
-  
-      fn int main() {
-        int x = 3;
-        String a = x;
-        return 0;
-    }
-    ```
-
-    ```
-    ERROR in <Line Number>:<Column Number> | function "add" redefined
-    ```
-
-  * `MissingMainFunctionException` - Brak zdefiniowanej funkcji main w programie
-    ```
-    int x = 5;
-  
-    fn int add(int x, int y) {
-      return x+y;
-    }
-    ```
-    ```
-    ERROR in <Line Number>:<Column Number> | Missing definition of the main function in the program
-    ```
 
   * `GlobalVariableException` - Definicja zmiennych poza {} (utworzenie zmiennej globalnej)
     ```
@@ -756,22 +714,7 @@ ERROR in <Line Number>:<Column Number> | <Error message>
     ```
     ERROR in <Line Number>:<Column Number> | Accessing variable beyond scope
     ```
-  * `MissingReturnstatementException` - Brak return w funkcji
-    ```
-    ERROR in <Line Number>:<Column Number> | Missing return statement in non-void function
-    ```
 
-  * `InvalidNumberofArgumentsException` - Wywołanie funkcji ze złą liczbą argumentów
-    ```
-    fn int add(int x, int y) {
-        return ($float x) + (float $y);
-    }
-
-
-    fn int main() {
-      int x = add(1, 2);
-    }
-    ```
     ```
     ERROR in <Line Number>:<Column Number> | Wrong number of arguments, expected 2
     ```
@@ -785,6 +728,18 @@ ERROR in <Line Number>:<Column Number> | <Error message>
     ```
     ERROR in <Line Number>:<Column Number> |  Missing closing bracket
     ```
+    
+  * `KeywordUsageException` - Użycie słów kluczowych jako identyfikatory
+    ```
+    fn int main() {
+      int float = 1;
+      return 0;
+    }
+    ```
+    ```
+    ERROR in <Line Number>:<Column Number> |  Attempted use of reserved keyword
+    ```
+
 
   <br><br>
 * #### Interpreter
@@ -822,6 +777,67 @@ ERROR in <Line Number>:<Column Number> | <Error message>
     ERROR in <Line Number>:<Column Number> | cannot assign value of type int to type float
     ```
 
+  * `UndefinedIdentiferException` Odwołanie się do nieistniejącej zmiennej/funkcji
+      ```
+      fn int main() {
+        int x = 3;
+        float y = a + $float x;
+        return 0;
+    }
+    ```
+
+    ```
+     ERROR in <Line Number>:<Column Number> | variable "a" undefined
+    ```
+
+  * `IdentiferRedefinedException` - Utworzenie funkcji/zmiennej o tej samej nazwie
+      ```
+      fn int add(int x, int y) {
+        return x+y;
+      }  
+    
+      fn float add(float x, float y) {
+        return x+y;
+      }
+  
+      fn int main() {
+        int x = 3;
+        String a = x;
+        return 0;
+    }
+    ```
+
+    ```
+    ERROR in <Line Number>:<Column Number> | function "add" redefined
+    ```
+  * `MissingReturnstatementException` - Brak return w funkcji
+    ```
+    ERROR in <Line Number>:<Column Number> | Missing return statement in non-void function
+    ```
+
+  * `InvalidNumberofArgumentsException` - Wywołanie funkcji ze złą liczbą argumentów
+    ```
+    fn int add(int x, int y) {
+        return ($float x) + (float $y);
+    }
+
+
+    fn int main() {
+      int x = add(1, 2);
+    }
+    ```
+
+  * `MissingMainFunctionException` - Brak zdefiniowanej funkcji main w programie
+    ```
+    int x = 5;
+  
+    fn int add(int x, int y) {
+      return x+y;
+    }
+    ```
+    ```
+    ERROR in <Line Number>:<Column Number> | Missing definition of the main function in the program
+    ```
 
 ## **<br>Wymagania funkcjonalne:**
 * Interpreter pozwala na uruchomienie kodu zapisanego w pliku tekstowym
@@ -888,20 +904,18 @@ Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
   * Tuple `Tuple`
   * Void `void`
 * Nawiasy
-  * BraceOpen `{`
-  * BraceClose `}`
+  * CurlyBracketOpen `{`
+  * CurlyBracketClose `}`
   * BracketOpen `(`
   * BracketClose `)`
   * SquareBracketOpen `[`
   * SquareBracketClose `]`
   * Pipe `|`
-  * LessForTypeDefinitionOpen `<` //czy potrzebujemy definiować to oddzielnie? to ten sam znak co Less
-  * GreaterForTypeDefinitionClose `>`
 * Pętle i instrukcje warunkowe
   * While `while`
   * For `for`
   * If `if`
-  * Elseif `elseif`
+  * Elif `elif`
   * Else `else`
 * Zapytania na słownikach
   * Select `SELECT`
@@ -911,7 +925,6 @@ Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
   * Ascending `ASC`
   * Descending `DSC`
 * Inne
-  * Comment `//`
   * MainFunction `main`
   * Function `fn`
   * Return `return`
@@ -924,7 +937,7 @@ Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
   * Dot `.`
   * Identifier
   * BoolTrueLiteral `True`
-  * BoolFalseLiteral = `False`
+  * BoolFalseLiteral `False`
   * StringLiteral 
   * IntLiteral
   * FloatLiteral
