@@ -13,9 +13,10 @@ public enum TokenType {
     MINUS("-"),
     MULTIPLY("*"),
     DIVIDE("/"),
+    EQUAL("="),
 
     // Comparison operators
-    EQUAL("="),
+    EQUAL_COMP("="),
     NOTEQUAL("!="),
     GREATER(">"),
     LESS("<"),
@@ -67,18 +68,20 @@ public enum TokenType {
     RETURN("return"),
     CAST("$"),
     LAMBDA("=>"),
-    STRING_QUOTE("\""),
+    //STRING_QUOTE("\""),
     SEMICOLON(";"),
     COLON(":"),
     COMMA(","),
     DOT("."),
+    ONE_LINE_COMMENT,
+    MULTI_LINE_COMMENT,
     IDENTIFIER,
-    BOOL_TRUE_LITERAL("True"),
-    BOOL_FALSE_LITERAL("False"),
+    BOOL_LITERAL,
     STRING_LITERAL,
     INT_LITERAL,
     FLOAT_LITERAL,
-    END_OF_FILE;
+    END_OF_FILE,
+    INVALID_TOKEN;
 
     private String keyword;
     TokenType(String keyword) {
