@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 public class FileInputReader implements InputReader {
 
-    private final Logger logger;
+    private static final Logger logger = Logger.getLogger(FileInputReader.class.getName());
     private final String path;
     private Position position = new Position();
     private char recentlyLoadedChar = 0;
@@ -27,11 +27,6 @@ public class FileInputReader implements InputReader {
         this.path = path;
         boolean isFilePath = path.endsWith(".txt");
 
-        if (isFilePath) {
-            this.logger = Logger.getLogger("Loading file: " + path);
-        } else {
-            this.logger = Logger.getLogger("Please provide a txt file");
-        }
         this.bufferedReader = new BufferedReader(new java.io.FileReader(path));
     }
 
@@ -56,7 +51,7 @@ public class FileInputReader implements InputReader {
             if (nextChar != (char) -1 && isCharANewLine(nextChar)) {
                 position.nextLine();
                 char nextCharSeq = (char) bufferedReader.read();
-                if (nextCharSeq != (char) -1 && !areTwoCharsNewLine(nextChar, nextCharSeq)) { // not an EOF and not \r\n
+                if (nextCharSeq != (char) -1 && !areTwoCharsNewLine(nextChar, nextCharSeq)) {
                     position.nextCharacter();
                     recentlyLoadedChar = nextCharSeq;
                     rememberLastCharToBeLoadedNext();
@@ -64,9 +59,9 @@ public class FileInputReader implements InputReader {
                 else {
                     recentlyLoadedChar = '\n';
                 }
-                return '\n';    // new line
+                return '\n';
             }
-            if (nextChar == (char) -1) {   // EOF
+            if (nextChar == (char) -1) {
                 fileEnded = true;
                 closeBuffer();
                 return EOF;

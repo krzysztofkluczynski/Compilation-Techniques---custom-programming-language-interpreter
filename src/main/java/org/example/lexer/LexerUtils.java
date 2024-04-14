@@ -47,7 +47,7 @@ public class LexerUtils {
                 Map.entry("SELECT", TokenType.SELECT),
                 Map.entry("FROM", TokenType.FROM),
                 Map.entry("WHERE", TokenType.WHERE),
-                Map.entry("ORDER BY", TokenType.ORDER_BY),
+                Map.entry("ORDER_BY", TokenType.ORDER_BY),
                 Map.entry("ASC", TokenType.ASCENDING),
                 Map.entry("DSC", TokenType.DESCENDING),
                 // Others

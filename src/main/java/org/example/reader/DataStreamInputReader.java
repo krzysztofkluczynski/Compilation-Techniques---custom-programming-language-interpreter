@@ -10,8 +10,7 @@ import java.util.logging.Logger;
 
 public class DataStreamInputReader implements InputReader {
 
-    private final Logger logger;
-    private final String path;
+    private static final Logger logger = Logger.getLogger(DataStreamInputReader.class.getName());
     private Position position = new Position();
     private char recentlyLoadedChar = 0;
     private BufferedReader bufferedReader;
@@ -25,14 +24,6 @@ public class DataStreamInputReader implements InputReader {
 
 
     public DataStreamInputReader(String txt) throws FileNotFoundException {
-        this.path = txt;
-        boolean isFilePath = txt.endsWith(".txt");
-
-        if (isFilePath) {
-            this.logger = Logger.getLogger("Loading file: " + txt);
-        } else {
-            this.logger = Logger.getLogger("Please provide a txt file");
-        }
         this.bufferedReader = new BufferedReader(new StringReader(txt));
     }
 
@@ -56,7 +47,7 @@ public class DataStreamInputReader implements InputReader {
             if (nextChar != (char) -1 && isCharANewLine(nextChar)) {
                 position.nextLine();
                 char nextCharSeq = (char) bufferedReader.read();
-                if (nextCharSeq != (char) -1 && !areTwoCharsNewLine(nextChar, nextCharSeq)) { // not an EOF and not \r\n
+                if (nextCharSeq != (char) -1 && !areTwoCharsNewLine(nextChar, nextCharSeq)) {
                     position.nextCharacter();
                     recentlyLoadedChar = nextCharSeq;
                     rememberLastCharToBeLoadedNext();
@@ -64,9 +55,9 @@ public class DataStreamInputReader implements InputReader {
                 else {
                     recentlyLoadedChar = '\n';
                 }
-                return '\n';    // new line
+                return '\n';
             }
-            if (nextChar == (char) -1) {   // EOF
+            if (nextChar == (char) -1) {
                 fileEnded = true;
                 closeBuffer();
                 return EOF;

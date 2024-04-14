@@ -58,7 +58,7 @@ public enum TokenType {
     SELECT("SELECT"),
     FROM("FROM"),
     WHERE("WHERE"),
-    ORDER_BY("ORDER BY"),
+    ORDER_BY("ORDER_BY"),
     ASCENDING("ASC"),
     DESCENDING("DSC"),
 

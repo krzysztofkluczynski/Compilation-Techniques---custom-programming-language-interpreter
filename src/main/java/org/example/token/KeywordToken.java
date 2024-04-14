@@ -8,9 +8,8 @@ public class KeywordToken implements Token {
     TokenType type;
     Position position;
 
-
     @Override
-    public <T> T getValue() {
+    public String getValue() {
         return null;
     }
 }

@@ -73,7 +73,7 @@ public class LexerImpl implements Lexer {
         while (Character.isDigit(currentChar = reader.getNextChar()) || currentChar == '.') {
             if (currentChar == '.') {
                 if (hasDot) { // only one dot is allowed
-                    throw new NumberFormatException("Invalid number format."); //TODO - customowy wyjatek?
+                    throw new NumberFormatException("Invalid number format.");
                 }
                 hasDot = true;
             }
@@ -150,12 +150,10 @@ public class LexerImpl implements Lexer {
             reader.rememberLastCharToBeLoadedNext();
         }
 
-        // Sprawdź złożone operandy
         String lexeme = Character.toString(currentChar);
         char nextChar = reader.getNextChar();
         String potentialDoubleLexeme = lexeme + nextChar;
 
-        // Sprawdź, czy dłuższy leksem odpowiada typowi tokena
         TokenType type = LexerUtils.getTokenType(potentialDoubleLexeme);
         if (type != null) {
             token = new KeywordToken(type, currentPosition);
@@ -202,7 +200,6 @@ public class LexerImpl implements Lexer {
                     (Character.isLetterOrDigit(currentChar) || currentChar == '_')) {
                 builder.append(currentChar);
             }
-            //reader.rememberLastCharToBeLoadedNext();  // Put back the last character that is not part of the identifier
 
             String lexeme = builder.toString();
             if (lexeme.length() > MAXIDENTIFIERLENGTH) {
