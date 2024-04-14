@@ -158,7 +158,6 @@ public class LexerImpl implements Lexer {
         // Sprawdź, czy dłuższy leksem odpowiada typowi tokena
         TokenType type = LexerUtils.getTokenType(potentialDoubleLexeme);
         if (type != null) {
-            reader.rememberLastCharToBeLoadedNext();
             token = new KeywordToken(type, currentPosition);
             return true;
         } else {
@@ -167,7 +166,6 @@ public class LexerImpl implements Lexer {
 
         type = LexerUtils.getTokenType(lexeme);
         if (type != null) {
-            reader.rememberLastCharToBeLoadedNext();
             token = new KeywordToken(type, currentPosition);
             return true;
         }
@@ -214,6 +212,7 @@ public class LexerImpl implements Lexer {
 
             if (type != null) {
                 token = new KeywordToken(type, currentPosition);
+                reader.rememberLastCharToBeLoadedNext();
                 return true;
             } else if (lexeme.equals("true") || lexeme.equals("false")) {
                 token = new BoolToken(currentPosition, Boolean.valueOf(lexeme));
