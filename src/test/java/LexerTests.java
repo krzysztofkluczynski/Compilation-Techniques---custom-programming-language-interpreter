@@ -13,8 +13,20 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class LexerTests {
+
+    private void assertToken(Token token, TokenType expectedType, int expectedLine, int expectedStartPos) {
+        Assert.assertEquals(expectedType, token.getType());
+        Assert.assertEquals(expectedLine, token.getPosition().getLine());
+        Assert.assertEquals(expectedStartPos, token.getPosition().getCharacterNumber());
+    }
+
+    private void assertToken(Token token, TokenType expectedType, int expectedLine, int expectedStartChar, Object expectedValue) {
+        assertToken(token, expectedType, expectedLine, expectedStartChar);
+        Assert.assertEquals(expectedValue, token.getValue());
+    }
+
     @Test
-    public void testSimpleDataTypes() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, NumberMaxValueExceededException, IdentifierTooLongException {
+    public void testLexerTokenTypesAndPositions() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, NumberMaxValueExceededException, IdentifierTooLongException {
         DataStreamInputReader reader = new DataStreamInputReader(
                 """
                    int a = 3; float b = 3.14; bool c = true; String x = "ala ma kota123";
@@ -22,191 +34,44 @@ public class LexerTests {
         );
         LexerImpl lexer = new LexerImpl(reader);
 
+        assertToken(lexer.next(), TokenType.INTEGER, 1, 0);
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 4);
+        assertToken(lexer.next(), TokenType.EQUAL, 1, 6);
+        assertToken(lexer.next(), TokenType.INT_LITERAL, 1, 8, 3);
+        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 9);
 
-        Assert.assertEquals(TokenType.INTEGER, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.EQUAL, lexer.next().getType());
-        Token tokenInt = lexer.next();
-        Assert.assertEquals(TokenType.INT_LITERAL, tokenInt.getType());
-        Assert.assertEquals(3, (Integer) tokenInt.getValue());
+        assertToken(lexer.next(), TokenType.FLOAT, 1, 11);
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 17);
+        assertToken(lexer.next(), TokenType.EQUAL, 1, 19);
+        assertToken(lexer.next(), TokenType.FLOAT_LITERAL, 1, 21, 3.14f);
+        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 25);
 
-        Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
+        assertToken(lexer.next(), TokenType.BOOL, 1, 27);
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 32);
+        assertToken(lexer.next(), TokenType.EQUAL, 1, 34);
+        assertToken(lexer.next(), TokenType.BOOL_LITERAL, 1, 36, true);
+        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 40);
 
-        Assert.assertEquals(TokenType.FLOAT, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.EQUAL, lexer.next().getType());
-        Token tokenFloat = lexer.next();
-        Assert.assertEquals(TokenType.FLOAT_LITERAL, tokenFloat.getType());
-        Assert.assertEquals(3.14f, (Float) tokenFloat.getValue());
-        Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
-
-        Assert.assertEquals(TokenType.BOOL, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.EQUAL, lexer.next().getType());
-        Token tokenBool = lexer.next();
-        Assert.assertEquals(TokenType.BOOL_LITERAL, tokenBool.getType());
-        Assert.assertEquals(true, tokenBool.getValue());
-        Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
-
-        Assert.assertEquals(TokenType.STRING, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.EQUAL, lexer.next().getType());
-        Token tokenString = lexer.next();
-        Assert.assertEquals(TokenType.STRING_LITERAL, tokenString.getType());
-        Assert.assertEquals("ala ma kota123", tokenString.getValue());
-        Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
-
+        assertToken(lexer.next(), TokenType.STRING, 1, 42);
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 49);
+        assertToken(lexer.next(), TokenType.EQUAL, 1, 51);
+        assertToken(lexer.next(), TokenType.STRING_LITERAL, 1, 53, "ala ma kota123");
+        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 69);
     }
 
-    @Test
-    public void testArithmeticAndAssignments() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, NumberMaxValueExceededException, IdentifierTooLongException {
-        DataStreamInputReader reader = new DataStreamInputReader(
-                """
-                int x;  x + 4;  23 - 5; 6 * 4; 6.5 / 76.5; x = 5; 
-                """
-        );
-        LexerImpl lexer = new LexerImpl(reader);
-
-        // Test "int x;"
-        Assert.assertEquals(TokenType.INTEGER, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
-
-        // Test "x + 4;"
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.PLUS, lexer.next().getType());
-        Token tokenInt = lexer.next();
-        Assert.assertEquals(TokenType.INT_LITERAL, tokenInt.getType());
-        Assert.assertEquals(4, (Integer) tokenInt.getValue());
-        Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
-
-        // Test "23 - 5;"
-        tokenInt = lexer.next();
-        Assert.assertEquals(TokenType.INT_LITERAL, tokenInt.getType());
-        Assert.assertEquals(23, (Integer) tokenInt.getValue());
-        Assert.assertEquals(TokenType.MINUS, lexer.next().getType());
-        tokenInt = lexer.next();
-        Assert.assertEquals(TokenType.INT_LITERAL, tokenInt.getType());
-        Assert.assertEquals(5, (Integer) tokenInt.getValue());
-        Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
-
-        // Test "6 * 4;"
-        tokenInt = lexer.next();
-        Assert.assertEquals(TokenType.INT_LITERAL, tokenInt.getType());
-        Assert.assertEquals(6, (Integer) tokenInt.getValue());
-        Assert.assertEquals(TokenType.MULTIPLY, lexer.next().getType());
-        tokenInt = lexer.next();
-        Assert.assertEquals(TokenType.INT_LITERAL, tokenInt.getType());
-        Assert.assertEquals(4, (Integer) tokenInt.getValue());
-        Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
-
-        // Test "6.5 / 76.5;"
-        Token tokenFloat = lexer.next();
-        Assert.assertEquals(TokenType.FLOAT_LITERAL, tokenFloat.getType());
-        Assert.assertEquals(6.5f, (Float) tokenFloat.getValue());
-        Assert.assertEquals(TokenType.DIVIDE, lexer.next().getType());
-        tokenFloat = lexer.next();
-        Assert.assertEquals(TokenType.FLOAT_LITERAL, tokenFloat.getType());
-        Assert.assertEquals(76.5f, (Float) tokenFloat.getValue());
-        Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
-
-        // Test "x = 5;"
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.EQUAL, lexer.next().getType());
-        tokenInt = lexer.next();
-        Assert.assertEquals(TokenType.INT_LITERAL, tokenInt.getType());
-        Assert.assertEquals(5, (Integer) tokenInt.getValue());
-        Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
-    }
-    @Test
-    public void testComplexExpressions() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, NumberMaxValueExceededException, IdentifierTooLongException {
-        DataStreamInputReader reader = new DataStreamInputReader(
-                """
-                (a_b != 3) ( test == 2) (test2  > 2); "string" <= "string2"; "string3" >= 5;  321 > 320; 567 < 1234 
-                cond_first and condition_second or conditon_third not condition_four
-                """
-        );
-        LexerImpl lexer = new LexerImpl(reader);
-
-        // Test comparison expressions within parentheses
-        Assert.assertEquals(TokenType.BRACKET_OPEN, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.NOTEQUAL, lexer.next().getType());
-        Token tokenInt = lexer.next();
-        Assert.assertEquals(TokenType.INT_LITERAL, tokenInt.getType());
-        Assert.assertEquals(TokenType.BRACKET_CLOSE, lexer.next().getType());
-
-        Assert.assertEquals(TokenType.BRACKET_OPEN, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.EQUAL_COMP, lexer.next().getType());
-        tokenInt = lexer.next();
-        Assert.assertEquals(TokenType.INT_LITERAL, tokenInt.getType());
-        Assert.assertEquals(TokenType.BRACKET_CLOSE, lexer.next().getType());
-
-        Assert.assertEquals(TokenType.BRACKET_OPEN, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.GREATER, lexer.next().getType());
-        tokenInt = lexer.next();
-        Assert.assertEquals(TokenType.INT_LITERAL, tokenInt.getType());
-        Assert.assertEquals(TokenType.BRACKET_CLOSE, lexer.next().getType());
-
-        Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
-
-        // Test string comparison
-        Token tokenString = lexer.next();
-        Assert.assertEquals(TokenType.STRING_LITERAL, tokenString.getType());
-        Assert.assertEquals("string", tokenString.getValue());
-        Assert.assertEquals(TokenType.LESSEQUAL, lexer.next().getType());
-        tokenString = lexer.next();
-        Assert.assertEquals(TokenType.STRING_LITERAL, tokenString.getType());
-        Assert.assertEquals("string2", tokenString.getValue());
-
-        Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
-
-        // Numerical comparisons and string comparison with numeric value
-        tokenString = lexer.next();
-        Assert.assertEquals(TokenType.STRING_LITERAL, tokenString.getType());
-        Assert.assertEquals("string3", tokenString.getValue());
-        Assert.assertEquals(TokenType.GREATEREQUAL, lexer.next().getType());
-        tokenInt = lexer.next();
-        Assert.assertEquals(TokenType.INT_LITERAL, tokenInt.getType());
-
-        Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
-
-        tokenInt = lexer.next();
-        Assert.assertEquals(TokenType.INT_LITERAL, tokenInt.getType());
-        Assert.assertEquals(TokenType.GREATER, lexer.next().getType());
-        tokenInt = lexer.next();
-        Assert.assertEquals(TokenType.INT_LITERAL, tokenInt.getType());
-
-        Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
-
-        tokenInt = lexer.next();
-        Assert.assertEquals(TokenType.INT_LITERAL, tokenInt.getType());
-        Assert.assertEquals(TokenType.LESS, lexer.next().getType());
-        tokenInt = lexer.next();
-        Assert.assertEquals(TokenType.INT_LITERAL, tokenInt.getType());
-
-        // Test logical expressions
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.AND, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.OR, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.NOT, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-    }
 
     @Test
-    public void testFullFeaturesIncludingComments() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, NumberMaxValueExceededException, IdentifierTooLongException {
+    public void testFullFeaturesIncludingCommentsAndPositions() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, NumberMaxValueExceededException, IdentifierTooLongException {
         DataStreamInputReader reader = new DataStreamInputReader(
                 """
+                
                 Dictionary<String, int> var_dict = |
-                    "dog": 3,
+                            "dog": 3,
                     "cat": 4,
-                    "cow": 5,
-                    "hamster": 6 
+                            "cow": 5,
+                                            "hamster": 6 
                  |;
+                \n
                 var_tuple.get(0) // Getting the first item from the tuple
                 var_tuple.set(0, 2) // Setting the value at index 0 to 2
                 var_dict.sort(( Tuple<String, int> a, Tuple<String, int> b) => a.get(1) > b.get(1)); // if value a is greater than value b, then a should be first in order
@@ -215,98 +80,101 @@ public class LexerTests {
         LexerImpl lexer = new LexerImpl(reader);
 
         // Test Dictionary with type annotations
-        Assert.assertEquals(TokenType.DICTIONARY, lexer.next().getType());
-        Assert.assertEquals(TokenType.LESS, lexer.next().getType());
-        Assert.assertEquals(TokenType.STRING, lexer.next().getType());
-        Assert.assertEquals(TokenType.COMMA, lexer.next().getType());
-        Assert.assertEquals(TokenType.INTEGER, lexer.next().getType());
-        Assert.assertEquals(TokenType.GREATER, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.EQUAL, lexer.next().getType());
-        Assert.assertEquals(TokenType.PIPE, lexer.next().getType());
+        assertToken(lexer.next(), TokenType.DICTIONARY, 2, 0);
+        assertToken(lexer.next(), TokenType.LESS, 2, 10);
+        assertToken(lexer.next(), TokenType.STRING, 2, 11);
+        assertToken(lexer.next(), TokenType.COMMA, 2, 17);
+        assertToken(lexer.next(), TokenType.INTEGER, 2, 19);
+        assertToken(lexer.next(), TokenType.GREATER, 2, 22);
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 2, 24);
+        assertToken(lexer.next(), TokenType.EQUAL, 2, 33);
+        assertToken(lexer.next(), TokenType.PIPE, 2, 35);
 
         // Test dictionary contents
-        Assert.assertEquals(TokenType.STRING_LITERAL, lexer.next().getType());
-        Assert.assertEquals(TokenType.COLON, lexer.next().getType());
-        Assert.assertEquals(TokenType.INT_LITERAL, lexer.next().getType());
-        Assert.assertEquals(TokenType.COMMA, lexer.next().getType());
-        Assert.assertEquals(TokenType.STRING_LITERAL, lexer.next().getType());
-        Assert.assertEquals(TokenType.COLON, lexer.next().getType());
-        Assert.assertEquals(TokenType.INT_LITERAL, lexer.next().getType());
-        Assert.assertEquals(TokenType.COMMA, lexer.next().getType());
-        Assert.assertEquals(TokenType.STRING_LITERAL, lexer.next().getType());
-        Assert.assertEquals(TokenType.COLON, lexer.next().getType());
-        Assert.assertEquals(TokenType.INT_LITERAL, lexer.next().getType());
-        Assert.assertEquals(TokenType.COMMA, lexer.next().getType());
-        Assert.assertEquals(TokenType.STRING_LITERAL, lexer.next().getType());
-        Assert.assertEquals(TokenType.COLON, lexer.next().getType());
-        Assert.assertEquals(TokenType.INT_LITERAL, lexer.next().getType());
-        Assert.assertEquals(TokenType.PIPE, lexer.next().getType());
-        Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
+        assertToken(lexer.next(), TokenType.STRING_LITERAL, 3, 12);
+        assertToken(lexer.next(), TokenType.COLON, 3, 17);
+        assertToken(lexer.next(), TokenType.INT_LITERAL, 3, 19);
+        assertToken(lexer.next(), TokenType.COMMA, 3, 20);
+
+        assertToken(lexer.next(), TokenType.STRING_LITERAL, 4, 4);
+        assertToken(lexer.next(), TokenType.COLON, 4, 9);
+        assertToken(lexer.next(), TokenType.INT_LITERAL, 4, 11);
+        assertToken(lexer.next(), TokenType.COMMA, 4, 12);
+
+        assertToken(lexer.next(), TokenType.STRING_LITERAL, 5, 12);
+        assertToken(lexer.next(), TokenType.COLON, 5, 17);
+        assertToken(lexer.next(), TokenType.INT_LITERAL, 5, 19);
+        assertToken(lexer.next(), TokenType.COMMA, 5, 20);
+
+        assertToken(lexer.next(), TokenType.STRING_LITERAL, 6, 28);
+        assertToken(lexer.next(), TokenType.COLON, 6, 37);
+        assertToken(lexer.next(), TokenType.INT_LITERAL, 6, 39);
+
+        assertToken(lexer.next(), TokenType.PIPE, 7, 1);
+        assertToken(lexer.next(), TokenType.SEMICOLON, 7, 2);
 
         // Test tuple method get() and comments
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.DOT, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.BRACKET_OPEN, lexer.next().getType());
-        Assert.assertEquals(TokenType.INT_LITERAL, lexer.next().getType());
-        Assert.assertEquals(TokenType.BRACKET_CLOSE, lexer.next().getType());
-        Token commentToken = lexer.next();
-        Assert.assertEquals(TokenType.ONE_LINE_COMMENT, commentToken.getType());
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 9, 0);
+        assertToken(lexer.next(), TokenType.DOT, 9, 9);
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 9, 10);
+        assertToken(lexer.next(), TokenType.BRACKET_OPEN, 9, 13);
+        assertToken(lexer.next(), TokenType.INT_LITERAL, 9, 14);
+        assertToken(lexer.next(), TokenType.BRACKET_CLOSE, 9, 15);
+        assertToken(lexer.next(), TokenType.ONE_LINE_COMMENT, 9, 17);
 
         // Test tuple method set() and comments
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.DOT, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.BRACKET_OPEN, lexer.next().getType());
-        Assert.assertEquals(TokenType.INT_LITERAL, lexer.next().getType());
-        Assert.assertEquals(TokenType.COMMA, lexer.next().getType());
-        Assert.assertEquals(TokenType.INT_LITERAL, lexer.next().getType());
-        Assert.assertEquals(TokenType.BRACKET_CLOSE, lexer.next().getType());
-        commentToken = lexer.next();
-        Assert.assertEquals(TokenType.ONE_LINE_COMMENT, commentToken.getType());
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 10, 0);
+        assertToken(lexer.next(), TokenType.DOT, 10, 9);
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 10, 10);
+        assertToken(lexer.next(), TokenType.BRACKET_OPEN, 10, 13);
+        assertToken(lexer.next(), TokenType.INT_LITERAL, 10, 14);
+        assertToken(lexer.next(), TokenType.COMMA, 10, 15);
+        assertToken(lexer.next(), TokenType.INT_LITERAL, 10, 17);
+        assertToken(lexer.next(), TokenType.BRACKET_CLOSE, 10, 18);
+        assertToken(lexer.next(), TokenType.ONE_LINE_COMMENT, 10, 20);
 
         // Test lambda expression in sort function
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.DOT, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.BRACKET_OPEN, lexer.next().getType());
-        Assert.assertEquals(TokenType.BRACKET_OPEN, lexer.next().getType());
-        Assert.assertEquals(TokenType.TUPLE, lexer.next().getType());
-        Assert.assertEquals(TokenType.LESS, lexer.next().getType());
-        Assert.assertEquals(TokenType.STRING, lexer.next().getType());
-        Assert.assertEquals(TokenType.COMMA, lexer.next().getType());
-        Assert.assertEquals(TokenType.INTEGER, lexer.next().getType());
-        Assert.assertEquals(TokenType.GREATER, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.COMMA, lexer.next().getType());
-        Assert.assertEquals(TokenType.TUPLE, lexer.next().getType());
-        Assert.assertEquals(TokenType.LESS, lexer.next().getType());
-        Assert.assertEquals(TokenType.STRING, lexer.next().getType());
-        Assert.assertEquals(TokenType.COMMA, lexer.next().getType());
-        Assert.assertEquals(TokenType.INTEGER, lexer.next().getType());
-        Assert.assertEquals(TokenType.GREATER, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.BRACKET_CLOSE, lexer.next().getType());
-        Assert.assertEquals(TokenType.LAMBDA, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.DOT, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.BRACKET_OPEN, lexer.next().getType());
-        Assert.assertEquals(TokenType.INT_LITERAL, lexer.next().getType());
-        Assert.assertEquals(TokenType.BRACKET_CLOSE, lexer.next().getType());
-        Assert.assertEquals(TokenType.GREATER, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.DOT, lexer.next().getType());
-        Assert.assertEquals(TokenType.IDENTIFIER, lexer.next().getType());
-        Assert.assertEquals(TokenType.BRACKET_OPEN, lexer.next().getType());
-        Assert.assertEquals(TokenType.INT_LITERAL, lexer.next().getType());
-        Assert.assertEquals(TokenType.BRACKET_CLOSE, lexer.next().getType());
-        Assert.assertEquals(TokenType.BRACKET_CLOSE, lexer.next().getType());
-        Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
-        commentToken = lexer.next();
-        Assert.assertEquals(TokenType.ONE_LINE_COMMENT, commentToken.getType());
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 11, 0);
+        assertToken(lexer.next(), TokenType.DOT, 11, 8);
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 11, 9);
+        assertToken(lexer.next(), TokenType.BRACKET_OPEN, 11, 13);
+        assertToken(lexer.next(), TokenType.BRACKET_OPEN, 11, 14);
+        assertToken(lexer.next(), TokenType.TUPLE, 11, 16);
+        assertToken(lexer.next(), TokenType.LESS, 11, 21);
+        assertToken(lexer.next(), TokenType.STRING, 11, 22);
+        assertToken(lexer.next(), TokenType.COMMA, 11, 28);
+        assertToken(lexer.next(), TokenType.INTEGER, 11, 30);
+        assertToken(lexer.next(), TokenType.GREATER, 11, 33);
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 11, 35);
+        assertToken(lexer.next(), TokenType.COMMA, 11, 36);
+        assertToken(lexer.next(), TokenType.TUPLE, 11, 38);
+        assertToken(lexer.next(), TokenType.LESS, 11, 43);
+        assertToken(lexer.next(), TokenType.STRING, 11, 44);
+        assertToken(lexer.next(), TokenType.COMMA, 11, 50);
+        assertToken(lexer.next(), TokenType.INTEGER, 11, 52);
+        assertToken(lexer.next(), TokenType.GREATER, 11, 55);
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 11, 57);
+        assertToken(lexer.next(), TokenType.BRACKET_CLOSE, 11, 58);
+        assertToken(lexer.next(), TokenType.LAMBDA, 11, 60);
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 11, 63);
+        assertToken(lexer.next(), TokenType.DOT, 11, 64);
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 11, 65);
+        assertToken(lexer.next(), TokenType.BRACKET_OPEN, 11, 68);
+        assertToken(lexer.next(), TokenType.INT_LITERAL, 11, 69);
+        assertToken(lexer.next(), TokenType.BRACKET_CLOSE, 11, 70);
+        assertToken(lexer.next(), TokenType.GREATER, 11, 72);
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 11, 74);
+        assertToken(lexer.next(), TokenType.DOT, 11, 75);
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 11, 76);
+        assertToken(lexer.next(), TokenType.BRACKET_OPEN, 11, 79);
+        assertToken(lexer.next(), TokenType.INT_LITERAL, 11, 80);
+        assertToken(lexer.next(), TokenType.BRACKET_CLOSE, 11, 81);
+        assertToken(lexer.next(), TokenType.BRACKET_CLOSE, 11, 82);
+        assertToken(lexer.next(), TokenType.SEMICOLON, 11, 83);
+        assertToken(lexer.next(), TokenType.ONE_LINE_COMMENT, 11, 85);
     }
+
+
 
     @Test
     public void testTuplesAndComments() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, NumberMaxValueExceededException, IdentifierTooLongException {

@@ -35,7 +35,7 @@ public class LexerImpl implements Lexer {
     public Token next() throws NumberMaxValueExceededException, ReachedEOFException, StringMaxSizeExceeded, IOException, UnkownTokenException, IdentifierTooLongException {
         currentChar = reader.getNextChar();
         skipWhitespace();
-        currentPosition = getPosition();
+        currentPosition = new Position(reader.getLineNumber(), reader.getCharacterNumber());
 
         if (tryBuildEndOfFile() || tryBuildNumber() || tryBuildString() || tryBuildCommentOrOperandToken() || tryBuildIdentifierOrKeywordOrBoolean())
         {
@@ -85,7 +85,7 @@ public class LexerImpl implements Lexer {
             float value = Float.parseFloat(numberBuilder.toString());
             String[] parts = numberBuilder.toString().split("\\.");
             if (parts.length > 1 && Integer.parseInt(parts[1]) > DECIMALPARTMAXVALUE) {
-                throw new NumberMaxValueExceededException("Float value do not match alloweed range: " + DECIMALPARTMAXVALUE,  String.valueOf(value));
+                throw new NumberMaxValueExceededException("Float value do not match allowed range: " + DECIMALPARTMAXVALUE,  String.valueOf(value));
             }
             if (value > INTEGERMAXVALUE) {
                 throw new NumberMaxValueExceededException("Float value do not match allowed range: " + INTEGERMAXVALUE, String.valueOf(value));
@@ -223,10 +223,6 @@ public class LexerImpl implements Lexer {
             }
         }
         return false;
-    }
-
-    private Position getPosition() {
-        return reader.getPosition();
     }
 
 }

@@ -5,7 +5,8 @@ import org.example.token.Position;
 
 public interface InputReader {
 
-        public Position getPosition();
+        public int getCharacterNumber();
+        public int getLineNumber();
 
         public char getNextChar();
 

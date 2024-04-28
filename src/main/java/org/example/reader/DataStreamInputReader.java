@@ -11,7 +11,8 @@ import java.util.logging.Logger;
 public class DataStreamInputReader implements InputReader {
 
     private static final Logger logger = Logger.getLogger(DataStreamInputReader.class.getName());
-    private Position position = new Position();
+    private int lineNumber = 1;
+    private int characterNumber = -1;
     private char recentlyLoadedChar = 0;
     private BufferedReader bufferedReader;
     private boolean reloadLastChar = false;
@@ -42,13 +43,14 @@ public class DataStreamInputReader implements InputReader {
             }
             else {
                 nextChar = (char) bufferedReader.read();
-                position.nextCharacter();
+                characterNumber++;
             }
             if (nextChar != (char) -1 && isCharANewLine(nextChar)) {
-                position.nextLine();
+                lineNumber++;
+                characterNumber = -1;
                 char nextCharSeq = (char) bufferedReader.read();
                 if (nextCharSeq != (char) -1 && !areTwoCharsNewLine(nextChar, nextCharSeq)) {
-                    position.nextCharacter();
+                    characterNumber++;
                     recentlyLoadedChar = nextCharSeq;
                     rememberLastCharToBeLoadedNext();
                 }
@@ -101,5 +103,6 @@ public class DataStreamInputReader implements InputReader {
         return fileEnded;
     }
 
-    public Position getPosition() {return position;}
+    public int getLineNumber() {return lineNumber;}
+    public int getCharacterNumber() {return  characterNumber;}
 }

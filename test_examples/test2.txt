@@ -1,3 +1,11 @@
-ASC //aaaaa
-bool b = 4;
-List<int, int>; = [1, 2, 3];
+
+                Dictionary<String, int> var_dict = |
+                            "dog": 3,
+                    "cat": 4,
+                            "cow": 5,
+                                            "hamster": 6|;
+
+
+                var_tuple.get(0) // Getting the first item from the tuple
+                var_tuple.set(0, 2) // Setting the value at index 0 to 2
+                var_dict.sort(( Tuple<String, int> a, Tuple<String, int> b) => a.get(1) > b.get(1)); // if value a is greater than value b, then a should be first in order;
