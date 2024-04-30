@@ -1,5 +1,9 @@
 package org.example.lexer.error;
 
+import org.example.token.Position;
+
 public class UnkownTokenException extends Exception {
-    public UnkownTokenException(String msg) {super(msg);}
+    public UnkownTokenException(Position position) {
+        super("ERROR in" + position.toString() + " | Unknown Token");
+    }
 }

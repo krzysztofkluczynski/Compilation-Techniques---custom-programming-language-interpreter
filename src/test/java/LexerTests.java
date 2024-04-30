@@ -25,43 +25,446 @@ public class LexerTests {
         Assert.assertEquals(expectedValue, token.getValue());
     }
 
+    // Arithmetic Operators Tests
     @Test
-    public void testLexerTokenTypesAndPositions() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, NumberMaxValueExceededException, IdentifierTooLongException {
-        DataStreamInputReader reader = new DataStreamInputReader(
-                """
-                   int a = 3; float b = 3.14; bool c = true; String x = "ala ma kota123";
-                   """
-        );
+    public void testPlusToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("+");
         LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.PLUS, 1, 0, "+");
+    }
 
-        assertToken(lexer.next(), TokenType.INTEGER, 1, 0);
-        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 4);
-        assertToken(lexer.next(), TokenType.EQUAL, 1, 6);
-        assertToken(lexer.next(), TokenType.INT_LITERAL, 1, 8, 3);
-        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 9);
+    @Test
+    public void testMinusToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("-");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.MINUS, 1, 0, "-");
+    }
 
-        assertToken(lexer.next(), TokenType.FLOAT, 1, 11);
-        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 17);
-        assertToken(lexer.next(), TokenType.EQUAL, 1, 19);
-        assertToken(lexer.next(), TokenType.FLOAT_LITERAL, 1, 21, 3.14f);
-        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 25);
+    @Test
+    public void testMultiplyToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("*");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.MULTIPLY, 1, 0, "*");
+    }
 
-        assertToken(lexer.next(), TokenType.BOOL, 1, 27);
-        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 32);
-        assertToken(lexer.next(), TokenType.EQUAL, 1, 34);
-        assertToken(lexer.next(), TokenType.BOOL_LITERAL, 1, 36, true);
-        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 40);
+    @Test
+    public void testDivideToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("/");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.DIVIDE, 1, 0, "/");
+    }
 
-        assertToken(lexer.next(), TokenType.STRING, 1, 42);
-        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 49);
-        assertToken(lexer.next(), TokenType.EQUAL, 1, 51);
-        assertToken(lexer.next(), TokenType.STRING_LITERAL, 1, 53, "ala ma kota123");
-        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 69);
+    @Test
+    public void testEqualToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("=");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.EQUAL, 1, 0, "=");
+    }
+
+    // Comparison Operators Tests
+    @Test
+    public void testEqualCompToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("==");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.EQUAL_COMP, 1, 0, "==");
+    }
+
+    @Test
+    public void testNotEqualToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("!=");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.NOTEQUAL, 1, 0, "!=");
+    }
+
+    @Test
+    public void testGreaterToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(">");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.GREATER, 1, 0, ">");
+    }
+
+    @Test
+    public void testLessToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("<");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.LESS, 1, 0, "<");
+    }
+
+    @Test
+    public void testLessEqualToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("<=");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.LESSEQUAL, 1, 0, "<=");
+    }
+
+    @Test
+    public void testGreaterEqualToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(">=");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.GREATEREQUAL, 1, 0, ">=");
+    }
+
+    @Test
+    public void testAndToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("and");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.AND, 1, 0, "and");
+    }
+
+    @Test
+    public void testOrToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("or");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.OR, 1, 0, "or");
+    }
+
+    @Test
+    public void testNotToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("not");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.NOT, 1, 0, "not");
+    }
+
+    // Types Tests
+    @Test
+    public void testIntegerToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("int");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.INTEGER, 1, 0, "int");
+    }
+
+    @Test
+    public void testFloatToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("float");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.FLOAT, 1, 0, "float");
+    }
+
+    @Test
+    public void testBoolToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("bool");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.BOOL, 1, 0, "bool");
+    }
+
+    @Test
+    public void testStringToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("String");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.STRING, 1, 0, "String");
+    }
+
+    @Test
+    public void testDictionaryToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("Dictionary");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.DICTIONARY, 1, 0, "Dictionary");
+    }
+
+    @Test
+    public void testListToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("List");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.LIST, 1, 0, "List");
+    }
+
+    @Test
+    public void testTupleToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("Tuple");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.TUPLE, 1, 0, "Tuple");
+    }
+
+    @Test
+    public void testVoidToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("void");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.VOID, 1, 0, "void");
+    }
+
+    @Test
+    public void testCurlyBracketCloseToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("}");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.CURLY_BRACKET_CLOSE, 1, 0, "}");
+    }
+
+    @Test
+    public void testBracketOpenToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("(");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.BRACKET_OPEN, 1, 0, "(");
+    }
+
+    @Test
+    public void testBracketCloseToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(")");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.BRACKET_CLOSE, 1, 0, ")");
+    }
+
+    @Test
+    public void testSquareBracketOpenToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("[");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.SQUARE_BRACKET_OPEN, 1, 0, "[");
+    }
+
+    @Test
+    public void testSquareBracketCloseToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("]");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.SQUARE_BRACKET_CLOSE, 1, 0, "]");
+    }
+
+    @Test
+    public void testPipeToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("|");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.PIPE, 1, 0, "|");
+    }
+
+    @Test
+    public void testWhileToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("while");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.WHILE, 1, 0, "while");
+    }
+
+    @Test
+    public void testForToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("for");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.FOR, 1, 0, "for");
+    }
+
+    @Test
+    public void testIfToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("if");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.IF, 1, 0, "if");
+    }
+
+    @Test
+    public void testElifToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("elif");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.ELIF, 1, 0, "elif");
+    }
+
+    @Test
+    public void testElseToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("else");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.ELSE, 1, 0, "else");
+    }
+
+    @Test
+    public void testSelectToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("SELECT");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.SELECT, 1, 0, "SELECT");
+    }
+
+    @Test
+    public void testFromToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("FROM");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.FROM, 1, 0, "FROM");
+    }
+
+    @Test
+    public void testWhereToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("WHERE");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.WHERE, 1, 0, "WHERE");
+    }
+
+    @Test
+    public void testOrderByToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("ORDER_BY");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.ORDER_BY, 1, 0, "ORDER_BY");
+    }
+
+    @Test
+    public void testAscendingToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("ASC");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.ASCENDING, 1, 0, "ASC");
+    }
+
+    @Test
+    public void testDescendingToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("DSC");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.DESCENDING, 1, 0, "DSC");
+    }
+
+    // Others
+    @Test
+    public void testMainFunctionToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("main");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.MAIN_FUNCTION, 1, 0, "main");
+    }
+
+    @Test
+    public void testFunctionToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("fn");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.FUNCTION, 1, 0, "fn");
+    }
+
+    @Test
+    public void testReturnToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("return");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.RETURN, 1, 0, "return");
+    }
+
+    @Test
+    public void testCastToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("$");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.CAST, 1, 0, "$");
+    }
+
+    @Test
+    public void testLambdaToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("=>");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.LAMBDA, 1, 0, "=>");
+    }
+
+    @Test
+    public void testSemicolonToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(";");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 0, ";");
+    }
+
+    @Test
+    public void testColonToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(":");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.COLON, 1, 0, ":");
+    }
+
+    @Test
+    public void testCommaToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(",");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.COMMA, 1, 0, ",");
+    }
+
+    @Test
+    public void testDotToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(".");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.DOT, 1, 0, ".");
+    }
+
+    @Test
+    public void testOneLineCommentToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("//This is a comment");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.ONE_LINE_COMMENT, 1, 0, "This is a comment");
+    }
+
+    @Test
+    public void testMultiLineCommentToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("/* Multi-line\ncomment */");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.MULTI_LINE_COMMENT, 1, 0, " Multi-line\ncomment ");
+    }
+
+    @Test
+    public void testIdentifierToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("variableName");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 0, "variableName");
+    }
+
+    @Test
+    public void testBoolLiteralToken() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("true");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.BOOL_LITERAL, 1, 0, true);
+    }
+
+    @Test
+    public void testBoolLiteralTokenFalse() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("false");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.BOOL_LITERAL, 1, 0, false);
+    }
+
+    @Test
+    public void testStringLiteral() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("\"string test\"");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.STRING_LITERAL, 1, 0, "string test");
+    }
+
+    @Test
+    public void testIntLiteral() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("123456");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.INT_LITERAL, 1, 0, 123456);
     }
 
 
     @Test
-    public void testFullFeaturesIncludingCommentsAndPositions() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, NumberMaxValueExceededException, IdentifierTooLongException {
+    public void testFloatLiteral() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader("3.14532");
+        LexerImpl lexer = new LexerImpl(reader);
+        assertToken(lexer.next(), TokenType.FLOAT_LITERAL, 1, 0, 3.14532f);
+    }
+
+
+
+
+
+
+
+    @Test
+    public void testLexerTokenTypesAndPositions() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, IntMaxValueExceededException, DecimalMaxValueExceededException, IdentifierTooLongException {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                   int a = 31234; float b = 3.14; bool c = true; String x = "ala ma kota123";
+                   """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+
+        assertToken(lexer.next(), TokenType.INTEGER, 1, 0, "int");
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 4, "a");
+        assertToken(lexer.next(), TokenType.EQUAL, 1, 6, "=");
+        assertToken(lexer.next(), TokenType.INT_LITERAL, 1, 8, 31234);
+        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 13, ";");
+
+        assertToken(lexer.next(), TokenType.FLOAT, 1, 15, "float");
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 21, "b");
+        assertToken(lexer.next(), TokenType.EQUAL, 1, 23, "=");
+        assertToken(lexer.next(), TokenType.FLOAT_LITERAL, 1, 25, 3.14f);
+        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 29, ";");
+
+        assertToken(lexer.next(), TokenType.BOOL, 1, 31, "bool");
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 36, "c");
+        assertToken(lexer.next(), TokenType.EQUAL, 1, 38, "=");
+        assertToken(lexer.next(), TokenType.BOOL_LITERAL, 1, 40, true);
+        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 44, ";");
+
+        assertToken(lexer.next(), TokenType.STRING, 1, 46, "String");
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 53, "x");
+        assertToken(lexer.next(), TokenType.EQUAL, 1, 55, "=");
+        assertToken(lexer.next(), TokenType.STRING_LITERAL, 1, 57, "ala ma kota123");
+        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 73, ";");
+    }
+
+
+    @Test
+    public void testFullFeaturesIncludingCommentsAndPositions() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, IntMaxValueExceededException, DecimalMaxValueExceededException, IdentifierTooLongException {
         DataStreamInputReader reader = new DataStreamInputReader(
                 """
                 
@@ -177,7 +580,7 @@ public class LexerTests {
 
 
     @Test
-    public void testTuplesAndComments() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, NumberMaxValueExceededException, IdentifierTooLongException {
+    public void testTuplesAndComments() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, IdentifierTooLongException, IntMaxValueExceededException, DecimalMaxValueExceededException {
         DataStreamInputReader reader = new DataStreamInputReader(
                 """
                 Tuple<String, int> var_tuple = ("dog", 3);
@@ -232,7 +635,7 @@ public class LexerTests {
     }
 
     @Test
-    public void testListOperations() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, NumberMaxValueExceededException, IdentifierTooLongException {
+    public void testListOperations() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, IdentifierTooLongException, IntMaxValueExceededException, DecimalMaxValueExceededException {
         DataStreamInputReader reader = new DataStreamInputReader(
                 """
                 List<int> var_list = [1, 2, 3, 4, 5];
@@ -307,7 +710,7 @@ public class LexerTests {
         Assert.assertEquals(TokenType.SEMICOLON, lexer.next().getType());
     }
     @Test
-    public void testFunctionAndOperations() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, NumberMaxValueExceededException, IdentifierTooLongException {
+    public void testFunctionAndOperations() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, IdentifierTooLongException, IntMaxValueExceededException, DecimalMaxValueExceededException {
         DataStreamInputReader reader = new DataStreamInputReader(
                 """
                 // Function that increments an int
@@ -393,7 +796,7 @@ public class LexerTests {
     }
 
     @Test
-    public void testSQLLikeQueryParsing() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, NumberMaxValueExceededException, IdentifierTooLongException {
+    public void testSQLLikeQueryParsing() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, IdentifierTooLongException, IntMaxValueExceededException, DecimalMaxValueExceededException {
         DataStreamInputReader reader = new DataStreamInputReader(
                 """
                 List<String> query_result2 = 
@@ -457,7 +860,7 @@ public class LexerTests {
     }
 
     @Test
-    public void testConditionalStructures() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, NumberMaxValueExceededException, IdentifierTooLongException {
+    public void testConditionalStructures() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, IdentifierTooLongException, IntMaxValueExceededException, DecimalMaxValueExceededException {
         DataStreamInputReader reader = new DataStreamInputReader(
                 """
                 int a = 2;
@@ -531,7 +934,7 @@ public class LexerTests {
     }
 
     @Test
-    public void testControlFlowAndListOperations() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, NumberMaxValueExceededException, IdentifierTooLongException {
+    public void testControlFlowAndListOperations() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, IdentifierTooLongException, IntMaxValueExceededException, DecimalMaxValueExceededException {
         DataStreamInputReader reader = new DataStreamInputReader(
                 """
                 List<int> list = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -615,7 +1018,7 @@ public class LexerTests {
     public void testNumberMaxValueExceeded() throws FileNotFoundException {
         DataStreamInputReader reader = new DataStreamInputReader("100000001");
         LexerImpl lexer = new LexerImpl(reader);
-        Assertions.assertThrows(NumberMaxValueExceededException.class, lexer::next);
+        Assertions.assertThrows(IntMaxValueExceededException.class, lexer::next);
     }
 
     @Test

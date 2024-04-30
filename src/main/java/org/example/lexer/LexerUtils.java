@@ -8,11 +8,9 @@ import java.util.Map;
 
 public class LexerUtils {
 
-    private static final Map<String, TokenType> keywordTokens = initializeTokens();
-
     // Method to initialize the map using Map.ofEntries
-    private static Map<String, TokenType> initializeTokens() {
-        return Map.ofEntries(
+    private static final Map<String, TokenType> operandsMap =
+        Map.ofEntries(
                 Map.entry("+", TokenType.PLUS),
                 Map.entry("-", TokenType.MINUS),
                 Map.entry("*", TokenType.MULTIPLY),
@@ -36,41 +34,49 @@ public class LexerUtils {
                 Map.entry(",", TokenType.COMMA),
                 Map.entry(".", TokenType.DOT),
                 Map.entry("$", TokenType.CAST),
-                Map.entry("=>", TokenType.LAMBDA),
-                // Loops and conditional statements
-                Map.entry("while", TokenType.WHILE),
-                Map.entry("for", TokenType.FOR),
-                Map.entry("if", TokenType.IF),
-                Map.entry("elif", TokenType.ELIF),
-                Map.entry("else", TokenType.ELSE),
-                // Dictionary queries
-                Map.entry("SELECT", TokenType.SELECT),
-                Map.entry("FROM", TokenType.FROM),
-                Map.entry("WHERE", TokenType.WHERE),
-                Map.entry("ORDER_BY", TokenType.ORDER_BY),
-                Map.entry("ASC", TokenType.ASCENDING),
-                Map.entry("DSC", TokenType.DESCENDING),
-                // Others
-                Map.entry("main", TokenType.MAIN_FUNCTION),
-                Map.entry("fn", TokenType.FUNCTION),
-                Map.entry("return", TokenType.RETURN),
-                // Logical operators
-                Map.entry("and", TokenType.AND),
-                Map.entry("or", TokenType.OR),
-                Map.entry("not", TokenType.NOT),
-                // Types
-                Map.entry("int", TokenType.INTEGER),
-                Map.entry("float", TokenType.FLOAT),
-                Map.entry("bool", TokenType.BOOL),
-                Map.entry("String", TokenType.STRING),
-                Map.entry("Dictionary", TokenType.DICTIONARY),
-                Map.entry("List", TokenType.LIST),
-                Map.entry("Tuple", TokenType.TUPLE),
-                Map.entry("void", TokenType.VOID)
-        );
-    }
+                Map.entry("=>", TokenType.LAMBDA)
 
-    public static TokenType getTokenType(String keyword) {
-        return keywordTokens.get(keyword);
+        );
+
+    private static final Map<String, TokenType> keywordsMap =
+            Map.ofEntries(
+                    // Loops and conditional statements
+                    Map.entry("while", TokenType.WHILE),
+                    Map.entry("for", TokenType.FOR),
+                    Map.entry("if", TokenType.IF),
+                    Map.entry("elif", TokenType.ELIF),
+                    Map.entry("else", TokenType.ELSE),
+                    // Dictionary queries
+                    Map.entry("SELECT", TokenType.SELECT),
+                    Map.entry("FROM", TokenType.FROM),
+                    Map.entry("WHERE", TokenType.WHERE),
+                    Map.entry("ORDER_BY", TokenType.ORDER_BY),
+                    Map.entry("ASC", TokenType.ASCENDING),
+                    Map.entry("DSC", TokenType.DESCENDING),
+                    // Others
+                    Map.entry("main", TokenType.MAIN_FUNCTION),
+                    Map.entry("fn", TokenType.FUNCTION),
+                    Map.entry("return", TokenType.RETURN),
+                    // Logical operators
+                    Map.entry("and", TokenType.AND),
+                    Map.entry("or", TokenType.OR),
+                    Map.entry("not", TokenType.NOT),
+                    // Types
+                    Map.entry("int", TokenType.INTEGER),
+                    Map.entry("float", TokenType.FLOAT),
+                    Map.entry("bool", TokenType.BOOL),
+                    Map.entry("String", TokenType.STRING),
+                    Map.entry("Dictionary", TokenType.DICTIONARY),
+                    Map.entry("List", TokenType.LIST),
+                    Map.entry("Tuple", TokenType.TUPLE),
+                    Map.entry("void", TokenType.VOID)
+            );
+
+
+    public static TokenType getTokenKeyword(String keyword) {
+        return keywordsMap.get(keyword);
+    }
+    public static TokenType getTokenOperand(String keyword) {
+        return operandsMap.get(keyword);
     }
 }

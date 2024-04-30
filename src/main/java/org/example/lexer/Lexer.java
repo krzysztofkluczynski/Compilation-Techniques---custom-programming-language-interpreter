@@ -6,5 +6,5 @@ import org.example.token.Token;
 import java.io.IOException;
 
 public interface Lexer {
-    Token next() throws NumberMaxValueExceededException, ReachedEOFException, StringMaxSizeExceeded, IOException, UnkownTokenException, IdentifierTooLongException;
+    Token next() throws ReachedEOFException, StringMaxSizeExceeded, IOException, UnkownTokenException, IdentifierTooLongException, IntMaxValueExceededException, DecimalMaxValueExceededException;
 }

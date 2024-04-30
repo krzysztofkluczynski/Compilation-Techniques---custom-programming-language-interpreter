@@ -3,7 +3,6 @@ package org.example.lexer;
 import org.example.lexer.error.*;
 import org.example.reader.InputReader;
 import org.example.token.*;
-import org.xml.sax.ErrorHandler;
 
 import java.io.IOException;
 
@@ -40,7 +39,7 @@ public class LexerImpl implements Lexer {
     }
 
     @Override
-    public Token next() throws NumberMaxValueExceededException, ReachedEOFException, StringMaxSizeExceeded, IOException, UnkownTokenException, IdentifierTooLongException {
+    public Token next() throws ReachedEOFException, StringMaxSizeExceeded, IOException, UnkownTokenException, IdentifierTooLongException, IntMaxValueExceededException, DecimalMaxValueExceededException {
         currentChar = reader.getNextChar();
         skipWhitespace();
         currentPosition = new Position(reader.getLineNumber(), reader.getCharacterNumber());
@@ -49,7 +48,7 @@ public class LexerImpl implements Lexer {
         {
             return token;
         } else {
-            throw new UnkownTokenException("Unknown Token");
+            throw new UnkownTokenException(currentPosition);
         }
 
     }
@@ -65,16 +64,16 @@ public class LexerImpl implements Lexer {
         if (!reader.isFileEnded()) {
             return false;
         }
-        token = new KeywordToken(TokenType.END_OF_FILE, currentPosition);
+        token = new KeywordOrOperandToken(TokenType.END_OF_FILE, currentPosition, "\\n");
         return true;
     }
 
-    private boolean tryBuildNumber() throws NumberMaxValueExceededException {
+    private boolean tryBuildNumber() throws IntMaxValueExceededException, DecimalMaxValueExceededException {
         if (Character.isDigit(currentChar)) {
             long value = 0;
             while(Character.isDigit(currentChar)) {
                 if (value * 10 + (currentChar - '0') > this.INTEGERMAXVALUE) {
-                    throw new NumberMaxValueExceededException("Value of int is too big! Max value is: "+  this.INTEGERMAXVALUE, String.valueOf(value));
+                    throw new IntMaxValueExceededException(currentPosition, MAXIDENTIFIERLENGTH);
                 }
                 value = value * 10;
                 value += currentChar - '0';
@@ -89,7 +88,7 @@ public class LexerImpl implements Lexer {
                 currentChar = reader.getNextChar();
                 while(Character.isDigit(currentChar)) {
                     if (decimalValue * 10 + (currentChar - '0') > DECIMALPARTMAXVALUE) {
-                        throw new NumberMaxValueExceededException("Value of decimal is too big! Max value is: "+  DECIMALPARTMAXVALUE, String.valueOf(value));
+                        throw new DecimalMaxValueExceededException(currentPosition, DECIMALPARTMAXVALUE);
                     }
                     decimalValue = decimalValue * 10;
                     decimalValue += currentChar - '0';
@@ -138,14 +137,14 @@ public class LexerImpl implements Lexer {
                     stringBuilder.append("\\n");
                 } else {
                     if (stringBuilder.length() > STRINGMAXLENGTH) {
-                        throw new StringMaxSizeExceeded("String max size exceeded while parsing string max is: " + STRINGMAXLENGTH);
+                        throw new StringMaxSizeExceeded(currentPosition, STRINGMAXLENGTH);
                     }
                         stringBuilder.append(currentChar);
                         currentChar = reader.getNextChar();
                     }
                 }
                 if (reader.isFileEnded()) {
-                    throw new ReachedEOFException("Reached end of file while parsing String");
+                    throw new ReachedEOFException(currentPosition);
                 } else {
                     token = new StringToken(currentPosition, stringBuilder.toString());
                     return true;
@@ -174,17 +173,17 @@ public class LexerImpl implements Lexer {
         char nextChar = reader.getNextChar();
         String potentialDoubleLexeme = lexeme + nextChar;
 
-        TokenType type = LexerUtils.getTokenType(potentialDoubleLexeme);
+        TokenType type = LexerUtils.getTokenOperand(potentialDoubleLexeme);
         if (type != null) {
-            token = new KeywordToken(type, currentPosition);
+            token = new KeywordOrOperandToken(type, currentPosition, potentialDoubleLexeme);
             return true;
         } else {
             reader.rememberLastCharToBeLoadedNext();
         }
 
-        type = LexerUtils.getTokenType(lexeme);
+        type = LexerUtils.getTokenOperand(lexeme);
         if (type != null) {
-            token = new KeywordToken(type, currentPosition);
+            token = new KeywordOrOperandToken(type, currentPosition, lexeme);
             return true;
         }
 
@@ -192,16 +191,21 @@ public class LexerImpl implements Lexer {
     }
 
     private void consumeLineComment() {
-        while ((currentChar = reader.getNextChar()) != '\n' && currentChar != '\0') {}
-        token = new KeywordToken(TokenType.ONE_LINE_COMMENT, currentPosition);
+        StringBuilder commentContent = new StringBuilder();  // StringBuilder to accumulate the comment characters
+        while ((currentChar = reader.getNextChar()) != '\n' && currentChar != '\0') {
+            commentContent.append(currentChar);  // Append each character to the StringBuilder
+        }
+        token = new KeywordOrOperandToken(TokenType.ONE_LINE_COMMENT, currentPosition, commentContent.toString());
     }
 
     private void consumeBlockComment() throws IOException, ReachedEOFException {
+        StringBuilder commentContent = new StringBuilder();  // StringBuilder to accumulate the comment characters
         while (true) {
             currentChar = reader.getNextChar();
             if (currentChar == '\0') {  // Sprawdzenie końca pliku
-                throw new ReachedEOFException("Reached EOF while parsing a comment");
+                throw new ReachedEOFException(currentPosition);
             }
+             // Append each character to the StringBuilder
             if (currentChar == '*') {
                 char nextChar = reader.getNextChar();
                 if (nextChar == '/') {
@@ -209,8 +213,9 @@ public class LexerImpl implements Lexer {
                 }
                 reader.rememberLastCharToBeLoadedNext();
             }
+            commentContent.append(currentChar);
         }
-        token = new KeywordToken(TokenType.MULTI_LINE_COMMENT, currentPosition);
+        token = new KeywordOrOperandToken(TokenType.MULTI_LINE_COMMENT, currentPosition, commentContent.toString());
     }
     private boolean tryBuildIdentifierOrKeywordOrBoolean() throws IOException, IdentifierTooLongException {
         StringBuilder builder = new StringBuilder();
@@ -219,16 +224,16 @@ public class LexerImpl implements Lexer {
             while ((currentChar = reader.getNextChar()) != '\0' &&
                     (Character.isLetterOrDigit(currentChar) || currentChar == '_')) {
                 if (builder.toString().length() >= MAXIDENTIFIERLENGTH) {
-                    throw new IdentifierTooLongException("Identifer too long");
+                    throw new IdentifierTooLongException(currentPosition, MAXIDENTIFIERLENGTH);
                 }
                 builder.append(currentChar);
             }
 
             String lexeme = builder.toString();
-            TokenType type = LexerUtils.getTokenType(lexeme);
+            TokenType type = LexerUtils.getTokenKeyword(lexeme);
 
             if (type != null) {
-                token = new KeywordToken(type, currentPosition);
+                token = new KeywordOrOperandToken(type, currentPosition, lexeme);
                 reader.rememberLastCharToBeLoadedNext();
                 return true;
             } else if (lexeme.equals("true") || lexeme.equals("false")) {
@@ -237,7 +242,7 @@ public class LexerImpl implements Lexer {
                 return true;
             } else {
                 // If it's not a keyword or boolean literal, it's an identifier
-                token = new KeywordToken(TokenType.IDENTIFIER, currentPosition);
+                token = new KeywordOrOperandToken(TokenType.IDENTIFIER, currentPosition, lexeme);
                 reader.rememberLastCharToBeLoadedNext();
                 return true;
             }
