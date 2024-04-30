@@ -31,6 +31,14 @@ public class LexerImpl implements Lexer {
         this.MAXIDENTIFIERLENGTH = 100;
     }
 
+    public LexerImpl(InputReader reader, int intMaxValue, int decimalMaxValue, int stringMaxLength, int identifierMaxLength) {
+        this.reader = reader;
+        this.INTEGERMAXVALUE = intMaxValue;
+        this.DECIMALPARTMAXVALUE = decimalMaxValue;
+        this.STRINGMAXLENGTH = stringMaxLength;
+        this.MAXIDENTIFIERLENGTH = identifierMaxLength;
+    }
+
     @Override
     public Token next() throws NumberMaxValueExceededException, ReachedEOFException, StringMaxSizeExceeded, IOException, UnkownTokenException, IdentifierTooLongException {
         currentChar = reader.getNextChar();
@@ -62,80 +70,92 @@ public class LexerImpl implements Lexer {
     }
 
     private boolean tryBuildNumber() throws NumberMaxValueExceededException {
-        if (!Character.isDigit(currentChar)) {
-            return false;
-        }
-
-        StringBuilder numberBuilder = new StringBuilder();
-        numberBuilder.append(currentChar);
-        boolean hasDot = false;
-
-        while (Character.isDigit(currentChar = reader.getNextChar()) || currentChar == '.') {
-            if (currentChar == '.') {
-                if (hasDot) { // only one dot is allowed
-                    throw new NumberFormatException("Invalid number format.");
+        if (Character.isDigit(currentChar)) {
+            long value = 0;
+            while(Character.isDigit(currentChar)) {
+                if (value * 10 + (currentChar - '0') > this.INTEGERMAXVALUE) {
+                    throw new NumberMaxValueExceededException("Value of int is too big! Max value is: "+  this.INTEGERMAXVALUE, String.valueOf(value));
                 }
-                hasDot = true;
+                value = value * 10;
+                value += currentChar - '0';
+                currentChar = reader.getNextChar();
             }
-            numberBuilder.append(currentChar);
-        }
 
+            boolean hasDecimalValue = false;
+            long decimalValue = 0;
+            int decimalCounter = 0;
+            if (currentChar == '.') {
+                hasDecimalValue = true;
+                currentChar = reader.getNextChar();
+                while(Character.isDigit(currentChar)) {
+                    if (decimalValue * 10 + (currentChar - '0') > DECIMALPARTMAXVALUE) {
+                        throw new NumberMaxValueExceededException("Value of decimal is too big! Max value is: "+  DECIMALPARTMAXVALUE, String.valueOf(value));
+                    }
+                    decimalValue = decimalValue * 10;
+                    decimalValue += currentChar - '0';
+                    decimalCounter += 1;
+                    currentChar = reader.getNextChar();
+                }
+            }
+            if (hasDecimalValue && decimalCounter == 0) {
+                StringBuilder stringBuilderInvalidValue = new StringBuilder(String.valueOf(value) + '.');
+                while (!reader.isFileEnded() && !Character.isWhitespace(currentChar)) {
+                    stringBuilderInvalidValue.append(currentChar);
+                    currentChar = reader.getNextChar();
+                }
+                reader.rememberLastCharToBeLoadedNext();
+                return false;
 
-        if (hasDot) {
-            float value = Float.parseFloat(numberBuilder.toString());
-            String[] parts = numberBuilder.toString().split("\\.");
-            if (parts.length > 1 && Integer.parseInt(parts[1]) > DECIMALPARTMAXVALUE) {
-                throw new NumberMaxValueExceededException("Float value do not match allowed range: " + DECIMALPARTMAXVALUE,  String.valueOf(value));
+            } else if (hasDecimalValue) {
+                reader.rememberLastCharToBeLoadedNext();
+                double floatValue = value + (decimalValue / Math.pow(10, decimalCounter));
+                token =  new FloatToken(currentPosition, (float) floatValue);
+                return true;
+            } else {
+                reader.rememberLastCharToBeLoadedNext();
+                token = new IntegerToken(currentPosition, (int) value);
+                return true;
             }
-            if (value > INTEGERMAXVALUE) {
-                throw new NumberMaxValueExceededException("Float value do not match allowed range: " + INTEGERMAXVALUE, String.valueOf(value));
-            }
-            token = new FloatToken(currentPosition, value);
-            reader.rememberLastCharToBeLoadedNext();
-            return true;
-        } else {
-            int value = Integer.parseInt(numberBuilder.toString());
-            if (value > INTEGERMAXVALUE) {
-                throw new NumberMaxValueExceededException("Integer value exceeds max value: " + INTEGERMAXVALUE, String.valueOf(value));
-            }
-            token = new IntegerToken(currentPosition, value);
-            reader.rememberLastCharToBeLoadedNext();
-            return true;
-        }
-
+        } else return false;
 
     }
 
     private boolean tryBuildString() throws ReachedEOFException, StringMaxSizeExceeded {
-        if(String.valueOf(currentChar).equals("\"")) {
+        if (String.valueOf(currentChar).equals("\"")) {
             StringBuilder stringBuilder = new StringBuilder();
+            boolean insideSingleQuotes = false;  // Flag to check if inside single quotes
             currentChar = reader.getNextChar();
-            while(!"\"".equals(String.valueOf(currentChar)) && !reader.isFileEnded()) {
-                if (reader.isCharANewLine(currentChar)) {
+            while (!"\"".equals(String.valueOf(currentChar)) && !reader.isFileEnded()) {
+                if (currentChar == '\'') {  // Toggle the insideSingleQuotes
+                    insideSingleQuotes = !insideSingleQuotes;
+                }
+                if (!insideSingleQuotes && reader.isCharANewLine(currentChar)) {
                     char previousChar = currentChar;
                     currentChar = reader.getNextChar();
                     if (reader.areTwoCharsNewLine(previousChar, currentChar)) {
                         currentChar = reader.getNextChar();
                     }
                     stringBuilder.append("\\n");
+                } else {
+                    if (stringBuilder.length() > STRINGMAXLENGTH) {
+                        throw new StringMaxSizeExceeded("String max size exceeded while parsing string max is: " + STRINGMAXLENGTH);
+                    }
+                        stringBuilder.append(currentChar);
+                        currentChar = reader.getNextChar();
+                    }
                 }
-                else {
-                    stringBuilder.append(currentChar);
-                    currentChar = reader.getNextChar();
+                if (reader.isFileEnded()) {
+                    throw new ReachedEOFException("Reached end of file while parsing String");
+                } else {
+                    token = new StringToken(currentPosition, stringBuilder.toString());
+                    return true;
                 }
+
             }
-            if (reader.isFileEnded()) {
-                throw new ReachedEOFException("Reached end of file while parsing String");
-            } else if (stringBuilder.length() > STRINGMAXLENGTH) {
-                throw new StringMaxSizeExceeded("String max size excceed while parsing string max is: " + STRINGMAXLENGTH);
-            } else {
-                token =  new StringToken(currentPosition, stringBuilder.toString());
-                return true;
-            }
-        } else {
-            return false;
-        }
+        return false;
     }
+
+
 
     private boolean tryBuildCommentOrOperandToken() throws IOException, ReachedEOFException {
         if (currentChar == '/') {
@@ -198,13 +218,13 @@ public class LexerImpl implements Lexer {
             builder.append(currentChar);
             while ((currentChar = reader.getNextChar()) != '\0' &&
                     (Character.isLetterOrDigit(currentChar) || currentChar == '_')) {
+                if (builder.toString().length() >= MAXIDENTIFIERLENGTH) {
+                    throw new IdentifierTooLongException("Identifer too long");
+                }
                 builder.append(currentChar);
             }
 
             String lexeme = builder.toString();
-            if (lexeme.length() > MAXIDENTIFIERLENGTH) {
-                throw new IdentifierTooLongException("Identifer too long");
-            }
             TokenType type = LexerUtils.getTokenType(lexeme);
 
             if (type != null) {

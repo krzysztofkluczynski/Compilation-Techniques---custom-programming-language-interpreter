@@ -13,15 +13,21 @@ import java.util.logging.Logger;
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        if (args.length != 1) {
-                throw new Exception("A file path must be provided as an argument.");
+
+        if (args.length < 1) {
+                throw new Exception("At least file path must be provided as an argument.");
             }
 
+        Lexer lexer;
         try {
             String filePath = args[0];
             String content = new String(Files.readAllBytes(Paths.get(filePath)));
             DataStreamInputReader reader = new DataStreamInputReader(content);
-            Lexer lexer = new LexerImpl(reader);
+        if (args.length == 5) {
+            lexer = new LexerImpl(reader, Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]));
+        } else {
+            lexer = new LexerImpl(reader);
+        }
 
             for (int count = 0; count < 70; count++) {
                 TokenType t = lexer.next().getType();
