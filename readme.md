@@ -475,8 +475,7 @@ który posiada jedynie kilka zmian względem tego co widać poniżej, m.in lepie
 Pomaga to w testowaniu naszej gramatyki za pomocą narzędzi takich jak https://mdkrajnak.github.io/ebnftest/.
 Niestety nie da się ominąć braku definicji znaków białych, przez co podczas testowania w polu "Test Input" należy umieszczać cały kod ciągiem.
 ```
- program                    = {definition}
- definition                 = function_definition
+ program                    = {function_definition}
  function_definition        = "fn",  (type | "void"), identifier, "(", parameters-list, ")", block;
  
  parameters-list            = [ type, identifier, { ",", type,  identifier } ]; 
@@ -491,7 +490,7 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
                             | return_statement;
                                                  
  conditional                = "if", "(", expression, ")", block,
-                            [ { "elif", "(", expression, ")", block },  //czy to jest poprawne? moze lepiej zdefiniowac blok elif oddzielnie
+                            [ { "elif", "(", expression, ")", block },  
                             "else", block ];
                                                                        
  while_loop                 = "while", "(", expression, ")", block;
