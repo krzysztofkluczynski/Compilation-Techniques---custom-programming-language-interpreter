@@ -540,9 +540,9 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
  type_complex               = dictionary_declaration | tuple_declaration | list_declaration
  type_basic                 = "int" | "float" | "String" | "boolean";
 
- dictionary_declaration     = "Dictionary", "<", type, ",", type, ">";  
- tuple_declaration          = "Tuple", "<", type, ",", type, ">";
- list_declaration           = "List", "<", type, ">" ;
+ dictionary_declaration     = "Dictionary", "<", type_basic, ",", type_basic, ">";  
+ tuple_declaration          = "Tuple", "<", type_basic, ",", type_basic, ">";
+ list_declaration           = "List", "<", type_basic, ">" ;
 
  literal                    = boolean | string | integer | float | complex_literal;
  complex_literal            = dictionary_literal | tuple_literal | list_literal

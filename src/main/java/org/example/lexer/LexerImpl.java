@@ -217,7 +217,7 @@ public class LexerImpl implements Lexer {
         }
         token = new KeywordOrOperandToken(TokenType.MULTI_LINE_COMMENT, currentPosition, commentContent.toString());
     }
-    private boolean tryBuildIdentifierOrKeywordOrBoolean() throws IOException, IdentifierTooLongException {
+    private boolean tryBuildIdentifierOrKeywordOrBoolean() throws IdentifierTooLongException {
         StringBuilder builder = new StringBuilder();
         if (Character.isLetter(currentChar) || currentChar == '_') {  // Identifiers can start with a letter or underscore
             builder.append(currentChar);

@@ -1,0 +1,33 @@
+package org.example.parser.Structure.utils;
+
+public enum Type {
+    BOOL("bool"),
+    INT("int"),
+    FLOAT("float"),
+    STRING("String"),
+    LIST("List"),
+    TUPLE("Tuple"),
+    DICTIONARY("Dictionary");
+
+
+    private final String name;
+
+    Type(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public static Type getTypeByName(String name) {
+        if (name != null) {
+            for (Type type : Type.values()) {
+                if (name.equals(type.name)) {
+                    return type;
+                }
+            }
+        }
+        return null;
+    }
+}
