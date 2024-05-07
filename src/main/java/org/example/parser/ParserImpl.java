@@ -10,7 +10,6 @@ import org.example.token.Position;
 import org.example.token.Token;
 import org.example.token.TokenType;
 
-import java.rmi.UnexpectedException;
 import java.util.*;
 import java.io.IOException;
 
@@ -32,52 +31,45 @@ public class ParserImpl implements Parser {
     */
     public Program parseProgram() throws Exception {
         Map<String, FunctionDefinition> functionDefinitions = new HashMap<>();
-        Optional<FunctionDefinition> funDefOptional;
-        while ((funDefOptional = parseFunctionDefinition()).isPresent()) {
-            FunctionDefinition funDef = funDefOptional.get();
+        FunctionDefinition funDef;
+        while ((funDef = parseFunctionDefinition()) != null) {
             if (functionDefinitions.containsKey(funDef.getName())) {
-                throw new Exception("Duplicate function definition: " + funDef.getName()); // TODO use a custom exception here.
+                throw new Exception("Duplicate function definition: " + funDef.getName()); // It's a good idea to define a custom exception for clarity.
             }
             functionDefinitions.put(funDef.getName(), funDef);
         }
         return new Program(functionDefinitions);
     }
 
-
     /*
      function_definition = "fn",  (type | "void"), identifier, "(", parameters-list, ")", block;
     */
-    private Optional<FunctionDefinition> parseFunctionDefinition() throws Exception {
+    private FunctionDefinition parseFunctionDefinition() throws Exception {
         if (!checkToken(TokenType.FUNCTION)) {
-            return Optional.empty();
+            return null;
         }
 
         EnumSet<TokenType> allowedTypes = EnumSet.of(TokenType.INTEGER, TokenType.FLOAT, TokenType.BOOL, TokenType.STRING, TokenType.DICTIONARY, TokenType.LIST, TokenType.TUPLE, TokenType.VOID);
         proceedAndCheck(allowedTypes);
-        TypeDeclaration typeDeclaration;
-        if (token.getType() == TokenType.VOID) {
-            typeDeclaration = null; //TODO, przemyslec czy ten null to dobry pomysl aby typeDeclaration  reprezentowac void ?
-        } else {
-            typeDeclaration = parseType();
+        TypeDeclaration typeDeclaration = null;
+        if (token.getType() != TokenType.VOID) {
+            typeDeclaration = parseType(); // null represents void here.
         }
 
         Position position = token.getPosition();
 
-
         proceedAndCheck(TokenType.IDENTIFIER);
         String name = token.getValue();
 
+        nextToken();
+        List<Argument> parameters = parseParameters();
 
         nextToken();
-        List<Argument> arguments = parseArguments();
+        BlockStatement blockStatement = parseBlock(); // consider handling empty block case inside parseBlock
 
-
-        nextToken();
-        BlockStatement blockStatement = parseBlock(); //TODO, blockStatement == empty list?
-
-
-        return Optional.of(new FunctionDefinition(typeDeclaration, name, arguments, blockStatement, position));
+        return new FunctionDefinition(typeDeclaration, name, parameters, blockStatement, position);
     }
+
 
 
     /*
@@ -150,7 +142,7 @@ public class ParserImpl implements Parser {
 /*
     parameters-list = [ type, identifier, { ",", type,  identifier } ];
 */
-    private List<Argument>  parseArguments() throws Exception {
+    private List<Argument> parseParameters() throws Exception {
         List<Argument> arguments = new ArrayList<>();
         if(!checkToken(TokenType.BRACKET_OPEN)) {
             throw new Exception("expected (");
@@ -359,7 +351,8 @@ public class ParserImpl implements Parser {
 /*
     arguments-list             = [ expression, { ",", expression } ];
 */
-    private List<Expression> parseFunctionArguments() {
+    private List<Expression> parseArguments() {
+
     }
 
 
