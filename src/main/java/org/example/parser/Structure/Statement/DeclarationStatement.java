@@ -1,25 +1,19 @@
-package org.example.parser.Structure;
+package org.example.parser.Structure.Statement;
 
-import lombok.Value;
 import org.example.parser.Node;
 import org.example.parser.Visitor;
 import org.example.token.Position;
 
-@Value
-public class Argument implements Node {
-
-    String name;
-    TypeDeclaration type;
+public class DeclarationStatement implements Node {
     Position position;
 
     @Override
     public Position getPosition() {
-        return null;
+        return position;
     }
 
     @Override
     public void accept(Visitor visitor) {
-        visitor.visit(this);
+        visitor.accept(this);
     }
 }
-

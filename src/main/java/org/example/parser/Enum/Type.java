@@ -1,4 +1,4 @@
-package org.example.parser.Structure.utils;
+package org.example.parser.Enum;
 
 public enum Type {
     BOOL("bool"),

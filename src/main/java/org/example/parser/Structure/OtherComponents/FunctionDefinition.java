@@ -1,12 +1,12 @@
-package org.example.parser.Structure;
+package org.example.parser.Structure.OtherComponents;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
 import org.example.parser.Node;
+import org.example.parser.Structure.Statement.BlockStatement;
 import org.example.parser.Visitor;
 import org.example.token.Position;
-import org.example.token.TokenType;
 
 import java.util.List;
 
