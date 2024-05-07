@@ -9,8 +9,8 @@
  statement                  = conditional
                             | while_loop
                             | for_loop
-                            | declaration_or_assignment
-                            | function_call
+                            | declaration_or_definition
+                            | function_call_or_assignment
                             | return_statement;
                             | expression
 

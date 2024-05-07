@@ -485,9 +485,10 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
  statement                  = conditional
                             | while_loop
                             | for_loop
-                            | declaration_or_assignment
-                            | function_call
+                            | declaration_or_definition
+                            | function_call_or_assignment
                             | return_statement;
+                            | expression;
                                                  
  conditional                = "if", "(", expression, ")", block,
                             [ { "elif", "(", expression, ")", block },  
@@ -497,7 +498,7 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
  
  for_loop                   = "for", "(", type, identifier ":" ,identifier, ")", block;
  
- declaration_or_assignment  = [type], identifier, ["=", (expression | query_statement)], ";";
+ declaration_or_definition  = type, identifier, ["=", (expression | query_statement)], ";";
  
  query_statement            = "SELECT", select_clause, "FROM", identifier, [where_clause], [order_by_clause];
  
@@ -507,7 +508,7 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
 
  order_by_clause            = "ORDER BY", expression, ("ASC" | "DESC");  //czy tutaj identifier.identifer jest poprawnym rozwiązaniem zamiast expression?
   
- function_call              = identifier, "(", arguments-list, ")", ";";
+ function_call_or_assignment = identifier, (, "(", arguments-list, ")", | ["=", (expression | query_statement)], ),  ";";
  
  arguments-list             = [ expression, { ",", expression } ]; 
  
