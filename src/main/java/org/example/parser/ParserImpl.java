@@ -2,6 +2,8 @@ package org.example.parser;
 
 import org.example.lexer.Lexer;
 import org.example.lexer.error.*;
+import org.example.parser.Error.DuplicateIdentiferException;
+import org.example.parser.Error.ParsingException;
 import org.example.parser.Structure.Expression.Expression;
 import org.example.parser.Structure.OtherComponents.*;
 import org.example.parser.Structure.Statement.*;
@@ -34,7 +36,7 @@ public class ParserImpl implements Parser {
         FunctionDefinition funDef;
         while ((funDef = parseFunctionDefinition()) != null) {
             if (functionDefinitions.containsKey(funDef.getName())) {
-                throw new Exception("Duplicate function definition: " + funDef.getName()); // It's a good idea to define a custom exception for clarity.
+                throw new DuplicateIdentiferException(funDef.getPosition(), funDef.getName());
             }
             functionDefinitions.put(funDef.getName(), funDef);
         }
@@ -49,23 +51,19 @@ public class ParserImpl implements Parser {
             return null;
         }
 
-        EnumSet<TokenType> allowedTypes = EnumSet.of(TokenType.INTEGER, TokenType.FLOAT, TokenType.BOOL, TokenType.STRING, TokenType.DICTIONARY, TokenType.LIST, TokenType.TUPLE, TokenType.VOID);
-        proceedAndCheck(allowedTypes);
-        TypeDeclaration typeDeclaration = null;
-        if (token.getType() != TokenType.VOID) {
-            typeDeclaration = parseType(); // null represents void here.
-        }
+        TypeDeclaration typeDeclaration = parseType();
 
         Position position = token.getPosition();
 
         proceedAndCheck(TokenType.IDENTIFIER);
         String name = token.getValue();
 
-        nextToken();
-        List<Argument> parameters = parseParameters();
 
         nextToken();
-        BlockStatement blockStatement = parseBlock(); // consider handling empty block case inside parseBlock
+        List<Argument> parameters = parseParameters(); // brackets read inside parseParameters
+
+        nextToken();
+        BlockStatement blockStatement = parseBlock(); // TODO, handle empty block statement?
 
         return new FunctionDefinition(typeDeclaration, name, parameters, blockStatement, position);
     }
@@ -76,14 +74,17 @@ public class ParserImpl implements Parser {
     type = type_basic | type_complex
     */
     private TypeDeclaration parseType() throws Exception {
+        EnumSet<TokenType> allowedTypes = EnumSet.of(TokenType.INTEGER, TokenType.FLOAT, TokenType.BOOL, TokenType.STRING, TokenType.DICTIONARY, TokenType.LIST, TokenType.TUPLE, TokenType.VOID);
+        proceedAndCheck(allowedTypes);
+
         TokenType tokenType = token.getType();
         if (tokenType == TokenType.INTEGER || tokenType == TokenType.FLOAT || tokenType == TokenType.STRING || tokenType == TokenType.BOOL ) {
             return parseBasicType();
         } else if (tokenType == TokenType.LIST || tokenType == TokenType.TUPLE || tokenType == TokenType.DICTIONARY) {
             return parseComplexType();
-        } else {
-            throw new Exception("Couldn't find any of the langauge definded types");
         }
+
+        return null;
     }
 
     /*
@@ -94,10 +95,10 @@ public class ParserImpl implements Parser {
     }
 
     /*
- type_complex               = dictionary_declaration | tuple_declaration | list_declaration
- dictionary_declaration     = "Dictionary", "<", type_basic, ",", type_basic, ">";
- tuple_declaration          = "Tuple", "<", type_basic, ",", type_basic, ">";
- list_declaration           = "List", "<", type_basic, ">" ;
+    type_complex               = dictionary_declaration | tuple_declaration | list_declaration
+    dictionary_declaration     = "Dictionary", "<", type_basic, ",", type_basic, ">";
+    tuple_declaration          = "Tuple", "<", type_basic, ",", type_basic, ">";
+    list_declaration           = "List", "<", type_basic, ">" ;
      */
     private TypeDeclaration parseComplexType() throws Exception {
         TokenType rememberedType = token.getType();
@@ -139,39 +140,28 @@ public class ParserImpl implements Parser {
         return typeDeclaration;
 
     }
-/*
+    /*
     parameters-list = [ type, identifier, { ",", type,  identifier } ];
-*/
+    */
     private List<Argument> parseParameters() throws Exception {
         List<Argument> arguments = new ArrayList<>();
-        if(!checkToken(TokenType.BRACKET_OPEN)) {
-            throw new Exception("expected (");
-        }
-        nextToken();
-        if (token.getType() == TokenType.BRACKET_CLOSE) {
-            return arguments;
-        }
 
-        while (true) { //TODO, przemyslec ta petle aby pozbyc sie while(true)
+        proceedAndCheck(TokenType.BRACKET_OPEN);
+
+
+        while (token.getType() != TokenType.BRACKET_CLOSE) {
             TypeDeclaration type = parseType();
             proceedAndCheck(TokenType.IDENTIFIER);
-            String name =token.getValue();
+            String name = token.getValue();
             Argument argument = new Argument(name, type, type.getPosition());
             arguments.add(argument);
+
+            proceedAndCheck(TokenType.COMMA);
             nextToken();
-            if (token.getType() == TokenType.BRACKET_CLOSE) {
-                break;
             }
-            if (checkToken(TokenType.COMMA)) {
-                nextToken();
-                //continue;
-            } else {
-                throw new Exception("Comma is expected");
-            }
+        return arguments;
 
         }
-        return arguments;
-    }
 
     /*
     block                    = "{", { statement }, "}";
@@ -181,7 +171,6 @@ public class ParserImpl implements Parser {
                             | declaration_or_assignment
                             | function_call
                             | return_statement;
-
     */
 
     private BlockStatement parseBlock() throws Exception {
@@ -193,26 +182,26 @@ public class ParserImpl implements Parser {
             return new BlockStatement(instructions, position);
         }
 
-        EnumSet<TokenType> allowedTypes = EnumSet.of( //TODO, lista przyda sie pozniej aby do wyjatku przekazac jakie tokeny sa obslugiwane
-                //conditional
-                TokenType.IF,
-                //while loop
-                TokenType.WHILE,
-                //for loop
-                TokenType.FOR,
-                //declaration
-                TokenType.INTEGER,
-                TokenType.FLOAT,
-                TokenType.BOOL,
-                TokenType.STRING,
-                TokenType.DICTIONARY,
-                TokenType.LIST,
-                TokenType.TUPLE,
-                //assignment or function call
-                TokenType.IDENTIFIER,
-                //return statement
-                TokenType.RETURN
-        );
+//        EnumSet<TokenType> allowedTypes = EnumSet.of( //TODO, lista przyda sie pozniej aby do wyjatku przekazac jakie tokeny sa obslugiwane
+//                //conditional
+//                TokenType.IF,
+//                //while loop
+//                TokenType.WHILE,
+//                //for loop
+//                TokenType.FOR,
+//                //declaration
+//                TokenType.INTEGER,
+//                TokenType.FLOAT,
+//                TokenType.BOOL,
+//                TokenType.STRING,
+//                TokenType.DICTIONARY,
+//                TokenType.LIST,
+//                TokenType.TUPLE,
+//                //assignment or function call
+//                TokenType.IDENTIFIER,
+//                //return statement
+//                TokenType.RETURN
+//        );
 
         Node node = null;
 
@@ -223,7 +212,7 @@ public class ParserImpl implements Parser {
                 case FOR -> node = parseForStatement();
                 case IDENTIFIER -> node = parseStatementStartingWithIdentifier(); //function call or assignment
                 case RETURN -> node = parseReturnStatement();
-                case INTEGER, FLOAT, BOOL, STRING, LIST, TUPLE, DICTIONARY -> node = parseAssignment();
+                case INTEGER, FLOAT, BOOL, STRING, LIST, TUPLE, DICTIONARY -> node = parseDeclaration();
             }
             proceedAndCheck(TokenType.SEMICOLON);
             if (node == null) {
@@ -237,13 +226,11 @@ public class ParserImpl implements Parser {
     }
 
 
-
-/*
- conditional                = "if", "(", expression, ")", block,
-                            [ { "elif", "(", expression, ")", block },
-                            "else", block ];
- */
-
+    /*
+    conditional = "if", "(", expression, ")", block,
+                [ { "elif", "(", expression, ")", block },
+                "else", block ];
+    */
     private ConditionalStatement parseConditionalStatement() throws Exception {
         Position position = token.getPosition();
         proceedAndCheck(TokenType.BRACKET_OPEN);
@@ -280,7 +267,7 @@ public class ParserImpl implements Parser {
     for_loop = "for", "(", type, identifier ":" ,identifier, ")", block;
     */
     private ForStatement parseForStatement() throws Exception {
-        Position position = token.getPosition(); //taking position of while token
+        Position position = token.getPosition(); //taking position of for token
 
         proceedAndCheck(TokenType.BRACKET_OPEN);
 
@@ -319,10 +306,11 @@ public class ParserImpl implements Parser {
 
         return new WhileStatement(expression, blockStatement, position);
     }
-/*
-    declaration_or_assignment  = [type], identifier, ["=", (expression | query_statement)], ";";
 
- */
+    /*
+    declaration_or_assignment  = [type], identifier, ["=", (expression | query_statement)], ";";
+    function_call = identifier, "(", arguments-list, ")", ";";
+    */
     private Node parseStatementStartingWithIdentifier() throws Exception {
         String name = token.getValue();
         Position position = token.getPosition();
@@ -330,7 +318,7 @@ public class ParserImpl implements Parser {
         TokenType type = token.getType();
 
         if(type == TokenType.BRACKET_OPEN) {
-            return parseFunctionCall();
+            return parseFunctionCall(name, position);
         } else if ( type == TokenType.EQUAL) {
             return parseAssignment();
         } else {
@@ -339,32 +327,62 @@ public class ParserImpl implements Parser {
 
     }
 
-
-/*
-    function_call              = identifier, "(", arguments-list, ")", ";";
-
- */
-    private FunctionCall parseFunctionCall() {
+    /*
+    function_call = identifier, "(", arguments-list, ")", ";";
+    */
+    private FunctionCall parseFunctionCall(String name, Position position) throws Exception {
+        nextToken();
+        List<Expression> arguments = parseArguments();
+        proceedAndCheck(TokenType.SEMICOLON);
+        return new FunctionCall(name, arguments, position);
 
     }
 
-/*
-    arguments-list             = [ expression, { ",", expression } ];
-*/
-    private List<Expression> parseArguments() {
+    /*
+    arguments-list = [ expression, { ",", expression } ];
+    */
+    private List<Expression> parseArguments() throws Exception {
+        List<Expression> expressions = new ArrayList<>();
+        if (checkToken(TokenType.BRACKET_CLOSE)) {
+            return expressions;
+        }
+        while (true) { //TODO, przemyslec ta petle aby pozbyc sie while(true)
+            Expression expression = parseExpression();
+            expressions.add(expression);
+            nextToken();
 
+            if (token.getType() == TokenType.BRACKET_CLOSE) {
+                break;
+            }
+            if (checkToken(TokenType.COMMA)) {
+                nextToken();
+                //continue;
+            } else {
+                throw new Exception("Comma is expected");
+            }
+
+        }
+
+        return expressions;
     }
 
 
     private Node parseAssignment() {
+
+    }
+
+    private Node parseDeclaration() {
+
     }
 
     private Node parseReturnStatement() {
+
     }
 
 
 
     private Expression parseExpression() {
+
     }
 
 
@@ -385,7 +403,7 @@ public class ParserImpl implements Parser {
     private void proceedAndCheck(TokenType expected) throws Exception {
         nextToken();
         if (!checkToken(expected)) {
-            throw new Exception("test"); //TODO, custom exceptions
+            throw new ParsingException(token.getPosition(), expected, token.getType()); //TODO, custom exceptions
         }
 
     }
@@ -393,7 +411,7 @@ public class ParserImpl implements Parser {
     private void proceedAndCheck(Collection<TokenType> expected) throws Exception {
         nextToken();
         if (!checkToken(expected)) {
-            throw new Exception("test"); //TODO, custom exceptions
+            throw new ParsingException(token.getPosition(), (List<TokenType>) expected, token.getType());
         }
 
 
