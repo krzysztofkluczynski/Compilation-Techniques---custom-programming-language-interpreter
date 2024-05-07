@@ -7,7 +7,7 @@ import org.example.parser.Visitor;
 import org.example.token.Position;
 
 @Value
-public class WhileStatement implements Node {
+public class WhileStatement implements Statement {
 
     Expression expression;
     BlockStatement blockStatement;

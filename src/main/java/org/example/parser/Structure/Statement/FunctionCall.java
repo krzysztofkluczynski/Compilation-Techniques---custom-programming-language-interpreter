@@ -9,7 +9,7 @@ import org.example.token.Position;
 import java.util.List;
 
 @Value
-public class FunctionCall implements Node {
+public class FunctionCall implements Statement {
     String name;
     List<Expression> arguments;
     Position position;

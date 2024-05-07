@@ -8,7 +8,7 @@ import org.example.parser.Visitor;
 import org.example.token.Position;
 
 @Value
-public class ForStatement implements Node {
+public class ForStatement implements Statement {
     TypeDeclaration type;
     String identifer;
     String collectionIdentifer;

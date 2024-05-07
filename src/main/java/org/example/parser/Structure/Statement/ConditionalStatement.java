@@ -10,7 +10,7 @@ import org.example.token.Position;
 import java.util.List;
 
 @Value
-public class ConditionalStatement implements Node {
+public class ConditionalStatement implements Statement {
     Expression ifExpression;
     BlockStatement ifBlock;
     List<Elif> elifs;

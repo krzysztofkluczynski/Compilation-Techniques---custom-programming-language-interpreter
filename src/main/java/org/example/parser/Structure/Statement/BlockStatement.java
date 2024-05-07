@@ -8,9 +8,9 @@ import org.example.token.Position;
 import java.util.List;
 
 @Value
-public class BlockStatement implements Node {
+public class BlockStatement implements Statement {
 
-    List<Node> instructions;
+    List<Statement> instructions;
     Position position;
 
     @Override

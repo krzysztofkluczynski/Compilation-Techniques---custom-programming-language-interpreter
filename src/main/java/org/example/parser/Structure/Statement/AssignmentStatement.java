@@ -4,7 +4,7 @@ import org.example.parser.Node;
 import org.example.parser.Visitor;
 import org.example.token.Position;
 
-public class AssignmentStatement implements Node {
+public class AssignmentStatement implements Statement {
     Position position;
 
     @Override

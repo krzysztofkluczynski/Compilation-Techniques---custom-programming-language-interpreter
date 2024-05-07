@@ -14,6 +14,7 @@ import org.example.token.TokenType;
 
 import java.util.*;
 import java.io.IOException;
+import java.util.function.Supplier;
 
 public class ParserImpl implements Parser {
     Lexer lexer;
@@ -96,50 +97,72 @@ public class ParserImpl implements Parser {
 
     /*
     type_complex               = dictionary_declaration | tuple_declaration | list_declaration
-    dictionary_declaration     = "Dictionary", "<", type_basic, ",", type_basic, ">";
-    tuple_declaration          = "Tuple", "<", type_basic, ",", type_basic, ">";
-    list_declaration           = "List", "<", type_basic, ">" ;
      */
     private TypeDeclaration parseComplexType() throws Exception {
         TokenType rememberedType = token.getType();
         Position rememberedPosition = token.getPosition();
-        proceedAndCheck(TokenType.LESS);
         Type firstOptionalparameter;
         Type secondOptionalParameter;
 
         TypeDeclaration typeDeclaration;
 
-        switch (rememberedType) { //TODO, add custom exceptions
-            case LIST:
-                nextToken();
-                firstOptionalparameter = Type.getTypeByName(token.getValue()); //TODO, check if token is basic_type for each one
-                typeDeclaration = new TypeDeclaration(Type.LIST, firstOptionalparameter, rememberedPosition);
-                break;
-            case DICTIONARY:
-                nextToken();
-                firstOptionalparameter = Type.getTypeByName(token.getValue());
-                proceedAndCheck(TokenType.COMMA);
-
-                nextToken();
-                secondOptionalParameter = Type.getTypeByName(token.getValue());
-                typeDeclaration = new TypeDeclaration(Type.DICTIONARY, firstOptionalparameter, secondOptionalParameter, rememberedPosition);
-                break;
-            case TUPLE:
-                nextToken();
-                firstOptionalparameter = Type.getTypeByName(token.getValue());
-                proceedAndCheck(TokenType.COMMA);
-
-                nextToken();
-                secondOptionalParameter = Type.getTypeByName(token.getValue());
-                typeDeclaration = new TypeDeclaration(Type.TUPLE, firstOptionalparameter, secondOptionalParameter, rememberedPosition);
-                break;
-            default:
-                throw new Exception("Error while parsing complex type");
+        if (token.getType() == TokenType.LIST) {
+            return parseList();
+        } else if (token.getType() == TokenType.DICTIONARY) {
+            return parseDictionary();
+        } else if (token.getType() == TokenType.TUPLE) {
+            return parseTuple();
+        } else {
+            List<TokenType> allowedTypes = List.of(TokenType.TUPLE, TokenType.LIST, TokenType.DICTIONARY);
+            throw new ParsingException(rememberedPosition, allowedTypes, token.getType());
         }
-        proceedAndCheck(TokenType.GREATER);
-        return typeDeclaration;
 
+    }`
+
+
+    /*
+    list_declaration           = "List", "<", type_basic, ">" ;
+     */
+    private TypeDeclaration parseList() throws Exception {
+        Position position = token.getPosition();
+        proceedAndCheck(TokenType.LESS);
+        nextToken();
+        Type type = Type.getTypeByName(token.getValue());
+        proceedAndCheck(TokenType.GREATER);
+        return new TypeDeclaration(Type.LIST, type, position);
     }
+
+    /*
+    dictionary_declaration     = "Dictionary", "<", type_basic, ",", type_basic, ">";
+    */
+    private TypeDeclaration parseDictionary() throws Exception {
+        Position position = token.getPosition();
+        proceedAndCheck(TokenType.LESS);
+        nextToken();
+        Type typeOne = Type.getTypeByName(token.getValue());
+        proceedAndCheck(TokenType.COMMA);
+        nextToken();
+        Type typeTwo = Type.getTypeByName(token.getValue());
+        proceedAndCheck(TokenType.GREATER);
+        return new TypeDeclaration(Type.DICTIONARY, typeOne, typeTwo, position);
+    }
+
+    /*
+    tuple_declaration          = "Tuple", "<", type_basic, ",", type_basic, ">";
+     */
+    private TypeDeclaration parseTuple() throws Exception {
+        Position position = token.getPosition();
+        proceedAndCheck(TokenType.LESS);
+        nextToken();
+        Type typeOne = Type.getTypeByName(token.getValue());
+        proceedAndCheck(TokenType.COMMA);
+        nextToken();
+        Type typeTwo = Type.getTypeByName(token.getValue());
+        proceedAndCheck(TokenType.GREATER);
+        return new TypeDeclaration(Type.TUPLE, typeOne, typeTwo, position);
+    }
+
+
     /*
     parameters-list = [ type, identifier, { ",", type,  identifier } ];
     */
@@ -165,62 +188,51 @@ public class ParserImpl implements Parser {
 
     /*
     block                    = "{", { statement }, "}";
-    statement                = conditional
+    statement                  = conditional
                             | while_loop
                             | for_loop
-                            | declaration_or_assignment
-                            | function_call
+                            | declaration_or_definition
+                            | function_call_or_assignment
                             | return_statement;
+                            | expression;
     */
 
     private BlockStatement parseBlock() throws Exception {
-        List<Node> instructions = new ArrayList<>();
-        proceedAndCheck(TokenType.CURLY_BRACKET_OPEN);
+        List<Statement> instructions = new ArrayList<>();
+        if(!checkToken(TokenType.CURLY_BRACKET_OPEN)) {
+            throw new ParsingException(token.getPosition(), TokenType.CURLY_BRACKET_OPEN, token.getType());
+        }
         Position position = token.getPosition();
         nextToken();
-        if (token.getType() == TokenType.CURLY_BRACKET_CLOSE) {
-            return new BlockStatement(instructions, position);
+
+        // Define a list of parser functions
+        List<Supplier<Statement>> parsers = Arrays.asList(
+                this::parseConditionalStatement,
+                this::parseWhileStatement,
+                this::parseForStatement,
+                this::parseStatementStartingWithIdentifier,
+                this::parseReturnStatement,
+                this::parseDeclaration
+        );
+
+
+        while (token.getType() != TokenType.CURLY_BRACKET_CLOSE) {
+            Statement statement = null;
+            for (Supplier<Statement> parser : parsers) {
+                statement = parser.get();
+                if (statement != null) {
+                    instructions.add(statement);
+                    break; // Exit the loop once a valid statement is parsed
+                }
+            }
+            if (statement == null) {
+                // If no statement is parsed, throw an exception or handle the error appropriately
+                List<TokenType> allowedTypes = List.of(TokenType.IF, TokenType.WHILE); //TODO, uzupelnic typy tokenow
+                throw new ParsingException(position, allowedTypes, token.getType());
+            }
         }
 
-//        EnumSet<TokenType> allowedTypes = EnumSet.of( //TODO, lista przyda sie pozniej aby do wyjatku przekazac jakie tokeny sa obslugiwane
-//                //conditional
-//                TokenType.IF,
-//                //while loop
-//                TokenType.WHILE,
-//                //for loop
-//                TokenType.FOR,
-//                //declaration
-//                TokenType.INTEGER,
-//                TokenType.FLOAT,
-//                TokenType.BOOL,
-//                TokenType.STRING,
-//                TokenType.DICTIONARY,
-//                TokenType.LIST,
-//                TokenType.TUPLE,
-//                //assignment or function call
-//                TokenType.IDENTIFIER,
-//                //return statement
-//                TokenType.RETURN
-//        );
-
-        Node node = null;
-
-        while(token.getType() != TokenType.CURLY_BRACKET_CLOSE) {
-            switch (token.getType()) {
-                case IF -> node = parseConditionalStatement();
-                case WHILE -> node = parseWhileStatement();
-                case FOR -> node = parseForStatement();
-                case IDENTIFIER -> node = parseStatementStartingWithIdentifier(); //function call or assignment
-                case RETURN -> node = parseReturnStatement();
-                case INTEGER, FLOAT, BOOL, STRING, LIST, TUPLE, DICTIONARY -> node = parseDeclaration();
-            }
-            proceedAndCheck(TokenType.SEMICOLON);
-            if (node == null) {
-                throw new Exception("unexpected instruction or missing closnig bracket"); //TODO, custom exception
-            }
-            instructions.add(node);
-            nextToken();
-        }
+        nextToken();
 
         return new BlockStatement(instructions, position);
     }
@@ -232,6 +244,9 @@ public class ParserImpl implements Parser {
                 "else", block ];
     */
     private ConditionalStatement parseConditionalStatement() throws Exception {
+        if(checkToken(TokenType.IF)) {
+            return null;
+        }
         Position position = token.getPosition();
         proceedAndCheck(TokenType.BRACKET_OPEN);
 
