@@ -397,12 +397,17 @@ public class ParserImpl implements Parser {
                 List<TokenType> allowedTypes = List.of(TokenType.IDENTIFIER); //TODO, add more types
                 throw new ParsingException(identifierPosition, allowedTypes, token.getType());
             } else {
-                proceedAndCheck(TokenType.SEMICOLON);
+                if(!checkToken(TokenType.SEMICOLON)) {
+                    throw new ParsingException(token.getPosition(), TokenType.SEMICOLON, token.getType());
+                }
                 return new AssignmentWithQueryStatement(name, queryStatement, identifierPosition);
             }
 
         }
-        proceedAndCheck(TokenType.SEMICOLON);
+        if(!checkToken(TokenType.SEMICOLON)) {
+            throw new ParsingException(token.getPosition(), TokenType.SEMICOLON, token.getType());
+        }
+        nextToken();
         return new AssignmentWithExpressionStatement(name, expression, identifierPosition);
 
     }
@@ -477,6 +482,7 @@ public class ParserImpl implements Parser {
         nextToken();
 
         if(checkToken(TokenType.SEMICOLON)) {
+            nextToken();
             return new DeclarationStatement(type, name, type.getPosition());
         } else if (checkToken(TokenType.EQUAL)) {
             return parseDefinition(type, name, type.getPosition());
