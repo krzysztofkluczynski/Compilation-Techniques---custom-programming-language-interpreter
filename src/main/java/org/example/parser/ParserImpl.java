@@ -805,9 +805,21 @@ public class ParserImpl implements Parser {
 
     return literals;
     }
+/*
+  | identifier, [ ".", (function_call | identifier, "(" lambda_expression ")") ]
 
-    private IExpression parseStartingwithIdentifier() {
-        return null; //TODO
+ */
+    private IExpression parseStartingwithIdentifier() throws ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, IntMaxValueExceededException, IOException, IdentifierTooLongException, DecimalMaxValueExceededException {
+        if (!checkToken(TokenType.IDENTIFIER)) {
+            return null;
+        }
+        IdentifierExpression identifierExpression = new IdentifierExpression(token.getValue(), token.getPosition());
+
+        nextToken();
+        if(checkToken(TokenType.SEMICOLON)) {
+            return identifierExpression;
+        }
+        return null;
     }
 
     private IExpression parseCastExpression() {

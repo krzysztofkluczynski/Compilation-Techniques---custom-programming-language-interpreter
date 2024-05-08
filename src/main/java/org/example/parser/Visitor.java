@@ -56,4 +56,8 @@ public interface Visitor {
     void visit(LiteralList literalList);
 
     void visit(LiteralTuple literalTuple);
+
+    void visit(IdentiferAndMethodCallExpression identiferAndMethodCallExpression);
+
+    void visit(LambdaExpression lambdaExpression);
 }
