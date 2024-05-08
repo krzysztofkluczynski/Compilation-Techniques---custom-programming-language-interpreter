@@ -1,9 +1,7 @@
 package org.example.parser.Structure.Statement;
 
 import lombok.Value;
-import org.example.parser.Node;
-import org.example.parser.Structure.Expression.Expression;
-import org.example.parser.Structure.OtherComponents.Elif;
+import org.example.parser.Structure.OtherComponents.If;
 import org.example.parser.Visitor;
 import org.example.token.Position;
 
@@ -11,11 +9,8 @@ import java.util.List;
 
 @Value
 public class ConditionalStatement implements Statement {
-    Expression ifExpression;
-    BlockStatement ifBlock;
-    List<Elif> elifs;
-    BlockStatement elseBlock;
 
+    List<If> ifs;
     Position position;
 
     @Override

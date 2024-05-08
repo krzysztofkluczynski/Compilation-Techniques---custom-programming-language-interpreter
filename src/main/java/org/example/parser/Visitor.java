@@ -1,8 +1,9 @@
 package org.example.parser;
 
+import org.example.parser.Structure.Expression.*;
+import org.example.parser.Structure.Expression.Literals.*;
 import org.example.parser.Structure.OtherComponents.Argument;
-import org.example.parser.Structure.OtherComponents.Elif;
-import org.example.parser.Structure.Expression.Expression;
+import org.example.parser.Structure.OtherComponents.If;
 import org.example.parser.Structure.Statement.BlockStatement;
 import org.example.parser.Structure.OtherComponents.FunctionDefinition;
 import org.example.parser.Structure.OtherComponents.Program;
@@ -16,8 +17,6 @@ public interface Visitor {
 
     void visit(BlockStatement blockStatement);
 
-    void accept(AssignmentStatement assignmentStatement);
-
     void accept(ConditionalStatement conditionalStatement);
 
     void accept(DeclarationStatement declarationStatement);
@@ -30,8 +29,31 @@ public interface Visitor {
 
     void accept(WhileStatement whileStatement);
 
-    void accept(Elif elif);
+    void accept(If elif);
 
-    void accept(Expression expression);
+    void accept(IExpression expression);
 
+    void accept(QueryStatement queryStatement);
+    void accept(AssignmentWithExpressionStatement assignmentWithExpressionStatement);
+
+
+    void accept(AssignmentWithQueryStatement assignmentWithQueryStatement);
+
+    void accept(DefinitionWithExpressionStatement definitionWithExpressionStatement);
+
+    void accept(DefinitionWithQueryStatement definitionWithQueryStatement);
+
+    void visit(MultiplicativeExpression multiplicativeExpression);
+
+    void visit(ArthmeticExpression arthmeticExpression);
+
+    void visit(NegatedExpression negatedExpression);
+
+    void visit(CastExpression castExpression);
+
+    void accept(LiteralInteger literalInteger);
+
+    void visit(LiteralList literalList);
+
+    void visit(LiteralTuple literalTuple);
 }

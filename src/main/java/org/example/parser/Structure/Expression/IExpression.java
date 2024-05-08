@@ -6,5 +6,5 @@ import org.example.parser.Structure.Statement.Statement;
 import org.example.parser.Visitor;
 import org.example.token.Position;
 
-public interface Expression extends Statement {
+public interface IExpression extends Statement {
 }

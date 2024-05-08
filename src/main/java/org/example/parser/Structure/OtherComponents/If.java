@@ -2,14 +2,14 @@ package org.example.parser.Structure.OtherComponents;
 
 import lombok.Value;
 import org.example.parser.Node;
-import org.example.parser.Structure.Expression.Expression;
+import org.example.parser.Structure.Expression.IExpression;
 import org.example.parser.Structure.Statement.BlockStatement;
 import org.example.parser.Visitor;
 import org.example.token.Position;
 
 @Value
-public class Elif implements Node {
-    Expression expression;
+public class If implements Node {
+    IExpression expression;
     BlockStatement blockStatement;
     Position position;
 

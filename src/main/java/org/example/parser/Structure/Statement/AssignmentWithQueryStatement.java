@@ -1,13 +1,13 @@
 package org.example.parser.Structure.Statement;
 
 import lombok.Value;
-import org.example.parser.Structure.Expression.IExpression;
 import org.example.parser.Visitor;
 import org.example.token.Position;
 
 @Value
-public class ReturnStatement implements Statement {
-    IExpression expression;
+public class AssignmentWithQueryStatement implements Statement{
+    String IdentifierName;
+    QueryStatement QueryStatement;
     Position position;
 
     @Override

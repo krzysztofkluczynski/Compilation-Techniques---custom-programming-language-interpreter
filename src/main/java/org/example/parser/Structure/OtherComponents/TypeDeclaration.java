@@ -34,12 +34,6 @@ public class TypeDeclaration implements Node {
         this.secondOptionalParam = secondOptionalParam;
     }
 
-
-    @Override
-    public Position getPosition() {
-        return null;
-    }
-
     @Override
     public void accept(Visitor visitor) {
 

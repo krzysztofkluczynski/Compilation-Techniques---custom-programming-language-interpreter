@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.lexer.Lexer;
 import org.example.lexer.LexerImpl;
+import org.example.parser.ParserImpl;
 import org.example.reader.DataStreamInputReader;
 import org.example.token.TokenType;
 
@@ -29,13 +30,16 @@ public class Main {
             lexer = new LexerImpl(reader);
         }
 
-            for (int count = 0; count < 70; count++) {
-                TokenType t = lexer.next().getType();
-                System.out.println(count + ". " + t);
-                if (t == TokenType.END_OF_FILE) {
-                    break;
-                }
-            }
+            ParserImpl parser = new ParserImpl(lexer);
+
+//            for (int count = 0; count < 70; count++) {
+//                TokenType t = lexer.next().getType();
+//                System.out.println(count + ". " + t);
+//                if (t == TokenType.END_OF_FILE) {
+//                    break;
+//                }
+//            }
+            parser.parseProgram();
         } catch (FileNotFoundException fnfe) {
             Logger.getLogger("File not found exception").warning(fnfe.getMessage());
             System.out.println("Error: File not found - " + fnfe.getMessage());

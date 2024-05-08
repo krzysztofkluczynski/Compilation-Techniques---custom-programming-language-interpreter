@@ -1,19 +1,23 @@
-package org.example.parser.Structure.Statement;
+package org.example.parser.Structure.Expression;
 
-import org.example.parser.Node;
+import lombok.Value;
 import org.example.parser.Visitor;
 import org.example.token.Position;
 
-public class AssignmentStatement implements Statement {
+@Value
+public class OrExpression implements IExpression {
+    IExpression left;
+    IExpression right;
+
     Position position;
 
     @Override
     public Position getPosition() {
-        return position;
+        return null;
     }
 
     @Override
     public void accept(Visitor visitor) {
-        visitor.accept(this);
+
     }
 }

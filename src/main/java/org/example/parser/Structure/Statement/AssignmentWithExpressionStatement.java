@@ -6,7 +6,8 @@ import org.example.parser.Visitor;
 import org.example.token.Position;
 
 @Value
-public class ReturnStatement implements Statement {
+public class AssignmentWithExpressionStatement implements Statement {
+    String IdentifierName;
     IExpression expression;
     Position position;
 

@@ -487,7 +487,7 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
                             | for_loop
                             | declaration_or_definition
                             | function_call_or_assignment
-                            | return_statement;
+                            | return_statement
                             | expression;
                                                  
  conditional                = "if", "(", expression, ")", block,
@@ -530,9 +530,9 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
  factor                     = ["not"],
                             | ["-"]
                             | literal 
-                            | expression 
-                            | identifier, [ ".", (identifier | function_call | identifier, "(" lambda_expression ")") ]
-                            | cast_expression; 
+                            | identifier, [ ".", (function_call | identifier, "(" lambda_expression ")") ]
+                            | cast_expression
+                            | "(", expression, ")";
 
  cast_expression            = "$", type_basic, expression;
 
