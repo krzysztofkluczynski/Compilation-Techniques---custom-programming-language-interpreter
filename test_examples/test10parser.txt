@@ -1,0 +1,5 @@
+fn bool add(int x, int y) {
+    for (int x : a) {
+        x = x + 1;
+    }
+}

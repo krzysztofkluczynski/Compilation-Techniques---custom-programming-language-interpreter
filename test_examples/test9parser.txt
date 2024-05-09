@@ -1,0 +1,9 @@
+fn bool add(int x, int y) {
+    if (x != 5) {
+        x = 3;
+    } elif (true) {
+        x = 3;
+    } else {
+        x = 3;
+    }
+ }

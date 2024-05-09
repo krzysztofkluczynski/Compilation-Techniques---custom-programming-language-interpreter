@@ -2,11 +2,8 @@ package org.example.parser;
 
 import org.example.parser.Structure.Expression.*;
 import org.example.parser.Structure.Expression.Literals.*;
-import org.example.parser.Structure.OtherComponents.Argument;
-import org.example.parser.Structure.OtherComponents.If;
+import org.example.parser.Structure.OtherComponents.*;
 import org.example.parser.Structure.Statement.BlockStatement;
-import org.example.parser.Structure.OtherComponents.FunctionDefinition;
-import org.example.parser.Structure.OtherComponents.Program;
 import org.example.parser.Structure.Statement.*;
 
 public interface Visitor {
@@ -60,4 +57,6 @@ public interface Visitor {
     void visit(IdentiferAndMethodCallExpression identiferAndMethodCallExpression);
 
     void visit(LambdaExpression lambdaExpression);
+
+    void accept(SelectClause selectClause);
 }
