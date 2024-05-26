@@ -1,0 +1,10 @@
+fn List<int> add(String x, int y) {
+    bool zmienna = 4 != 3 and 3 > 2;
+    return "String";
+}
+
+fn bool train(int x, int y) {
+    Tuple<int, float> pair;
+    Tuple<int, float> pair = (3, 4);
+    return true;
+}

@@ -475,8 +475,7 @@ który posiada jedynie kilka zmian względem tego co widać poniżej, m.in lepie
 Pomaga to w testowaniu naszej gramatyki za pomocą narzędzi takich jak https://mdkrajnak.github.io/ebnftest/.
 Niestety nie da się ominąć braku definicji znaków białych, przez co podczas testowania w polu "Test Input" należy umieszczać cały kod ciągiem.
 ```
- program                    = {definition}
- definition                 = function_definition
+ program                    = {function_definition}
  function_definition        = "fn",  (type | "void"), identifier, "(", parameters-list, ")", block;
  
  parameters-list            = [ type, identifier, { ",", type,  identifier } ]; 
@@ -486,19 +485,20 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
  statement                  = conditional
                             | while_loop
                             | for_loop
-                            | declaration_or_assignment
-                            | function_call
-                            | return_statement;
+                            | declaration_or_definition
+                            | function_call_or_assignment
+                            | return_statement
+                            | expression;
                                                  
  conditional                = "if", "(", expression, ")", block,
-                            [ { "elif", "(", expression, ")", block },  //czy to jest poprawne? moze lepiej zdefiniowac blok elif oddzielnie
+                            [ { "elif", "(", expression, ")", block },  
                             "else", block ];
                                                                        
  while_loop                 = "while", "(", expression, ")", block;
  
  for_loop                   = "for", "(", type, identifier ":" ,identifier, ")", block;
  
- declaration_or_assignment  = [type], identifier, ["=", (expression | query_statement)], ";";
+ declaration_or_definition  = type, identifier, ["=", (expression | query_statement)], ";";
  
  query_statement            = "SELECT", select_clause, "FROM", identifier, [where_clause], [order_by_clause];
  
@@ -508,7 +508,7 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
 
  order_by_clause            = "ORDER BY", expression, ("ASC" | "DESC");  //czy tutaj identifier.identifer jest poprawnym rozwiązaniem zamiast expression?
   
- function_call              = identifier, "(", arguments-list, ")", ";";
+ function_call_or_assignment = identifier, (, "(", arguments-list, ")", | ["=", (expression | query_statement)], ),  ";";
  
  arguments-list             = [ expression, { ",", expression } ]; 
  
@@ -530,9 +530,9 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
  factor                     = ["not"],
                             | ["-"]
                             | literal 
-                            | expression 
-                            | identifier, [ ".", (identifier | function_call | identifier, "(" lambda_expression ")") ]
-                            | cast_expression; 
+                            | identifier, [ ".", (function_call | identifier, "(" lambda_expression ")") ]
+                            | cast_expression
+                            | "(", expression, ")";
 
  cast_expression            = "$", type_basic, expression;
 
@@ -541,9 +541,9 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
  type_complex               = dictionary_declaration | tuple_declaration | list_declaration
  type_basic                 = "int" | "float" | "String" | "boolean";
 
- dictionary_declaration     = "Dictionary", "<", type, ",", type, ">";  
- tuple_declaration          = "Tuple", "<", type, ",", type, ">";
- list_declaration           = "List", "<", type, ">" ;
+ dictionary_declaration     = "Dictionary", "<", type_basic, ",", type_basic, ">";  
+ tuple_declaration          = "Tuple", "<", type_basic, ",", type_basic, ">";
+ list_declaration           = "List", "<", type_basic, ">" ;
 
  literal                    = boolean | string | integer | float | complex_literal;
  complex_literal            = dictionary_literal | tuple_literal | list_literal
