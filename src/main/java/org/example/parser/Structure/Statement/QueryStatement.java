@@ -1,12 +1,23 @@
 package org.example.parser.Structure.Statement;
 
 import lombok.Value;
+import org.example.parser.Enum.AscOrDESC;
+import org.example.parser.Structure.Expression.IExpression;
+import org.example.parser.Structure.Expression.IdentifierExpression;
 import org.example.parser.Visitor;
 import org.example.token.Position;
 
 @Value
 public class QueryStatement implements Statement {
+
+    IExpression firstSelectExpression;
+    IExpression secondSelectExpression;
+    IdentifierExpression fromIdentifer;
+    IExpression whereExpression;
+    IExpression orderByExpression;
+    AscOrDESC ascOrDESC;
     Position position;
+
 
     @Override
     public Position getPosition() {

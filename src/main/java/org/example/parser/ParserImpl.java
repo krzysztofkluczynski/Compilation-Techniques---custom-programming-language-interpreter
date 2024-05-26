@@ -2,21 +2,17 @@ package org.example.parser;
 
 import org.example.lexer.Lexer;
 import org.example.lexer.error.*;
-import org.example.parser.Enum.AdditiveType;
-import org.example.parser.Enum.MultiplicativeType;
-import org.example.parser.Enum.RelativeType;
+import org.example.parser.Enum.*;
 import org.example.parser.Error.DuplicateIdentiferException;
 import org.example.parser.Error.ParsingException;
 import org.example.parser.Structure.Expression.*;
 import org.example.parser.Structure.Expression.Literals.*;
 import org.example.parser.Structure.OtherComponents.*;
 import org.example.parser.Structure.Statement.*;
-import org.example.parser.Enum.Type;
 import org.example.token.Position;
 import org.example.token.Token;
 import org.example.token.TokenType;
 
-import java.beans.Expression;
 import java.util.*;
 import java.io.IOException;
 
@@ -32,7 +28,6 @@ public class ParserImpl implements Parser {
     private void nextToken() throws ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, IntMaxValueExceededException, IOException, IdentifierTooLongException, DecimalMaxValueExceededException {
         token = lexer.next();
     }
-
 
     /*
     program = {function_definition}
@@ -75,7 +70,6 @@ public class ParserImpl implements Parser {
 
         return new FunctionDefinition(typeDeclaration, name, parameters, blockStatement, position);
     }
-
 
 
     /*
@@ -235,7 +229,19 @@ public class ParserImpl implements Parser {
                 statements.add(statement);
             }
             else {
-                List<TokenType> allowedTypes = List.of(TokenType.IF); // TODO, ADD MORE TOKEN TYPES
+                List<TokenType> allowedTypes = List.of(TokenType.IF,
+                        TokenType.WHILE,
+                        TokenType.FOR,
+                        TokenType.IDENTIFIER,
+                        TokenType.INTEGER,
+                        TokenType.STRING,
+                        TokenType.BOOL,
+                        TokenType.FLOAT,
+                        TokenType.LIST,
+                        TokenType.DICTIONARY,
+                        TokenType.TUPLE,
+                        TokenType.RETURN);
+
                 throw new ParsingException(position, allowedTypes, token.getType());
             }
         }
@@ -264,6 +270,7 @@ public class ParserImpl implements Parser {
         statement = parseReturnStatement();
         if (statement != null) return statement;
 
+
         return null;
     }
 
@@ -279,25 +286,35 @@ public class ParserImpl implements Parser {
         }
         Position position = token.getPosition();
         proceedAndCheck(TokenType.BRACKET_OPEN);
+        nextToken();
 
         IExpression ifExpression = parseExpression();
-        proceedAndCheck(TokenType.BRACKET_CLOSE);
+
+        if(!checkToken(TokenType.BRACKET_CLOSE)) {
+            throw new ParsingException(token.getPosition(), TokenType.BRACKET_CLOSE, token.getType());
+        }
 
         nextToken();
         BlockStatement ifBlock = parseBlock();
         If ifStatement = new If(ifExpression, ifBlock, ifExpression.getPosition());
-        nextToken();
+
 
         List<If> ifs = new ArrayList<>();
+        ifs.add(ifStatement);
+
+        if(checkToken(TokenType.CURLY_BRACKET_CLOSE)) { //TODO, when there is { {
+            return new ConditionalStatement(ifs, ifStatement.getPosition());
+        }
+
 
         while(token.getType() != TokenType.ELSE) {
             if (!checkToken(TokenType.ELIF)) {
-                throw new Exception("expected elif token");
+                throw new ParsingException(token.getPosition(), TokenType.ELIF, token.getType());
             }
             Position elifPosition = token.getPosition();
             proceedAndCheck(TokenType.BRACKET_OPEN);
+            nextToken();
             IExpression elifExpression= parseExpression();
-            proceedAndCheck(TokenType.BRACKET_CLOSE);
 
             nextToken();
             BlockStatement elifBlock = parseBlock();
@@ -354,10 +371,13 @@ public class ParserImpl implements Parser {
         Position position = token.getPosition(); //taking position of while token
 
         proceedAndCheck(TokenType.BRACKET_OPEN);
+        nextToken();
 
         IExpression expression = parseExpression();
 
-        proceedAndCheck(TokenType.BRACKET_CLOSE);
+        if(!checkToken(TokenType.BRACKET_CLOSE)) {
+            throw new ParsingException(token.getPosition(), TokenType.BRACKET_CLOSE, token.getType());
+        }
 
         nextToken();
         BlockStatement blockStatement = parseBlock();
@@ -394,7 +414,18 @@ public class ParserImpl implements Parser {
         if (expression == null) {
             QueryStatement queryStatement = parseQueryStatement();
             if (queryStatement == null) {
-                List<TokenType> allowedTypes = List.of(TokenType.IDENTIFIER); //TODO, add more types
+                List<TokenType> allowedTypes = List.of(TokenType.IF,
+                        TokenType.WHILE,
+                        TokenType.FOR,
+                        TokenType.IDENTIFIER,
+                        TokenType.INT_LITERAL,
+                        TokenType.STRING_LITERAL,
+                        TokenType.BOOL_LITERAL,
+                        TokenType.FLOAT_LITERAL,
+                        TokenType.PIPE,
+                        TokenType.BRACKET_OPEN,
+                        TokenType.SQUARE_BRACKET_OPEN
+                        ); //TODO, review those types
                 throw new ParsingException(identifierPosition, allowedTypes, token.getType());
             } else {
                 if(!checkToken(TokenType.SEMICOLON)) {
@@ -420,7 +451,6 @@ public class ParserImpl implements Parser {
         List<IExpression> arguments = parseArguments();
         proceedAndCheck(TokenType.SEMICOLON);
         return new FunctionCall(name, arguments, position);
-
     }
 
     /*
@@ -487,7 +517,7 @@ public class ParserImpl implements Parser {
         } else if (checkToken(TokenType.EQUAL)) {
             return parseDefinition(type, name, type.getPosition());
         } else {
-            List<TokenType> allowedTypesAfterIdentifier = List.of(TokenType.SEMICOLON, TokenType.EQUAL); //TODO, add more types
+            List<TokenType> allowedTypesAfterIdentifier = List.of(TokenType.SEMICOLON, TokenType.EQUAL);
             throw new ParsingException(type.getPosition(), allowedTypesAfterIdentifier, token.getType());
         }
     }
@@ -499,7 +529,15 @@ public class ParserImpl implements Parser {
         if (expression == null) {
             QueryStatement queryStatement = parseQueryStatement();
             if (queryStatement == null) {
-                List<TokenType> allowedTypes = List.of(TokenType.IDENTIFIER); //TODO, add more types
+                List<TokenType> allowedTypes = List.of(TokenType.IF,
+                        TokenType.WHILE,
+                        TokenType.FOR,
+                        TokenType.IDENTIFIER,
+                        TokenType.INT_LITERAL,
+                        TokenType.STRING_LITERAL,
+                        TokenType.BOOL_LITERAL,
+                        TokenType.FLOAT_LITERAL
+                ); //TODO, review those types
                 throw new ParsingException(identifierPosition, allowedTypes, token.getType());
             } else {
                 proceedAndCheck(TokenType.SEMICOLON);
@@ -554,7 +592,15 @@ public class ParserImpl implements Parser {
             nextToken();
             IExpression right = parseAndExpression();
             if (right == null) {
-                List<TokenType> allowedTypes = List.of(TokenType.IDENTIFIER, TokenType.INT_LITERAL); //TODO, add more types
+                List<TokenType> allowedTypes = List.of(TokenType.IF,
+                        TokenType.WHILE,
+                        TokenType.FOR,
+                        TokenType.IDENTIFIER,
+                        TokenType.INT_LITERAL,
+                        TokenType.STRING_LITERAL,
+                        TokenType.BOOL_LITERAL,
+                        TokenType.FLOAT_LITERAL
+                ); //TODO, review those types
                 throw new ParsingException(token.getPosition(), allowedTypes, token.getType());
             }
             left = new OrExpression(left, right, left.getPosition());
@@ -573,7 +619,15 @@ public class ParserImpl implements Parser {
             nextToken();
             IExpression right = parseRelativeExpression();
             if (right == null) {
-                List<TokenType> allowedTypes = List.of(TokenType.IDENTIFIER, TokenType.INT_LITERAL); //TODO, change types
+                List<TokenType> allowedTypes = List.of(TokenType.IF,
+                        TokenType.WHILE,
+                        TokenType.FOR,
+                        TokenType.IDENTIFIER,
+                        TokenType.INT_LITERAL,
+                        TokenType.STRING_LITERAL,
+                        TokenType.BOOL_LITERAL,
+                        TokenType.FLOAT_LITERAL
+                ); //TODO, review those types
                 throw new ParsingException(token.getPosition(), allowedTypes, token.getType());
             }
             left = new AndExpression(left, right, left.getPosition());
@@ -593,7 +647,15 @@ public class ParserImpl implements Parser {
             nextToken();
             IExpression right = parseArithmeticExpression();
             if (right == null) {
-                List<TokenType> allowedTypes = List.of(TokenType.IDENTIFIER, TokenType.INT_LITERAL); //TODO, change types
+                List<TokenType> allowedTypes = List.of(TokenType.IF,
+                        TokenType.WHILE,
+                        TokenType.FOR,
+                        TokenType.IDENTIFIER,
+                        TokenType.INT_LITERAL,
+                        TokenType.STRING_LITERAL,
+                        TokenType.BOOL_LITERAL,
+                        TokenType.FLOAT_LITERAL
+                );  //TODO, change types
                 throw new ParsingException(token.getPosition(), allowedTypes, token.getType());
             }
             left = new RelationExpression(left, relativeType, right, left.getPosition());
@@ -613,7 +675,15 @@ public class ParserImpl implements Parser {
             nextToken();
             IExpression right = parseMultiplicativeExpression();
             if (right == null) {
-                List<TokenType> allowedTypes = List.of(TokenType.IDENTIFIER, TokenType.INT_LITERAL); //TODO, change types
+                List<TokenType> allowedTypes = List.of(TokenType.IF,
+                        TokenType.WHILE,
+                        TokenType.FOR,
+                        TokenType.IDENTIFIER,
+                        TokenType.INT_LITERAL,
+                        TokenType.STRING_LITERAL,
+                        TokenType.BOOL_LITERAL,
+                        TokenType.FLOAT_LITERAL
+                ); //TODO, review those types
                 throw new ParsingException(token.getPosition(), allowedTypes, token.getType());
             }
             left = new ArthmeticExpression(left, additiveType, right, left.getPosition());
@@ -633,7 +703,15 @@ public class ParserImpl implements Parser {
             nextToken();
             IExpression right = parseNegatedFactor();
             if (right == null) {
-                List<TokenType> allowedTypes = List.of(TokenType.IDENTIFIER, TokenType.INT_LITERAL); //TODO, change types
+                List<TokenType> allowedTypes = List.of(TokenType.IF,
+                        TokenType.WHILE,
+                        TokenType.FOR,
+                        TokenType.IDENTIFIER,
+                        TokenType.INT_LITERAL,
+                        TokenType.STRING_LITERAL,
+                        TokenType.BOOL_LITERAL,
+                        TokenType.FLOAT_LITERAL
+                ); //TODO, review those types
                 throw new ParsingException(token.getPosition(), allowedTypes, token.getType());
             }
             left = new MultiplicativeExpression(left,multiplicativeType, right, left.getPosition());
@@ -650,7 +728,15 @@ public class ParserImpl implements Parser {
         }
         IExpression expression = parseFactor();
         if (negated && expression == null) {
-            List<TokenType> allowedForException = List.of(TokenType.IDENTIFIER, TokenType.INT_LITERAL); //TODO, change types
+            List<TokenType> allowedForException = List.of(TokenType.IF,
+                    TokenType.WHILE,
+                    TokenType.FOR,
+                    TokenType.IDENTIFIER,
+                    TokenType.INT_LITERAL,
+                    TokenType.STRING_LITERAL,
+                    TokenType.BOOL_LITERAL,
+                    TokenType.FLOAT_LITERAL
+            ); //TODO, review those types
             throw new ParsingException(token.getPosition(), allowedForException, token.getType());
         }
         if (negated) {
@@ -683,7 +769,7 @@ public class ParserImpl implements Parser {
             return expression;
         }
 
-
+        //TODO, przemyslec dodanie tutaj nawiasu za i przed parseExpression, rowniez w samej gramatyce
         expression = parseExpression();
         if (expression != null) {
             return expression;
@@ -722,21 +808,23 @@ public class ParserImpl implements Parser {
             Map<IExpression, IExpression> map = parseDictionaryLiteral();
             expression = new LiteralDictionary(map, position);
         }
+        if (expression == null) {
+            return expression;
+        }
         nextToken();
         return expression;
     }
 
     private Map<IExpression,IExpression> parseDictionaryLiteral() throws Exception {
-        if(!checkToken(TokenType.BRACKET_OPEN)) {
+        if(!checkToken(TokenType.PIPE)) {
             return null;
         }
         nextToken();
         IExpression objectOne;
         IExpression objectTwo;
-        Map<IExpression, IExpression> map = null;
+        Map<IExpression, IExpression> map = new HashMap<>();
         
-        while(!checkToken(TokenType.PIPE)) {
-
+        while(!checkToken(TokenType.PIPE)) { //dictionary literal ends with Semicolon
 
             objectOne = parseLiteral();
             if(!checkToken(TokenType.COLON)) {
@@ -751,7 +839,10 @@ public class ParserImpl implements Parser {
             if(!checkToken(list)) {
                 throw new ParsingException(token.getPosition(), list, token.getType());
             }
-            nextToken();
+            if (checkToken(TokenType.COMMA)) {
+                nextToken();
+            }
+
             
         }
         return map;
@@ -807,27 +898,145 @@ public class ParserImpl implements Parser {
     }
 /*
   | identifier, [ ".", (function_call | identifier, "(" lambda_expression ")") ]
-
  */
-    private IExpression parseStartingwithIdentifier() throws ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, IntMaxValueExceededException, IOException, IdentifierTooLongException, DecimalMaxValueExceededException {
+    private IExpression parseStartingwithIdentifier() throws Exception {
         if (!checkToken(TokenType.IDENTIFIER)) {
             return null;
         }
         IdentifierExpression identifierExpression = new IdentifierExpression(token.getValue(), token.getPosition());
 
         nextToken();
-        if(checkToken(TokenType.SEMICOLON)) {
-            return identifierExpression;
+
+        if (checkToken(TokenType.DOT)) {
+            nextToken();
+            return parseMethodCallOrLambda(identifierExpression.getName());
+        }
+        return  identifierExpression;
+    }
+    /*
+      | identifier, [ ".", (function_call | identifier, "(" lambda_expression ")") ]
+     */
+    private IExpression parseMethodCallOrLambda(String firstName) throws Exception {
+        if(!checkToken(TokenType.IDENTIFIER)) {
+            throw new ParsingException(token.getPosition(), TokenType.IDENTIFIER, token.getType());
+        }
+        String name = token.getValue();
+        Position position = token.getPosition();
+        if (name.equals("sort")) {
+            return parseLambda(firstName);
+        } else {
+            FunctionCall methodCall = parseFunctionCall(name, position);
+            return new IdentiferAndMethodCallExpression(firstName, methodCall, position);
+        }
+    }
+
+    /*
+      | identifier, [ ".", (function_call | identifier, "(" lambda_expression ")") ]
+     */
+    private IExpression parseLambda(String name) throws Exception {
+        nextToken();
+        proceedAndCheck(TokenType.BRACKET_OPEN);
+        proceedAndCheck(TokenType.BRACKET_OPEN);
+        List<Argument> arguments = parseParameters();
+        proceedAndCheck(TokenType.FLOAT.LAMBDA);
+        nextToken();
+        RelationExpression expression = (RelationExpression) parseExpression();
+        if(!checkToken(TokenType.BRACKET_CLOSE)) {
+            throw new ParsingException(token.getPosition(), TokenType.BRACKET_CLOSE, token.getType());
+        }
+        return new IdentifierAndLambdaCall(name, arguments, expression, arguments.get(0).getPosition());
+    }
+
+    private IExpression parseCastExpression() throws Exception {
+        if(!checkToken(TokenType.CAST)) {
+            return null;
+        }
+        Position position = token.getPosition();
+        nextToken();
+        List<TokenType> allowedTypes = List.of(TokenType.INTEGER, TokenType.STRING, TokenType.FLOAT, TokenType.BOOL);
+        if(!checkToken(allowedTypes)) {
+            throw new ParsingException(token.getPosition(), allowedTypes, token.getType());
+        }
+        TypeDeclaration typeDeclaration = new TypeDeclaration(Type.getTypeByName(token.getValue()), token.getPosition());
+
+        nextToken();
+        IExpression expression = parseExpression();
+
+        return new CastExpression(typeDeclaration, expression, position);
+    }
+
+    /*
+     query_statement            = "SELECT", select_clause, "FROM", identifier, [where_clause], [order_by_clause];
+      Select_clause              = "(", expression, { ",", expression }, ")";
+      where_clause               = "WHERE", "(", expression, ")";
+     order_by_clause            = "ORDERBY", expression, ("ASC" | "DESC");  //czy tutaj identifier.identifer jest poprawnym rozwiązaniem zamiast expression?
+     */
+    private QueryStatement parseQueryStatement() throws Exception {
+        if (!checkToken(TokenType.SELECT)) {
+            return null;
+        }
+        Position position = token.getPosition();
+        proceedAndCheck(TokenType.FLOAT.BRACKET_OPEN);
+        IExpression firtSelectExpression = parseExpression();
+        IExpression secondSelectExpression = null;
+        if (checkToken(TokenType.COMMA)) {
+            nextToken();
+            secondSelectExpression = parseExpression();
+        }
+        proceedAndCheck(TokenType.BRACKET_CLOSE);
+        proceedAndCheck(TokenType.FROM);
+        proceedAndCheck(TokenType.IDENTIFIER);
+        IdentifierExpression fromIdentifer = new IdentifierExpression(token.getValue(), token.getPosition());
+        nextToken();
+
+        IExpression whereExpression = parseWhereExpression(); //might be null
+
+        IExpression orderByExpression = parseOrderByExpression(); //might be null
+        AscOrDESC ascOrDESC = null;
+
+        if (orderByExpression != null)
+        {
+             ascOrDESC = parseAscOrDesc(); //cannot be null, throws Exception
+        }
+        nextToken(); //Semicolon read in calling methods
+        return new QueryStatement(firtSelectExpression, secondSelectExpression, fromIdentifer, whereExpression, orderByExpression, ascOrDESC, token.getPosition());
+    }
+
+    private AscOrDESC parseAscOrDesc() {
+        if(checkToken(TokenType.ASCENDING) || checkToken(TokenType.DESCENDING)) {
+            AscOrDESC ascOrDESC = AscOrDESC.getBySymbol(token.getValue());
+            return ascOrDESC;
         }
         return null;
     }
 
-    private IExpression parseCastExpression() {
-        return null; //TODO
+
+    private IExpression parseWhereExpression() throws Exception {
+        if(!checkToken(TokenType.WHERE)) {
+            return null;
+        }
+        proceedAndCheck(TokenType.BRACKET_OPEN);
+        nextToken();
+        IExpression whereExpression = parseExpression();
+        if(!checkToken(TokenType.BRACKET_CLOSE)) {
+            throw new ParsingException(token.getPosition(), TokenType.BRACKET_CLOSE, token.getType());
+        }
+        nextToken();
+        return whereExpression;
     }
 
-    private QueryStatement parseQueryStatement() {
-        return null; //TODO
+    private IExpression parseOrderByExpression() throws Exception {
+        if(!checkToken(TokenType.ORDER_BY)) {
+            return null;
+        }
+        proceedAndCheck(TokenType.BRACKET_OPEN);
+        nextToken();
+        IExpression whereExpression = parseExpression();
+        if(!checkToken(TokenType.BRACKET_CLOSE)) {
+            throw new ParsingException(token.getPosition(), TokenType.BRACKET_CLOSE, token.getType());
+        }
+        nextToken();
+        return whereExpression;
     }
 
     private boolean checkToken(TokenType tokenType) {
@@ -847,7 +1056,7 @@ public class ParserImpl implements Parser {
     private void proceedAndCheck(TokenType expected) throws Exception {
         nextToken();
         if (!checkToken(expected)) {
-            throw new ParsingException(token.getPosition(), expected, token.getType()); //TODO, custom exceptions
+            throw new ParsingException(token.getPosition(), expected, token.getType());
         }
 
     }

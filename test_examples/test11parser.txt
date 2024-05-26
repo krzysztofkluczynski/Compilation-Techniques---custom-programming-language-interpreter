@@ -1,0 +1,11 @@
+                        fn int add(int x) {
+                          if(x != 5) {
+                              identifer = "string";
+                          } elif (x == 5) {
+                            identifer = "variable";
+                            }
+                          else {
+                            return "x";
+                          }
+
+                        }

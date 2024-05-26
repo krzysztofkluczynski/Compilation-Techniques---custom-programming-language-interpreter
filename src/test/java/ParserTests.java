@@ -1,32 +1,21 @@
-import org.example.lexer.Lexer;
 import org.example.lexer.LexerImpl;
-import org.example.lexer.error.*;
-import org.example.parser.Enum.MultiplicativeType;
 import org.example.parser.Enum.RelativeType;
 import org.example.parser.Enum.Type;
+import org.example.parser.Error.DuplicateIdentiferException;
+import org.example.parser.Error.ParsingException;
 import org.example.parser.ParserImpl;
 import org.example.parser.Structure.Expression.*;
-import org.example.parser.Structure.Expression.Literals.LiteralBool;
-import org.example.parser.Structure.Expression.Literals.LiteralInteger;
-import org.example.parser.Structure.Expression.Literals.LiteralString;
-import org.example.parser.Structure.Expression.Literals.LiteralTuple;
+import org.example.parser.Structure.Expression.Literals.*;
 import org.example.parser.Structure.OtherComponents.FunctionDefinition;
 import org.example.parser.Structure.OtherComponents.Program;
 import org.example.parser.Structure.OtherComponents.TypeDeclaration;
 import org.example.parser.Structure.Statement.*;
 import org.example.reader.DataStreamInputReader;
-import org.example.token.IntegerToken;
 import org.example.token.Position;
-import org.example.token.Token;
-import org.example.token.TokenType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.testng.Assert;
 
-import java.beans.Expression;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public class ParserTests {
@@ -261,6 +250,513 @@ public class ParserTests {
         LiteralBool returnValue = (LiteralBool) returnStatement1.getExpression();
         Assert.assertEquals(returnValue.getValue(), true);
     }
+
+    @Test
+    public void testWhile() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                    fn bool add(int x, int y) {
+                        while (x != 5) {
+                            int x = 2;
+                        }
+                     }
+                        """
+        );
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+        Map<String, FunctionDefinition> functionDefinitionList = program.getFunctionDefinitions();
+        Assert.assertEquals(functionDefinitionList.size(), 1);
+        Assert.assertEquals(functionDefinitionList.containsKey("add"), true);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getType(), Type.BOOL);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getFirstOptionalParam(), null);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getSecondOptionalParam(), null);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getPosition().getLine(), 1);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getPosition().getCharacterNumber(), 3);
+        Assert.assertEquals(functionDefinitionList.get("add").getName(), "add");
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().size(), 2);
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().get(0).getType().getType(), Type.INT);
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().get(1).getType().getType(), Type.INT);
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().get(0).getName(), "x");
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().get(1).getName(), "y");
+
+        Assert.assertEquals(functionDefinitionList.get("add").getBody().getPosition().getLine(), 1);
+        Assert.assertEquals(functionDefinitionList.get("add").getBody().getPosition().getCharacterNumber(), 26);
+        Assert.assertEquals(functionDefinitionList.get("add").getBody().getInstructions().size(), 1);
+
+        WhileStatement whileStatement= (WhileStatement) functionDefinitionList.get("add").getBody().getInstructions().get(0);
+        RelationExpression relationExpression = (RelationExpression) whileStatement.getExpression();
+        DefinitionWithExpressionStatement assignment = (DefinitionWithExpressionStatement) whileStatement.getBlockStatement().getInstructions().get(0);
+
+        IdentifierExpression identifierExpression = (IdentifierExpression) relationExpression.getLeft();
+        LiteralInteger literalInteger = (LiteralInteger) relationExpression.getRight();
+
+        Assert.assertEquals(identifierExpression.getName(), "x");
+        Assert.assertEquals(literalInteger.getValue(), 5);
+
+        String name = assignment.getIdentifierName();
+        LiteralInteger assignmentInteger = (LiteralInteger) assignment.getExpression();
+
+        Assert.assertEquals(name, "x");
+        Assert.assertEquals(assignmentInteger.getValue(), 2);
+
+    }
+
+    @Test
+    public void testIf() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                    fn bool add(int x, int y) {
+                        if (x != 5) {
+                            int x = 2;
+                        }
+                     }
+                        """
+        );
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+        Map<String, FunctionDefinition> functionDefinitionList = program.getFunctionDefinitions();
+        Assert.assertEquals(functionDefinitionList.size(), 1);
+        Assert.assertEquals(functionDefinitionList.containsKey("add"), true);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getType(), Type.BOOL);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getFirstOptionalParam(), null);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getSecondOptionalParam(), null);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getPosition().getLine(), 1);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getPosition().getCharacterNumber(), 3);
+        Assert.assertEquals(functionDefinitionList.get("add").getName(), "add");
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().size(), 2);
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().get(0).getType().getType(), Type.INT);
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().get(1).getType().getType(), Type.INT);
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().get(0).getName(), "x");
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().get(1).getName(), "y");
+
+        Assert.assertEquals(functionDefinitionList.get("add").getBody().getPosition().getLine(), 1);
+        Assert.assertEquals(functionDefinitionList.get("add").getBody().getPosition().getCharacterNumber(), 26);
+        Assert.assertEquals(functionDefinitionList.get("add").getBody().getInstructions().size(), 1);
+
+        ConditionalStatement conditionalStatement= (ConditionalStatement) functionDefinitionList.get("add").getBody().getInstructions().get(0);
+        RelationExpression relationExpression = (RelationExpression) conditionalStatement.getIfs().get(0).getExpression();
+        DefinitionWithExpressionStatement assignment = (DefinitionWithExpressionStatement) conditionalStatement.getIfs().get(0).getBlockStatement().getInstructions().get(0);
+
+        IdentifierExpression identifierExpression = (IdentifierExpression) relationExpression.getLeft();
+        LiteralInteger literalInteger = (LiteralInteger) relationExpression.getRight();
+
+        Assert.assertEquals(identifierExpression.getName(), "x");
+        Assert.assertEquals(literalInteger.getValue(), 5);
+
+        String name = assignment.getIdentifierName();
+        LiteralInteger assignmentInteger = (LiteralInteger) assignment.getExpression();
+
+        Assert.assertEquals(name, "x");
+        Assert.assertEquals(assignmentInteger.getValue(), 2);
+
+    }
+
+    @Test
+    public void testIfElifElse() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                    fn bool add(int x, int y) {
+                     if (x != 5) {
+                        int x = 3;
+                     } elif (true) {
+                        int x = 3;
+                     } else {
+                        int x = 3;
+                        }
+                     }
+                        """
+        );
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+        Map<String, FunctionDefinition> functionDefinitionList = program.getFunctionDefinitions();
+        Assert.assertEquals(functionDefinitionList.size(), 1);
+        Assert.assertEquals(functionDefinitionList.containsKey("add"), true);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getType(), Type.BOOL);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getFirstOptionalParam(), null);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getSecondOptionalParam(), null);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getPosition().getLine(), 1);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getPosition().getCharacterNumber(), 3);
+        Assert.assertEquals(functionDefinitionList.get("add").getName(), "add");
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().size(), 2);
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().get(0).getType().getType(), Type.INT);
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().get(1).getType().getType(), Type.INT);
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().get(0).getName(), "x");
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().get(1).getName(), "y");
+
+        Assert.assertEquals(functionDefinitionList.get("add").getBody().getPosition().getLine(), 1);
+        Assert.assertEquals(functionDefinitionList.get("add").getBody().getPosition().getCharacterNumber(), 26);
+        Assert.assertEquals(functionDefinitionList.get("add").getBody().getInstructions().size(), 1);
+
+        ConditionalStatement conditionalStatement= (ConditionalStatement) functionDefinitionList.get("add").getBody().getInstructions().get(0);
+        RelationExpression relationExpression = (RelationExpression) conditionalStatement.getIfs().get(0).getExpression();
+        DefinitionWithExpressionStatement assignment = (DefinitionWithExpressionStatement) conditionalStatement.getIfs().get(0).getBlockStatement().getInstructions().get(0);
+
+        IdentifierExpression identifierExpression = (IdentifierExpression) relationExpression.getLeft();
+        LiteralInteger literalInteger = (LiteralInteger) relationExpression.getRight();
+
+        Assert.assertEquals(identifierExpression.getName(), "x");
+        Assert.assertEquals(literalInteger.getValue(), 5);
+
+        String name = assignment.getIdentifierName();
+        LiteralInteger assignmentInteger = (LiteralInteger) assignment.getExpression();
+
+        Assert.assertEquals(name, "x");
+        Assert.assertEquals(assignmentInteger.getValue(), 3);
+
+        LiteralBool literalBool = (LiteralBool) conditionalStatement.getIfs().get(1).getExpression();
+        DefinitionWithExpressionStatement assignment1 = (DefinitionWithExpressionStatement) conditionalStatement.getIfs().get(1).getBlockStatement().getInstructions().get(0);
+
+
+        Assert.assertEquals(literalBool.getValue() ,true);
+
+        String name1 = assignment1.getIdentifierName();
+        LiteralInteger assignmentInteger1 = (LiteralInteger) assignment1.getExpression();
+
+        Assert.assertEquals(name1, "x");
+        Assert.assertEquals(assignmentInteger1.getValue(), 3);
+
+        RelationExpression relationExpression2 = (RelationExpression) conditionalStatement.getIfs().get(2).getExpression();
+        DefinitionWithExpressionStatement assignment2 = (DefinitionWithExpressionStatement) conditionalStatement.getIfs().get(2).getBlockStatement().getInstructions().get(0);
+//        IdentifierExpression identifierExpression2 = (IdentifierExpression) relationExpression1.getLeft();
+//        LiteralInteger literalInteger2 = (LiteralInteger) relationExpression1.getRight();
+
+//        Assert.assertEquals(identifierExpression2.getName(), "x");
+//        Assert.assertEquals(literalInteger2.getValue(), 5);
+        Assert.assertEquals(relationExpression2, null);
+
+        String name2 = assignment2.getIdentifierName();
+        LiteralInteger assignmentInteger2 = (LiteralInteger) assignment2.getExpression();
+
+        Assert.assertEquals(name2, "x");
+        Assert.assertEquals(assignmentInteger2.getValue(), 3);
+    }
+
+    @Test
+    public void testForLoop() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn bool add(int x, int y) {
+                              for (int x : a) {
+                                  int x = 2;
+                              }
+                          }
+                        """
+        );
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+        Map<String, FunctionDefinition> functionDefinitionList = program.getFunctionDefinitions();
+        Assert.assertEquals(functionDefinitionList.size(), 1);
+        Assert.assertEquals(functionDefinitionList.containsKey("add"), true);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getType(), Type.BOOL);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getFirstOptionalParam(), null);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getSecondOptionalParam(), null);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getPosition().getLine(), 1);
+        Assert.assertEquals(functionDefinitionList.get("add").getReturnType().getPosition().getCharacterNumber(), 3);
+        Assert.assertEquals(functionDefinitionList.get("add").getName(), "add");
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().size(), 2);
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().get(0).getType().getType(), Type.INT);
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().get(1).getType().getType(), Type.INT);
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().get(0).getName(), "x");
+        Assert.assertEquals(functionDefinitionList.get("add").getArguments().get(1).getName(), "y");
+
+        Assert.assertEquals(functionDefinitionList.get("add").getBody().getPosition().getLine(), 1);
+        Assert.assertEquals(functionDefinitionList.get("add").getBody().getPosition().getCharacterNumber(), 26);
+        Assert.assertEquals(functionDefinitionList.get("add").getBody().getInstructions().size(), 1);
+
+        ForStatement forStatement= (ForStatement) functionDefinitionList.get("add").getBody().getInstructions().get(0);
+        Assert.assertEquals(forStatement.getType().getType(), Type.INT);
+        Assert.assertEquals(forStatement.getIdentifer(), "x");
+        Assert.assertEquals(forStatement.getCollectionIdentifer(), "a");
+        DefinitionWithExpressionStatement assignment = (DefinitionWithExpressionStatement) forStatement.getBlockStatement().getInstructions().get(0);
+
+
+        String name = assignment.getIdentifierName();
+        LiteralInteger assignmentInteger = (LiteralInteger) assignment.getExpression();
+
+        Assert.assertEquals(name, "x");
+        Assert.assertEquals(assignmentInteger.getValue(), 2);
+    }
+
+    @Test
+    public void testDicitionaryIdentifier() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                                fn bool add(int x, int y) {
+                                     Dictionary<String, int> dict = | "Krzysztof" : 32,
+                                                                    "Klaudia" : 33
+                                     |;
+                            }
+                        """
+        );
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+        Map<String, FunctionDefinition> functionDefinitionList = program.getFunctionDefinitions();
+
+        DefinitionWithExpressionStatement definition = (DefinitionWithExpressionStatement) functionDefinitionList.get("add").getBody().getInstructions().get(0);
+
+        TypeDeclaration typeDeclaration = definition.getType();
+        Assert.assertEquals(typeDeclaration.getType(), Type.DICTIONARY);
+        Assert.assertEquals(typeDeclaration.getFirstOptionalParam(), Type.STRING);
+        Assert.assertEquals(typeDeclaration.getSecondOptionalParam(), Type.INT);
+
+        String name = definition.getIdentifierName();
+        Assert.assertEquals(name, "dict");
+
+        LiteralDictionary literalDictionary = (LiteralDictionary) definition.getExpression();
+        Map<IExpression, IExpression> map = literalDictionary.getValue();
+    }
+
+    @Test
+    public void testDuplacatedIdentifer() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn bool add(int x, int y) {
+                              for (int x : a) {
+                                  int x = 2;
+                              }
+                          }
+                         fn bool add(int x, int y) {
+                              for (int x : a) {
+                                  int x = 2;
+                              }
+                          }
+                        """
+        );
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Assertions.assertThrows(DuplicateIdentiferException.class, parser::parseProgram);
+    }
+
+
+    @Test
+    public void testSemicolonMissing() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn bool add(int x, int y) {
+                              for (int x : a) {
+                                  int x = 2
+                              }
+                          }
+                
+                        ); 
+        """);
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Assertions.assertThrows(ParsingException.class, parser::parseProgram);
+    }
+
+    @Test
+    public void testMissingFunctionReturnType() throws Exception {
+
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn add(int x, int y) {
+                              for (int x : a) {
+                                  int x = 2;
+                              }
+                          }
+                
+                        ); 
+        """);
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Assertions.assertThrows(ParsingException.class, parser::parseProgram);
+    }
+
+
+    @Test
+    public void testMissingParameter() throws Exception {
+
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn add(int x,) {
+                              for (int x : a) {
+                                  int x = 2;
+                              }
+                          }
+                
+                        ); 
+        """);
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Assertions.assertThrows(ParsingException.class, parser::parseProgram);
+    }
+
+    @Test
+    public void testMissingparameterIdentifer() throws Exception {
+
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn add(int ) {
+                              for (int x : a) {
+                                  int x = 2;
+                              }
+                          }
+                
+                        ); 
+        """);
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Assertions.assertThrows(ParsingException.class, parser::parseProgram);
+    }
+
+    @Test
+    public void testMissingBracket() throws Exception {
+
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn add(int x) {
+                              for (int x : a) {
+                                  int x = 2;
+                              }
+                          }
+                
+        """);
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Assertions.assertThrows(ParsingException.class, parser::parseProgram);
+    }
+
+    @Test
+    public void testWrongBrackets() throws Exception {
+
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn add(int x) {
+                              for {int x : a} {
+                                  int x = 2;
+                              }
+                          }
+                
+                        
+        """);
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Assertions.assertThrows(ParsingException.class, parser::parseProgram);
+    }
+
+
+    @Test
+    public void emptyFor() throws Exception {
+
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn add(int x) {
+                              for () {
+                                  int x = 2;
+                              }
+                          }
+                
+                       
+        """);
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Assertions.assertThrows(ParsingException.class, parser::parseProgram);
+    }
+
+
+    @Test
+    public void testEmptyTuple() throws Exception {
+
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn add(int x) {
+                              Tuple<> x = 5;
+                          }
+              
+                      
+        """);
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Assertions.assertThrows(ParsingException.class, parser::parseProgram);
+    }
+
+    @Test
+    public void testOperandsBeingNextToEachother() throws Exception {
+
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn add(int x) {
+                              int x != +;
+                          }
+              
+                        }
+        """);
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Assertions.assertThrows(ParsingException.class, parser::parseProgram);
+    }
+
+    @Test
+    public void ifWithoutConiditon() throws Exception {
+
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                      fn int add(int x) {
+                          if {
+                              identifer = "string";
+                          } elif (x == 5) {
+                            identifer = "variable";
+                            }
+                          else {
+                            return "x";
+                          }
+
+                          }
+                        """);
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Assertions.assertThrows(ParsingException.class, parser::parseProgram);
+    }
+
+
+    @Test
+    public void elifWithoutConiditon() throws Exception {
+
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn int add(int x) {
+                            if {
+                                identifer = "string";
+                            } elif {
+                              identifer = "variable";
+                              }
+                            else {
+                              return "x";
+                            }
+
+                            }
+                          """);
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Assertions.assertThrows(ParsingException.class, parser::parseProgram);
+    }
+
+
+
+
 
 
 
