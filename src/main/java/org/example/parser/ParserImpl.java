@@ -29,7 +29,6 @@ public class ParserImpl implements Parser {
         token = lexer.next();
     }
 
-
     /*
     program = {function_definition}
     */
@@ -71,7 +70,6 @@ public class ParserImpl implements Parser {
 
         return new FunctionDefinition(typeDeclaration, name, parameters, blockStatement, position);
     }
-
 
 
     /*
