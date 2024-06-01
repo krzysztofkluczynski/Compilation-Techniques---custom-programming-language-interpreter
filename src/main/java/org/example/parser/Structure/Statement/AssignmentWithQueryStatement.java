@@ -7,7 +7,7 @@ import org.example.token.Position;
 @Value
 public class AssignmentWithQueryStatement implements Statement{
     String IdentifierName;
-    QueryStatement QueryStatement;
+    org.example.parser.Structure.Expression.QueryExpression QueryExpression;
     Position position;
 
     @Override

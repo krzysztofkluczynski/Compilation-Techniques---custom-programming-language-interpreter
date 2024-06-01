@@ -30,7 +30,7 @@ public interface Visitor {
 
     void accept(IExpression expression);
 
-    void accept(QueryStatement queryStatement);
+    void accept(QueryExpression queryExpression);
     void accept(AssignmentWithExpressionStatement assignmentWithExpressionStatement);
 
 
@@ -56,7 +56,11 @@ public interface Visitor {
 
     void visit(IdentiferAndMethodCallExpression identiferAndMethodCallExpression);
 
-    void visit(LambdaExpression lambdaExpression);
+    void visit(IdentifierAndLambdaCall identifierAndLambdaCall);
 
     void accept(SelectClause selectClause);
+
+    void visit(IdentiferAndFieldReference identiferAndFieldReference);
+
+    void visit(LiteralBool literalBool);
 }

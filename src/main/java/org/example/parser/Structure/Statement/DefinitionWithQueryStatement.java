@@ -1,6 +1,7 @@
 package org.example.parser.Structure.Statement;
 
 import lombok.Value;
+import org.example.parser.Structure.Expression.QueryExpression;
 import org.example.parser.Structure.OtherComponents.TypeDeclaration;
 import org.example.parser.Visitor;
 import org.example.token.Position;
@@ -9,7 +10,7 @@ import org.example.token.Position;
 public class DefinitionWithQueryStatement implements Statement{
     TypeDeclaration type;
     String IdentifierName;
-    QueryStatement queryStatement;
+    QueryExpression queryExpression;
     Position position;
 
     @Override

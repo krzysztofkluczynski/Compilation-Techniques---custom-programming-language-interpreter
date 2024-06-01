@@ -4,6 +4,7 @@ import org.example.lexer.Lexer;
 import org.example.lexer.error.*;
 import org.example.parser.Enum.*;
 import org.example.parser.Error.DuplicateIdentiferException;
+import org.example.parser.Error.GlobalVariableException;
 import org.example.parser.Error.ParsingException;
 import org.example.parser.Structure.Expression.*;
 import org.example.parser.Structure.Expression.Literals.*;
@@ -386,7 +387,7 @@ public class ParserImpl implements Parser {
     }
 
     /*
- function_call_or_assignment = identifier, (, "(", arguments-list, ")", | ["=", (expression | query_statement)], ),  ";";
+ function_call_or_assignment = identifier, (, "(", arguments-list, ")", | ["=", (expression ),  ";";
     */
     private Node parseStatementStartingWithIdentifier() throws Exception {
         if(!checkToken(TokenType.IDENTIFIER)) {
@@ -397,7 +398,9 @@ public class ParserImpl implements Parser {
         nextToken();
 
         if(token.getType() == TokenType.BRACKET_OPEN) {
-            return parseFunctionCall(name, identifierPosition);
+            FunctionCall functionCall = parseFunctionCall(name, identifierPosition);
+            nextToken();
+            return functionCall;
         } else if (token.getType() == TokenType.EQUAL) {
             return parseAssignment(name, identifierPosition);
         } else {
@@ -412,8 +415,8 @@ public class ParserImpl implements Parser {
         IExpression expression = parseExpression();
         Statement statement;
         if (expression == null) {
-            QueryStatement queryStatement = parseQueryStatement();
-            if (queryStatement == null) {
+            QueryExpression queryExpression = parseQueryStatement();
+            if (queryExpression == null) {
                 List<TokenType> allowedTypes = List.of(TokenType.IF,
                         TokenType.WHILE,
                         TokenType.FOR,
@@ -425,13 +428,13 @@ public class ParserImpl implements Parser {
                         TokenType.PIPE,
                         TokenType.BRACKET_OPEN,
                         TokenType.SQUARE_BRACKET_OPEN
-                        ); //TODO, review those types
+                        );
                 throw new ParsingException(identifierPosition, allowedTypes, token.getType());
             } else {
                 if(!checkToken(TokenType.SEMICOLON)) {
                     throw new ParsingException(token.getPosition(), TokenType.SEMICOLON, token.getType());
                 }
-                return new AssignmentWithQueryStatement(name, queryStatement, identifierPosition);
+                return new AssignmentWithQueryStatement(name, queryExpression, identifierPosition);
             }
 
         }
@@ -471,7 +474,7 @@ public class ParserImpl implements Parser {
             expressions.add(expression);
 
             // Advance to the next token to check if it's a comma or a closing bracket.
-            nextToken();
+            //nextToken();
 
             if (token.getType() == TokenType.BRACKET_CLOSE) {
                 break;
@@ -486,7 +489,7 @@ public class ParserImpl implements Parser {
     }
 
     /*
-     declaration_or_definition  = type, identifier, ["=", (expression | query_statement)], ";";
+     declaration_or_definition  = type, identifier, ["=", expression], ";";
      */
     private Statement parseStatementStartingWithType() throws Exception {
         List<TokenType> allowedTypes = List.of(
@@ -527,8 +530,6 @@ public class ParserImpl implements Parser {
         IExpression expression = parseExpression();
         Statement statement;
         if (expression == null) {
-            QueryStatement queryStatement = parseQueryStatement();
-            if (queryStatement == null) {
                 List<TokenType> allowedTypes = List.of(TokenType.IF,
                         TokenType.WHILE,
                         TokenType.FOR,
@@ -539,12 +540,8 @@ public class ParserImpl implements Parser {
                         TokenType.FLOAT_LITERAL
                 ); //TODO, review those types
                 throw new ParsingException(identifierPosition, allowedTypes, token.getType());
-            } else {
-                proceedAndCheck(TokenType.SEMICOLON);
-                return new DefinitionWithQueryStatement(type, name, queryStatement, identifierPosition);
             }
 
-        }
         if(!checkToken(TokenType.SEMICOLON)) {
             throw new ParsingException(token.getPosition(), TokenType.SEMICOLON, token.getType());
         }
@@ -722,9 +719,10 @@ public class ParserImpl implements Parser {
     private IExpression parseNegatedFactor() throws Exception {
         boolean negated = false;
         Position position = token.getPosition();
-        List<TokenType> allowedTypes = List.of(TokenType.NOT, TokenType.MINUS); //TODO, change types
+        List<TokenType> allowedTypes = List.of(TokenType.NOT, TokenType.MINUS);
         if (checkToken(allowedTypes)) {
             negated = true;
+            nextToken();
         }
         IExpression expression = parseFactor();
         if (negated && expression == null) {
@@ -751,6 +749,7 @@ public class ParserImpl implements Parser {
                             | identifier, [ ".", (function_call | identifier, "(" lambda_expression ")") ]
                             | cast_expression
                             | "(", expression, ")";
+                            | queryStatement
 
      */
     private IExpression parseFactor() throws Exception {
@@ -769,11 +768,18 @@ public class ParserImpl implements Parser {
             return expression;
         }
 
+        expression = parseQueryStatement();
+        if (expression != null) {
+            return expression;
+        }
+
         //TODO, przemyslec dodanie tutaj nawiasu za i przed parseExpression, rowniez w samej gramatyce
         expression = parseExpression();
         if (expression != null) {
             return expression;
         }
+
+
         return expression;
     }
 
@@ -873,7 +879,7 @@ public class ParserImpl implements Parser {
             return null;
         }
         nextToken();
-        List<IExpression> literals = null;
+        List<IExpression> literals = new ArrayList<>();
 
         while(!checkToken(TokenType.SQUARE_BRACKET_CLOSE)) {
             IExpression literal = parseLiteral();
@@ -911,6 +917,11 @@ public class ParserImpl implements Parser {
             nextToken();
             return parseMethodCallOrLambda(identifierExpression.getName());
         }
+
+        if (checkToken(TokenType.BRACKET_OPEN)) {
+            return parseFunctionCall(identifierExpression.getName(), identifierExpression.getPosition());
+        }
+
         return  identifierExpression;
     }
     /*
@@ -925,8 +936,16 @@ public class ParserImpl implements Parser {
         if (name.equals("sort")) {
             return parseLambda(firstName);
         } else {
-            FunctionCall methodCall = parseFunctionCall(name, position);
-            return new IdentiferAndMethodCallExpression(firstName, methodCall, position);
+            nextToken();
+            if(token.getType() == TokenType.BRACKET_OPEN) {
+                FunctionCall methodCall = parseFunctionCall(name, position);
+                return new IdentiferAndMethodCallExpression(firstName, methodCall, position);
+            } else {
+                return new IdentiferAndFieldReference(firstName, name, position);
+            }
+//            List<TokenType> list = List.of(TokenType.BRACKET_OPEN, TokenType.IDENTIFIER);
+//            throw new ParsingException(token.getPosition(), list, token.getType());
+
         }
     }
 
@@ -971,19 +990,22 @@ public class ParserImpl implements Parser {
       where_clause               = "WHERE", "(", expression, ")";
      order_by_clause            = "ORDERBY", expression, ("ASC" | "DESC");  //czy tutaj identifier.identifer jest poprawnym rozwiązaniem zamiast expression?
      */
-    private QueryStatement parseQueryStatement() throws Exception {
+    private QueryExpression parseQueryStatement() throws Exception {
         if (!checkToken(TokenType.SELECT)) {
             return null;
         }
         Position position = token.getPosition();
         proceedAndCheck(TokenType.FLOAT.BRACKET_OPEN);
+        nextToken();
         IExpression firtSelectExpression = parseExpression();
         IExpression secondSelectExpression = null;
         if (checkToken(TokenType.COMMA)) {
             nextToken();
             secondSelectExpression = parseExpression();
         }
-        proceedAndCheck(TokenType.BRACKET_CLOSE);
+        if (!checkToken(TokenType.BRACKET_CLOSE)) {
+            throw new ParsingException(position, TokenType.BRACKET_CLOSE, token.getType());
+        }
         proceedAndCheck(TokenType.FROM);
         proceedAndCheck(TokenType.IDENTIFIER);
         IdentifierExpression fromIdentifer = new IdentifierExpression(token.getValue(), token.getPosition());
@@ -998,8 +1020,8 @@ public class ParserImpl implements Parser {
         {
              ascOrDESC = parseAscOrDesc(); //cannot be null, throws Exception
         }
-        nextToken(); //Semicolon read in calling methods
-        return new QueryStatement(firtSelectExpression, secondSelectExpression, fromIdentifer, whereExpression, orderByExpression, ascOrDESC, token.getPosition());
+        //nextToken(); //Semicolon read in calling methods
+        return new QueryExpression(firtSelectExpression, secondSelectExpression, fromIdentifer, whereExpression, orderByExpression, ascOrDESC, token.getPosition());
     }
 
     private AscOrDESC parseAscOrDesc() {
