@@ -1,4 +1,5 @@
 import org.example.lexer.LexerImpl;
+import org.example.parser.Enum.AscOrDESC;
 import org.example.parser.Enum.RelativeType;
 import org.example.parser.Enum.Type;
 import org.example.parser.Error.DuplicateIdentiferException;
@@ -6,19 +7,21 @@ import org.example.parser.Error.ParsingException;
 import org.example.parser.ParserImpl;
 import org.example.parser.Structure.Expression.*;
 import org.example.parser.Structure.Expression.Literals.*;
-import org.example.parser.Structure.OtherComponents.FunctionDefinition;
-import org.example.parser.Structure.OtherComponents.Program;
-import org.example.parser.Structure.OtherComponents.TypeDeclaration;
+import org.example.parser.Structure.OtherComponents.*;
 import org.example.parser.Structure.Statement.*;
 import org.example.reader.DataStreamInputReader;
 import org.example.token.Position;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.testng.Assert;
+import static org.mockito.Mockito.*;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-public class ParserTests {
+public class ParserIntegrationTests {
 
     @Test
     public void testSimpleIntFunction() throws Exception {
@@ -514,7 +517,191 @@ public class ParserTests {
 
         LiteralDictionary literalDictionary = (LiteralDictionary) definition.getExpression();
         Map<IExpression, IExpression> map = literalDictionary.getValue();
+        Set<IExpression> keySet = map.keySet();
+        Iterator<IExpression> iterator = keySet.iterator();
+        LiteralString string1 = (LiteralString) iterator.next();
+        LiteralString string2 = (LiteralString) iterator.next();
+
+        Assert.assertEquals(string1.getValue(), "Klaudia");
+        Assert.assertEquals(string2.getValue(), "Krzysztof");
+
+        LiteralInteger literalInteger1 = (LiteralInteger) map.get(string1);
+        LiteralInteger literalInteger2 = (LiteralInteger) map.get(string2);
+
+        Assert.assertEquals(map.get(string1), literalInteger1);
+        Assert.assertEquals(map.get(string2), literalInteger2);
     }
+
+    @Test
+    public void testSelect() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                                fn bool add(int x, int y) {
+                                     Dictionary<String, int> dict = | "Krzysztof" : 32,
+                                                                    "Klaudia" : 33
+                                     |;
+                                     
+                                     Tuple<String, int> variable = SELECT (dict.key, dict.value) FROM dict WHERE (dict.key == "Krzysztof");
+                            }
+                        """
+        );
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+        Map<String, FunctionDefinition> functionDefinitionList = program.getFunctionDefinitions();
+
+        DefinitionWithExpressionStatement definition = (DefinitionWithExpressionStatement) functionDefinitionList.get("add").getBody().getInstructions().get(0);
+
+        TypeDeclaration typeDeclaration = definition.getType();
+        Assert.assertEquals(typeDeclaration.getType(), Type.DICTIONARY);
+        Assert.assertEquals(typeDeclaration.getFirstOptionalParam(), Type.STRING);
+        Assert.assertEquals(typeDeclaration.getSecondOptionalParam(), Type.INT);
+
+        String name = definition.getIdentifierName();
+        Assert.assertEquals(name, "dict");
+
+        LiteralDictionary literalDictionary = (LiteralDictionary) definition.getExpression();
+        Map<IExpression, IExpression> map = literalDictionary.getValue();
+        Set<IExpression> keySet = map.keySet();
+        Iterator<IExpression> iterator = keySet.iterator();
+        LiteralString string1 = (LiteralString) iterator.next();
+        LiteralString string2 = (LiteralString) iterator.next();
+
+        Assert.assertEquals(string1.getValue(), "Klaudia");
+        Assert.assertEquals(string2.getValue(), "Krzysztof");
+
+        LiteralInteger literalInteger1 = (LiteralInteger) map.get(string1);
+        LiteralInteger literalInteger2 = (LiteralInteger) map.get(string2);
+
+        Assert.assertEquals(map.get(string1), literalInteger1);
+        Assert.assertEquals(map.get(string2), literalInteger2);
+
+        DefinitionWithExpressionStatement definitionWithExpressionStatement = (DefinitionWithExpressionStatement) functionDefinitionList.get("add").getBody().getInstructions().get(1);
+
+        String tupleName = definitionWithExpressionStatement.getIdentifierName();
+        TypeDeclaration declarationType = definitionWithExpressionStatement.getType();
+
+        Assert.assertEquals(tupleName, "variable");
+        Assert.assertEquals(declarationType.getType(), Type.TUPLE);
+        Assert.assertEquals(declarationType.getFirstOptionalParam(), Type.STRING);
+        Assert.assertEquals(declarationType.getSecondOptionalParam(), Type.INT);
+
+
+        QueryExpression queryExpression = (QueryExpression) definitionWithExpressionStatement.getExpression();
+
+        IdentiferAndFieldReference identiferAndFieldReference = (IdentiferAndFieldReference) queryExpression.getFirstSelectExpression();
+        IdentiferAndFieldReference identiferAndFieldReference2 = (IdentiferAndFieldReference) queryExpression.getSecondSelectExpression();
+
+        IdentifierExpression identifer = queryExpression.getFromIdentifer();
+
+        RelationExpression relationExpression = (RelationExpression) queryExpression.getWhereExpression();
+
+
+        IdentiferAndFieldReference orderBy = (IdentiferAndFieldReference) queryExpression.getOrderByExpression();
+        AscOrDESC ascOrDESC = queryExpression.getAscOrDESC();
+
+        Assert.assertEquals(identiferAndFieldReference.getFirstIdentiferName(), "dict");
+        Assert.assertEquals(identiferAndFieldReference.getSecondIdentiferName(), "key");
+        Assert.assertEquals(identiferAndFieldReference2.getFirstIdentiferName(), "dict");
+        Assert.assertEquals(identiferAndFieldReference2.getSecondIdentiferName(), "value");
+
+        Assert.assertEquals(identifer.getName(), "dict");
+
+        IdentiferAndFieldReference identiferAndFieldReferenceLeft = (IdentiferAndFieldReference) relationExpression.getLeft();
+        LiteralString StringRight = (LiteralString) relationExpression.getRight();
+
+        Assert.assertEquals(relationExpression.getRelativeOperand(), RelativeType.EQUAL);
+        Assert.assertEquals(identiferAndFieldReferenceLeft.getFirstIdentiferName(), "dict");
+        Assert.assertEquals(identiferAndFieldReferenceLeft.getSecondIdentiferName(), "key");
+        Assert.assertEquals(StringRight.getValue(), "Krzysztof");
+    }
+
+    public void testLambda() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                                fn bool add(int x, int y) {
+                                     Dictionary<String, int> dict = | "Krzysztof" : 32,
+                                                                    "Klaudia" : 33
+                                     |;
+                                     
+                                     dict.sort((Tuple<String, int> a,Tuple<String, int> b) => a.get(1) > b.get(1));
+                                   }
+                        """
+        );
+
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+        Map<String, FunctionDefinition> functionDefinitionList = program.getFunctionDefinitions();
+
+        DefinitionWithExpressionStatement definition = (DefinitionWithExpressionStatement) functionDefinitionList.get("add").getBody().getInstructions().get(0);
+
+        TypeDeclaration typeDeclaration = definition.getType();
+        Assert.assertEquals(typeDeclaration.getType(), Type.DICTIONARY);
+        Assert.assertEquals(typeDeclaration.getFirstOptionalParam(), Type.STRING);
+        Assert.assertEquals(typeDeclaration.getSecondOptionalParam(), Type.INT);
+
+        String name = definition.getIdentifierName();
+        Assert.assertEquals(name, "dict");
+
+        LiteralDictionary literalDictionary = (LiteralDictionary) definition.getExpression();
+        Map<IExpression, IExpression> map = literalDictionary.getValue();
+        Set<IExpression> keySet = map.keySet();
+        Iterator<IExpression> iterator = keySet.iterator();
+        LiteralString string1 = (LiteralString) iterator.next();
+        LiteralString string2 = (LiteralString) iterator.next();
+
+        Assert.assertEquals(string1.getValue(), "Klaudia");
+        Assert.assertEquals(string2.getValue(), "Krzysztof");
+
+        LiteralInteger literalInteger1 = (LiteralInteger) map.get(string1);
+        LiteralInteger literalInteger2 = (LiteralInteger) map.get(string2);
+
+        Assert.assertEquals(map.get(string1), literalInteger1);
+        Assert.assertEquals(map.get(string2), literalInteger2);
+
+        IdentifierAndLambdaCall lambdaExpression = (IdentifierAndLambdaCall) functionDefinitionList.get("add").getBody().getInstructions().get(1);
+        String mainName = lambdaExpression.getName();
+        List<Argument> argumentList = lambdaExpression.getArgumentList();
+        RelationExpression expression = (RelationExpression) lambdaExpression.getExpression();
+
+        Assert.assertEquals(mainName, "dict");
+        Assert.assertEquals(argumentList.size(), 2);
+
+        Assert.assertEquals(argumentList.get(0).getName(), "a");
+        Assert.assertEquals(argumentList.get(1).getName(), "b");
+
+        Assert.assertEquals(argumentList.get(0).getType().getType(), Type.TUPLE);
+        Assert.assertEquals(argumentList.get(0).getType().getFirstOptionalParam(), Type.STRING);
+        Assert.assertEquals(argumentList.get(0).getType().getSecondOptionalParam(), Type.INT);
+
+        Assert.assertEquals(argumentList.get(1).getType().getType(), Type.TUPLE);
+        Assert.assertEquals(argumentList.get(1).getType().getFirstOptionalParam(), Type.STRING);
+        Assert.assertEquals(argumentList.get(1).getType().getSecondOptionalParam(), Type.INT);
+
+        IdentiferAndMethodCallExpression left = (IdentiferAndMethodCallExpression) expression.getLeft();
+        IdentiferAndMethodCallExpression right = (IdentiferAndMethodCallExpression) expression.getRight();
+        Assert.assertEquals(expression.getRelativeOperand(), RelativeType.MORE);
+        Assert.assertEquals(left.getName(), "a");
+        Assert.assertEquals(right.getName(), "b");
+
+
+        FunctionCall leftMethodCall = left.getMethodCall();
+        FunctionCall rightMethodCall = right.getMethodCall();
+
+        Assert.assertEquals(leftMethodCall.getName(), "get");
+        Assert.assertEquals(rightMethodCall.getName(), "get");
+
+
+        LiteralInteger parameter1 = (LiteralInteger) leftMethodCall.getArguments().get(0);
+        LiteralInteger parameter2 = (LiteralInteger) rightMethodCall.getArguments().get(0);
+
+        Assert.assertEquals(parameter1.getValue(), 1);
+        Assert.assertEquals(parameter2.getValue(), 1);
+
+    }
+
 
     @Test
     public void testDuplacatedIdentifer() throws Exception {

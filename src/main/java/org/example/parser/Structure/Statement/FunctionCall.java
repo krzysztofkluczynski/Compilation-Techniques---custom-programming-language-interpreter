@@ -9,7 +9,7 @@ import org.example.token.Position;
 import java.util.List;
 
 @Value
-public class FunctionCall implements Statement {
+public class FunctionCall implements Statement, IExpression {
     String name;
     List<IExpression> arguments;
     Position position;

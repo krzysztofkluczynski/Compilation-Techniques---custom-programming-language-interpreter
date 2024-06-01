@@ -498,7 +498,7 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
  
  for_loop                   = "for", "(", type, identifier ":" ,identifier, ")", block;
  
- declaration_or_definition  = type, identifier, ["=", (expression | query_statement)], ";";
+ declaration_or_definition  = type, identifier, ["=", expression ], ";";
  
  query_statement            = "SELECT", select_clause, "FROM", identifier, [where_clause], [order_by_clause];
  
@@ -530,9 +530,10 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
  factor                     = ["not"],
                             | ["-"]
                             | literal 
-                            | identifier, [ ".", (function_call | identifier, "(" lambda_expression ")") ]
+                            | identifier, [ ( ".", identifier, ( , "(", arguments-list, ")" | "(" lambda_expression ")" ) | "(", arguments-list, ")"]
                             | cast_expression
-                            | "(", expression, ")";
+                            | "(", expression, ")"
+                            | query statement
 
  cast_expression            = "$", type_basic, expression;
 

@@ -1,0 +1,7 @@
+                                fn bool add(int x, int y) {
+                                     Dictionary<String, int> dict = | "Krzysztof" : 32,
+                                                                    "Klaudia" : 33
+                                     |;
+
+                                     Tuple<String, int> variable = SELECT (dict.key, dict.value) FROM dict WHERE (not dict.key == "Krzysztof");
+                            }

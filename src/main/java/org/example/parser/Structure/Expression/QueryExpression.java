@@ -1,4 +1,4 @@
-package org.example.parser.Structure.Statement;
+package org.example.parser.Structure.Expression;
 
 import lombok.Value;
 import org.example.parser.Enum.AscOrDESC;
@@ -8,7 +8,7 @@ import org.example.parser.Visitor;
 import org.example.token.Position;
 
 @Value
-public class QueryStatement implements Statement {
+public class QueryExpression implements IExpression {
 
     IExpression firstSelectExpression;
     IExpression secondSelectExpression;

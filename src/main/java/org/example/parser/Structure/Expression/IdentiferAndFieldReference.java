@@ -5,7 +5,9 @@ import org.example.parser.Visitor;
 import org.example.token.Position;
 
 @Value
-public class LambdaExpression implements IExpression {
+public class IdentiferAndFieldReference implements IExpression{
+    String firstIdentiferName;
+    String secondIdentiferName;
     Position position;
 
     @Override
