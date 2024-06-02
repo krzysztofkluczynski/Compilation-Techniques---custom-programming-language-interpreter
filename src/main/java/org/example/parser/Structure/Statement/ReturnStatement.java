@@ -2,7 +2,7 @@ package org.example.parser.Structure.Statement;
 
 import lombok.Value;
 import org.example.parser.Structure.Expression.IExpression;
-import org.example.parser.Visitor;
+import org.example.interpreter.Visitor;
 import org.example.token.Position;
 
 @Value
@@ -17,6 +17,6 @@ public class ReturnStatement implements Statement {
 
     @Override
     public void accept(Visitor visitor) {
-        visitor.accept(this);
+        visitor.visit(this);
     }
 }

@@ -1,5 +1,8 @@
-package org.example.parser;
+package org.example.interpreter;
 
+import org.example.interpreter.error.InterpretingException;
+import org.example.interpreter.error.NoMainFunctionInterpretingException;
+import org.example.interpreter.error.NoSuchFunctionInterpretingException;
 import org.example.parser.Structure.Expression.*;
 import org.example.parser.Structure.Expression.Literals.*;
 import org.example.parser.Structure.OtherComponents.*;
@@ -7,7 +10,7 @@ import org.example.parser.Structure.Statement.BlockStatement;
 import org.example.parser.Structure.Statement.*;
 
 public interface Visitor {
-    void visit(Program program);
+    void visit(Program program) throws InterpretingException;
     void visit(FunctionDefinition functionDefinition);
 
     void visit(Argument argument);
@@ -69,7 +72,7 @@ public interface Visitor {
 
     void visit(ForStatement forStatement);
 
-    void visit(FunctionCall functionCall);
+    void visit(FunctionCall functionCall) throws InterpretingException;
 
     void visit(QueryStatement queryStatement);
 

@@ -1,9 +1,8 @@
 package org.example.parser.Structure.Expression;
 
 import lombok.Value;
-import org.example.parser.Structure.Expression.IExpression;
 import org.example.parser.Structure.Statement.FunctionCall;
-import org.example.parser.Visitor;
+import org.example.interpreter.Visitor;
 import org.example.token.Position;
 
 @Value
