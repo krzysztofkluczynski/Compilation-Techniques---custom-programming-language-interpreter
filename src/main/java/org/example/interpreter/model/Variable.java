@@ -26,6 +26,11 @@ public class Variable {
         this.value = value;
     }
 
+    public Variable(String value) {
+        this.variableType = Type.STRING;
+        this.value = value;
+    }
+
     public Type getVariableType() {
         return variableType;
     }

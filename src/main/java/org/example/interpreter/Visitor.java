@@ -3,6 +3,7 @@ package org.example.interpreter;
 import org.example.interpreter.error.InterpretingException;
 import org.example.interpreter.error.NoMainFunctionInterpretingException;
 import org.example.interpreter.error.NoSuchFunctionInterpretingException;
+import org.example.interpreter.error.NoSuchVariableInterpretingException;
 import org.example.parser.Structure.Expression.*;
 import org.example.parser.Structure.Expression.Literals.*;
 import org.example.parser.Structure.OtherComponents.*;
@@ -11,11 +12,11 @@ import org.example.parser.Structure.Statement.*;
 
 public interface Visitor {
     void visit(Program program) throws InterpretingException;
-    void visit(FunctionDefinition functionDefinition);
+    void visit(FunctionDefinition functionDefinition) throws InterpretingException;
 
     void visit(Argument argument);
 
-    void visit(BlockStatement blockStatement);
+    void visit(BlockStatement blockStatement) throws InterpretingException;
 
 
     void visit(MultiplicativeExpression multiplicativeExpression);
@@ -55,9 +56,9 @@ public interface Visitor {
 
     void visit(If anIf);
 
-    void visit(AssignmentWithExpressionStatement assignmentWithExpressionStatement);
+    void visit(AssignmentWithExpressionStatement assignmentWithExpressionStatement) throws InterpretingException;
 
-    void visit(AssignmentWithQueryStatement assignmentWithQueryStatement);
+    void visit(AssignmentWithQueryStatement assignmentWithQueryStatement) throws NoSuchVariableInterpretingException;
 
     void visit(ConditionalStatement conditionalStatement);
 
@@ -71,7 +72,7 @@ public interface Visitor {
 
     void visit(FunctionCall functionCall) throws InterpretingException;
 
-    void visit(ReturnStatement returnStatement);
+    void visit(ReturnStatement returnStatement) throws InterpretingException;
 
     void visit(WhileStatement whileStatement);
 

@@ -3,6 +3,7 @@ package org.example.parser.Structure.OtherComponents;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
+import org.example.interpreter.error.InterpretingException;
 import org.example.parser.Node;
 import org.example.parser.Structure.Statement.BlockStatement;
 import org.example.interpreter.Visitor;
@@ -24,7 +25,7 @@ public class FunctionDefinition implements Node {
 
 
     @Override
-    public void accept(Visitor visitor) {
+    public void accept(Visitor visitor) throws InterpretingException {
         visitor.visit(this);
     }
 }
