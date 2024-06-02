@@ -1,8 +1,11 @@
 package org.example;
 
+import org.example.interpreter.Interpreter;
+import org.example.interpreter.InterpretingVisitor;
 import org.example.lexer.Lexer;
 import org.example.lexer.LexerImpl;
 import org.example.parser.ParserImpl;
+import org.example.parser.Structure.OtherComponents.Program;
 import org.example.reader.DataStreamInputReader;
 import org.example.token.TokenType;
 
@@ -39,7 +42,12 @@ public class Main {
 //                    break;
 //                }
 //            }
-            parser.parseProgram();
+            Program program = parser.parseProgram();
+            InterpretingVisitor interpretingVisitor = new InterpretingVisitor(program);
+            Interpreter interpreter = new Interpreter(program);
+
+            interpreter.execute();
+
         } catch (FileNotFoundException fnfe) {
             Logger.getLogger("File not found exception").warning(fnfe.getMessage());
             System.out.println("Error: File not found - " + fnfe.getMessage());

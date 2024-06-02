@@ -63,7 +63,7 @@ public enum TokenType {
     DESCENDING("DSC"),
 
     // Others
-    MAIN_FUNCTION("main"),
+    //MAIN_FUNCTION("main"),
     FUNCTION("fn"),
     RETURN("return"),
     CAST("$"),

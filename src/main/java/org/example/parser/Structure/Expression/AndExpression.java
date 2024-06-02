@@ -1,10 +1,8 @@
 package org.example.parser.Structure.Expression;
 
 import lombok.Value;
-import org.example.parser.Visitor;
+import org.example.interpreter.Visitor;
 import org.example.token.Position;
-
-import java.beans.Expression;
 
 @Value
 public class AndExpression implements IExpression {
@@ -14,5 +12,6 @@ public class AndExpression implements IExpression {
 
     @Override
     public void accept(Visitor visitor) {
+        visitor.visit(this);
     }
 }

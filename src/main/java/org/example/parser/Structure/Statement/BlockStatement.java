@@ -1,8 +1,7 @@
 package org.example.parser.Structure.Statement;
 
 import lombok.Value;
-import org.example.parser.Node;
-import org.example.parser.Visitor;
+import org.example.interpreter.Visitor;
 import org.example.token.Position;
 
 import java.util.List;

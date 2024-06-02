@@ -2,8 +2,7 @@ package org.example.parser.Structure.Expression;
 
 import lombok.Value;
 import org.example.parser.Enum.AdditiveType;
-import org.example.parser.Enum.RelativeType;
-import org.example.parser.Visitor;
+import org.example.interpreter.Visitor;
 import org.example.token.Position;
 
 @Value

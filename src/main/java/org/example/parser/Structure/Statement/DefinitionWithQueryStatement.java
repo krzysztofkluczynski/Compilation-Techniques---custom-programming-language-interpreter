@@ -3,7 +3,7 @@ package org.example.parser.Structure.Statement;
 import lombok.Value;
 import org.example.parser.Structure.Expression.QueryExpression;
 import org.example.parser.Structure.OtherComponents.TypeDeclaration;
-import org.example.parser.Visitor;
+import org.example.interpreter.Visitor;
 import org.example.token.Position;
 
 @Value
@@ -20,7 +20,7 @@ public class DefinitionWithQueryStatement implements Statement{
 
     @Override
     public void accept(Visitor visitor) {
-        visitor.accept(this);
+        visitor.visit(this);
     }
 }
 
