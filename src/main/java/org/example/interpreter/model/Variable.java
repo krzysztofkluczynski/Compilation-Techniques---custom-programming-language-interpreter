@@ -3,9 +3,12 @@ package org.example.interpreter.model;
 import org.example.interpreter.error.InterpretingException;
 import org.example.interpreter.error.VariableValueTypeInterpretingException;
 import org.example.parser.Enum.Type;
+import org.example.parser.Structure.Expression.Literals.LiteralTuple;
 
 public class Variable {
     Type variableType;
+    Type optionalOne = null;
+    Type optionalTwo = null;
     String name = null;
     Object value = null;
 
@@ -21,6 +24,23 @@ public class Variable {
         assertValueIsCorrectType();
     }
 
+    public Variable(Type variableType, Type optionalOne, String name, Object value) throws InterpretingException {
+        this.variableType = variableType;
+        this.name = name;
+        this.value = value;
+        this.optionalOne = optionalOne;
+        assertValueIsCorrectType();
+    }
+
+    public Variable(Type variableType, Type optionalOne, Type optionalTwo, String name, Object value) throws InterpretingException {
+        this.variableType = variableType;
+        this.name = name;
+        this.value = value;
+        this.optionalOne = optionalOne;
+        this.optionalTwo = optionalTwo;
+        assertValueIsCorrectType();
+    }
+
     public Variable(Type variableType, Object value) {
         this.variableType = variableType;
         this.value = value;
@@ -30,6 +50,7 @@ public class Variable {
         this.variableType = Type.STRING;
         this.value = value;
     }
+
 
     public Type getVariableType() {
         return variableType;
@@ -61,6 +82,11 @@ public class Variable {
                 break;
             case STRING:
                 throwException = !(value instanceof String);
+                break;
+            case TUPLE:
+            case LIST:
+                break;
+            case DICTIONARY:
                 break;
         }
         if (throwException) {

@@ -1,9 +1,6 @@
 package org.example.interpreter;
 
-import org.example.interpreter.error.InterpretingException;
-import org.example.interpreter.error.NoMainFunctionInterpretingException;
-import org.example.interpreter.error.NoSuchFunctionInterpretingException;
-import org.example.interpreter.error.NoSuchVariableInterpretingException;
+import org.example.interpreter.error.*;
 import org.example.parser.Structure.Expression.*;
 import org.example.parser.Structure.Expression.Literals.*;
 import org.example.parser.Structure.OtherComponents.*;
@@ -13,8 +10,6 @@ import org.example.parser.Structure.Statement.*;
 public interface Visitor {
     void visit(Program program) throws InterpretingException;
     void visit(FunctionDefinition functionDefinition) throws InterpretingException;
-
-    void visit(Argument argument);
 
     void visit(BlockStatement blockStatement) throws InterpretingException;
 
@@ -48,13 +43,13 @@ public interface Visitor {
 
     void visit(IdentifierAndLambdaCall identifierAndLambdaCall);
 
-    void visit(IdentifierExpression identifierExpression);
+    void visit(IdentifierExpression identifierExpression) throws NoSuchVariableInterpretingException;
 
     void visit(OrExpression orExpression) throws InterpretingException;
 
     void visit(RelationExpression relationExpression) throws InterpretingException;
 
-    void visit(If anIf);
+//    void visit(If anIf);
 
     void visit(AssignmentWithExpressionStatement assignmentWithExpressionStatement) throws InterpretingException;
 
@@ -62,9 +57,9 @@ public interface Visitor {
 
     void visit(ConditionalStatement conditionalStatement);
 
-    void visit(DeclarationStatement declarationStatement);
+    void visit(DeclarationStatement declarationStatement) throws LocalVariableRepeatedInterpretingException;
 
-    void visit(DefinitionWithExpressionStatement definitionWithExpressionStatement);
+    void visit(DefinitionWithExpressionStatement definitionWithExpressionStatement) throws InterpretingException;
 
     void visit(DefinitionWithQueryStatement definitionWithQueryStatement);
 

@@ -116,35 +116,12 @@ public class InterpretingVisitor  implements Visitor {
     }
 
 
-    @Override
-    public void visit(AssignmentWithExpressionStatement assignmentWithExpressionStatement) throws InterpretingException {
-        FunctionCallContext functionCallContext = getLastFunctionCallContext(functionCallContexts);
-        assignmentWithExpressionStatement.getExpression().accept(this);
-        functionCallContext.updateVariable(assignmentWithExpressionStatement.getIdentifierName(), lastVisitationResult.getReturnedValue().getValue());
-    }
 
-    @Override
-    public void visit(AssignmentWithQueryStatement assignmentWithQueryStatement) throws NoSuchVariableInterpretingException {
-//TODO
-    }
+
+
 
     @Override
     public void visit(ConditionalStatement conditionalStatement) {
-
-    }
-
-    @Override
-    public void visit(DeclarationStatement declarationStatement) {
-
-    }
-
-    @Override
-    public void visit(DefinitionWithExpressionStatement definitionWithExpressionStatement) {
-
-    }
-
-    @Override
-    public void visit(DefinitionWithQueryStatement definitionWithQueryStatement) {
 
     }
 
@@ -167,12 +144,44 @@ public class InterpretingVisitor  implements Visitor {
 
     }
 
+    //gdy zmienna już istnieje
+    @Override
+    public void visit(AssignmentWithExpressionStatement assignmentWithExpressionStatement) throws InterpretingException {
+        FunctionCallContext functionCallContext = getLastFunctionCallContext(functionCallContexts);
+        assignmentWithExpressionStatement.getExpression().accept(this);
+        functionCallContext.updateVariable(assignmentWithExpressionStatement.getIdentifierName(), lastVisitationResult.getReturnedValue().getValue());
+    }
 
     @Override
-    public void visit(Argument argument) {
+    public void visit(DeclarationStatement declarationStatement) throws LocalVariableRepeatedInterpretingException {
+        IExpression assignedValue = null;
+
+        lastVisitationResult = new VisitationResult(
+                    new Variable(declarationStatement.getType().getType(), declarationStatement.getName()));
+
+        getLastFunctionCallContext(functionCallContexts).addLocalVariableToLastScope(lastVisitationResult.getReturnedValue());
+    }
+
+    @Override
+    public void visit(DefinitionWithExpressionStatement definitionWithExpressionStatement) throws InterpretingException {
+        IExpression assignedValue = definitionWithExpressionStatement.getExpression();
+        assignedValue.accept(this);
+        lastVisitationResult = new VisitationResult(
+                    new Variable(definitionWithExpressionStatement.getType().getType(), definitionWithExpressionStatement.getIdentifierName(), lastVisitationResult.getReturnedValue().getValue()));
+
+        getLastFunctionCallContext(functionCallContexts).addLocalVariableToLastScope(lastVisitationResult.getReturnedValue());
+    }
+
+
+    @Override
+    public void visit(DefinitionWithQueryStatement definitionWithQueryStatement) {
 
     }
 
+    @Override
+    public void visit(AssignmentWithQueryStatement assignmentWithQueryStatement) throws NoSuchVariableInterpretingException {
+//TODO
+    }
 
     @Override
     public void visit(IdentiferAndMethodCallExpression identiferAndMethodCallExpression) {
@@ -185,17 +194,14 @@ public class InterpretingVisitor  implements Visitor {
 
     }
 
-    @Override
-    public void visit(IdentifierExpression identifierExpression) {
-
-    }
 
 
 
-    @Override
-    public void visit(If anIf) {
 
-    }
+//    @Override
+//    public void visit(If anIf) {
+//
+//    }
 
 
 
@@ -313,12 +319,8 @@ public class InterpretingVisitor  implements Visitor {
             return;
         }
 
-
-
-
         int resultInt;
         float resultFloat;
-
 
         MultiplicativeType operand = multiplicativeExpression.getRelativeOperand();
         switch (operand) {
@@ -366,13 +368,9 @@ public class InterpretingVisitor  implements Visitor {
             return;
         }
 
-
-
-
         int resultInt;
         float resultFloat;
         String resultString;
-
 
         AdditiveType operand = arthmeticExpression.getRelativeOperand();
         switch (operand) {
@@ -430,6 +428,21 @@ public class InterpretingVisitor  implements Visitor {
 }
 
     @Override
+    public void visit(IdentifierExpression identifierExpression) throws NoSuchVariableInterpretingException {
+    String variableName = identifierExpression.getName();
+
+    FunctionCallContext currentContext = getLastFunctionCallContext(functionCallContexts);
+
+    Variable variable = currentContext.getVariable(variableName);
+
+    if (variable == null) {
+        throw new NoSuchVariableInterpretingException(identifierExpression.getName());
+    }
+
+    lastVisitationResult = new VisitationResult(variable);
+}
+
+    @Override
     public void visit(CastExpression castExpression) throws InterpretingException {
         // Visit the inner expression
         castExpression.getExpression().accept(this);
@@ -483,11 +496,9 @@ public class InterpretingVisitor  implements Visitor {
         SimpleLiteral elementOne = (SimpleLiteral) literalTuple.getObjectOne();  // Retrieve the first element of the tuple
         SimpleLiteral elementTwo = (SimpleLiteral) literalTuple.getObjectTwo();  // Retrieve the second element of the tuple
 
-        List<Object> tupleArray = new ArrayList<>();
-        tupleArray.add(elementOne.getValue());
-        tupleArray.add(elementTwo.getValue());
+       Pair pair = new Pair(elementOne.getValue(), elementTwo.getValue());
 
-        lastVisitationResult = new VisitationResult(new Variable(Type.TUPLE, tupleArray));
+        lastVisitationResult = new VisitationResult(new Variable(Type.TUPLE, pair));
     }
 
 

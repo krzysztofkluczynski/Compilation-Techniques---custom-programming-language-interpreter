@@ -1,0 +1,6 @@
+fn int main() {
+    String s = "Hello, World! + ";
+    int i = 5;
+    print(s + $String i);
+    return i;
+}

@@ -8,19 +8,18 @@ import org.example.interpreter.Visitor;
 import org.example.token.Position;
 
 @Value
-public class If implements Node {
+public class If {
     IExpression expression;
     BlockStatement blockStatement;
     Position position;
 
-    @Override
     public Position getPosition() {
         return position;
     }
 
-    @Override
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
+//    @Override
+//    public void accept(Visitor visitor) {
+//        visitor.visit(this);
+//    }
 
 }

@@ -1,9 +1,7 @@
 import org.example.interpreter.Interpreter;
 import org.example.interpreter.InterpretingVisitor;
-import org.example.interpreter.error.DivisionByZeroInterpretingException;
-import org.example.interpreter.error.IncorrectReturnedValueTypeInterpretingException;
-import org.example.interpreter.error.InterpretingException;
-import org.example.interpreter.error.InvalidExpressionInterpretingException;
+import org.example.interpreter.error.*;
+import org.example.interpreter.model.Pair;
 import org.example.lexer.LexerImpl;
 import org.example.lexer.error.*;
 import org.example.parser.ParserImpl;
@@ -187,9 +185,9 @@ public class InterpreterIntegrationTest {
 
         Interpreter interpreter = new Interpreter(program);
 
-        List<String> result = (List<String>) interpreter.execute();
-        Assert.assertEquals(result.get(0), "Hello");
-        Assert.assertEquals(result.get(1), "World");
+        Pair pair = (Pair) interpreter.execute();
+        Assert.assertEquals(pair.getFirst(), "Hello");
+        Assert.assertEquals(pair.getSecond(), "World");
     }
 
 
@@ -859,6 +857,370 @@ public class InterpreterIntegrationTest {
         Assert.assertEquals(result, "2");
 
     }
+
+
+    @Test
+    public void TestIntegerDefinition() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                   int a = 2;
+                   return a;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 2);
+
+    }
+
+
+    @Test
+    public void TestFloatDefinition() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn float main() {
+                   float f = 2.5;
+                   return f;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        float result = (float) interpreter.execute();
+        Assert.assertEquals(result, 2.5f);
+
+    }
+
+
+    @Test
+    public void TestBoolDefinition() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn bool main() {
+                   bool f = true;
+                   return f;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        boolean result = (boolean) interpreter.execute();
+        Assert.assertEquals(result, true);
+
+    }
+
+    @Test
+    public void TestStringDefinition() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                   String f = "2";
+                   return $int f;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 2);
+
+    }
+
+    @Test
+    public void TestStringDeclaration() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                   String f;
+                     f = "2";
+                   return $int f;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 2);
+
+    }
+
+
+    @Test
+    public void TestFloatDeclaration() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn float main() {
+                   int f;
+                   f = 2;
+                   return $float f;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        float result = (float) interpreter.execute();
+        Assert.assertEquals(result, 2.0f);
+
+    }
+
+    @Test
+    public void TestDictionaryDefinition() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn Dictionary<String,int> main() {
+                   Dictionary<String,int> f = | "a": 1, "b": 2|;
+                   return f;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        Map result = (Map) interpreter.execute();
+        Assert.assertEquals(result, Map.of("a", 1, "b", 2));
+
+    }
+
+    @Test
+    public void TestDictionaryDeclaration() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn Dictionary<String,int> main() {
+                   Dictionary<String,int> f;
+                   f = | "a": 1, "b": 3|;
+                   return f;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        Map result = (Map) interpreter.execute();
+        Assert.assertEquals(result, Map.of("a", 1, "b", 3));
+
+    }
+
+
+    @Test
+    public void TestListDefinition() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn List<String> main() {
+                   List<String> f = [ "a", "b"];
+                   return f;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        List result = (List) interpreter.execute();
+        Assert.assertEquals(result, List.of("a", "b"));
+
+    }
+
+    @Test
+    public void TestListDeclaration() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn List<String> main() {
+                   List<String> f;
+                   f = [ "a", "b"];
+                   return f;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        List result = (List) interpreter.execute();
+        Assert.assertEquals(result, List.of("a", "b"));
+    }
+
+    @Test
+    public void TestTupleDefinition() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn Tuple<String, String> main() {
+                   Tuple<String, String> f = ("a", "b");
+                   return f;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        Pair result = (Pair) interpreter.execute();
+        Assert.assertEquals(result.getSecond(), "b");
+        Assert.assertEquals(result.getFirst(), "a");
+    }
+
+    @Test
+    public void TestTupleDeclaration() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn Tuple<String, String> main() {
+                   Tuple<String, int> f;
+                   f = ("a", 1);
+                   return f;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        Pair result = (Pair) interpreter.execute();
+        Assert.assertEquals(result.getSecond(), 1);
+        Assert.assertEquals(result.getFirst(), "a");
+    }
+
+    @Test
+    public void TestEmptyList() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn List<String> main() {
+                   List<String> f;
+                   f = [];
+                   return f;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        List result = (List) interpreter.execute();
+        Assert.assertEquals(result, List.of());
+    }
+
+    @Test
+    public void TestTupleTypeDoNotMatchException() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn Tuple<String, String> main() {
+                   Tuple<String, String> f;
+                   f = ("a", 1);
+                   return f;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        Pair result = (Pair) interpreter.execute();
+        Assert.assertEquals(result.getSecond(), 1);
+        Assert.assertEquals(result.getFirst(), "a");
+    }
+
+
+    @Test
+    public void TestEmptyListTypeDoNotMatchException() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn List<String> main() {
+                   List<String> f;
+                   f = [1];
+                   return f;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        List result = (List) interpreter.execute();
+        Assert.assertEquals(result, List.of(1));
+    }
+
+
+    @Test
+    public void TestIntegerTypeDoNotMatchException() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn String main() {
+                   int f = "a";
+                   return f;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        Assert.assertThrows(VariableValueTypeInterpretingException.class, interpreter::execute);
+
+    }
+
 
 
 }
