@@ -19,13 +19,13 @@ public interface Visitor {
     void visit(BlockStatement blockStatement) throws InterpretingException;
 
 
-    void visit(MultiplicativeExpression multiplicativeExpression);
+    void visit(MultiplicativeExpression multiplicativeExpression) throws InterpretingException;
 
-    void visit(ArthmeticExpression arthmeticExpression);
+    void visit(ArthmeticExpression arthmeticExpression) throws InterpretingException;
 
-    void visit(NegatedExpression negatedExpression);
+    void visit(NegatedExpression negatedExpression) throws InterpretingException;
 
-    void visit(CastExpression castExpression);
+    void visit(CastExpression castExpression) throws InterpretingException;
 
 
     void visit(LiteralList literalList);
@@ -44,15 +44,15 @@ public interface Visitor {
 
     void visit(LiteralString literalString);
 
-    void visit(AndExpression andExpression);
+    void visit(AndExpression andExpression) throws InterpretingException;
 
     void visit(IdentifierAndLambdaCall identifierAndLambdaCall);
 
     void visit(IdentifierExpression identifierExpression);
 
-    void visit(OrExpression orExpression);
+    void visit(OrExpression orExpression) throws InterpretingException;
 
-    void visit(RelationExpression relationExpression);
+    void visit(RelationExpression relationExpression) throws InterpretingException;
 
     void visit(If anIf);
 

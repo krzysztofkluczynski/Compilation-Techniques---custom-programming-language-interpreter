@@ -2,8 +2,10 @@ package org.example.interpreter;
 
 import org.example.interpreter.error.*;
 import org.example.interpreter.model.*;
+import org.example.parser.Enum.AdditiveType;
+import org.example.parser.Enum.MultiplicativeType;
+import org.example.parser.Enum.RelativeType;
 import org.example.parser.Enum.Type;
-import org.example.parser.Node;
 import org.example.parser.Structure.Expression.*;
 import org.example.parser.Structure.Expression.Literals.*;
 import org.example.parser.Structure.OtherComponents.Argument;
@@ -118,16 +120,12 @@ public class InterpretingVisitor  implements Visitor {
     public void visit(AssignmentWithExpressionStatement assignmentWithExpressionStatement) throws InterpretingException {
         FunctionCallContext functionCallContext = getLastFunctionCallContext(functionCallContexts);
         assignmentWithExpressionStatement.getExpression().accept(this);
-
         functionCallContext.updateVariable(assignmentWithExpressionStatement.getIdentifierName(), lastVisitationResult.getReturnedValue().getValue());
     }
 
     @Override
     public void visit(AssignmentWithQueryStatement assignmentWithQueryStatement) throws NoSuchVariableInterpretingException {
-        FunctionCallContext functionCallContext = getLastFunctionCallContext(functionCallContexts);
-        assignmentWithQueryStatement.getQueryExpression().accept(this);
-
-        functionCallContext.updateVariable(assignmentWithQueryStatement.getIdentifierName(), lastVisitationResult.getReturnedValue().getValue());
+//TODO
     }
 
     @Override
@@ -164,7 +162,6 @@ public class InterpretingVisitor  implements Visitor {
     }
 
 
-
     @Override
     public void visit(WhileStatement whileStatement) {
 
@@ -176,43 +173,6 @@ public class InterpretingVisitor  implements Visitor {
 
     }
 
-    @Override
-    public void visit(OrExpression orExpression) {
-
-    }
-
-    @Override
-    public void visit(AndExpression andExpression) {
-
-    }
-
-    @Override
-    public void visit(RelationExpression relationExpression) {
-
-    }
-
-
-    @Override
-    public void visit(MultiplicativeExpression multiplicativeExpression) {
-
-    }
-
-    @Override
-    public void visit(ArthmeticExpression arthmeticExpression) {
-
-    }
-
-    @Override
-    public void visit(NegatedExpression negatedExpression) {
-
-    }
-
-    @Override
-    public void visit(CastExpression castExpression) {
-
-    }
-
-
 
     @Override
     public void visit(IdentiferAndMethodCallExpression identiferAndMethodCallExpression) {
@@ -220,6 +180,302 @@ public class InterpretingVisitor  implements Visitor {
     }
 
 
+    @Override
+    public void visit(IdentifierAndLambdaCall identifierAndLambdaCall) {
+
+    }
+
+    @Override
+    public void visit(IdentifierExpression identifierExpression) {
+
+    }
+
+
+
+    @Override
+    public void visit(If anIf) {
+
+    }
+
+
+
+    @Override
+    public void visit(QueryExpression queryExpression) {
+
+    }
+
+    @Override
+    public void visit(IdentiferAndFieldReference identiferAndFieldReference) {
+
+    }
+
+    @Override
+    public void visit(OrExpression orExpression) throws InterpretingException {
+        orExpression.getLeft().accept(this);
+        Variable left = lastVisitationResult.getReturnedValue();
+
+        orExpression.getRight().accept(this);
+        Variable right = lastVisitationResult.getReturnedValue();
+
+        if (right == null) {
+            return;
+        }
+
+        boolean result = (boolean) left.getValue() || (boolean) right.getValue();
+
+        lastVisitationResult = new VisitationResult(new Variable(Type.BOOL, result));
+    }
+
+    @Override
+    public void visit(AndExpression andExpression) throws InterpretingException {
+        andExpression.getLeft().accept(this);
+        Variable left = lastVisitationResult.getReturnedValue();
+
+        andExpression.getRight().accept(this);
+        Variable right = lastVisitationResult.getReturnedValue();
+
+        if (right == null) {
+            return;
+        }
+
+        boolean result = (boolean) left.getValue() && (boolean) right.getValue();
+
+        lastVisitationResult = new VisitationResult(new Variable(Type.BOOL, result));
+    }
+
+    @Override
+    public void visit(RelationExpression relationExpression) throws InterpretingException {
+        relationExpression.getLeft().accept(this);
+        Variable left = lastVisitationResult.getReturnedValue();
+
+        relationExpression.getRight().accept(this);
+        Variable right = lastVisitationResult.getReturnedValue();
+
+        if (right == null) {
+            return;
+        }
+
+
+        Boolean result = null;
+        RelativeType operand = relationExpression.getRelativeOperand();
+        switch (operand) {
+            case EQUAL:
+                result = left.getValue().equals(right.getValue());
+                break;
+            case NOT_EQUAL:
+                result = !left.getValue().equals(right.getValue());
+                break;
+            case MORE:
+                result = getLeftMoreThenRight(left.getValue(), right.getValue(), operand);
+                break;
+            case LESS:
+                result = !getLeftMoreThenRight(left.getValue(), right.getValue(), operand);
+                break;
+        }
+        lastVisitationResult = new VisitationResult(new Variable(Type.BOOL, result));
+
+    }
+
+    private Boolean getLeftMoreThenRight(Object left, Object right, RelativeType conditionOperand) throws InterpretingException {
+        if (left instanceof Integer && right instanceof Integer) {
+            return (int) left > (int) right;
+        } else if (left instanceof Float && right instanceof Float) {
+            return (float) left > (float) right;
+        } else if ((left instanceof String && right instanceof String)) {
+            String stringLeft = (String) left;
+            String stringRight = (String) right;
+
+            int result = stringLeft.compareTo(stringRight);
+
+            if (result < 0) {
+                return false;
+            } else if (result > 0) {
+                return true;
+            } else {
+                return true; //return true if strings are equal, does not make sense to throw an error here
+            }
+
+        }
+        throw new InvalidLogicStatementInterpretingException(left, conditionOperand, right);
+    }
+
+
+
+    @Override
+    public void visit(MultiplicativeExpression multiplicativeExpression) throws InterpretingException {
+        multiplicativeExpression.getLeft().accept(this);
+        Variable left = lastVisitationResult.getReturnedValue();
+
+        multiplicativeExpression.getRight().accept(this);
+        Variable right = lastVisitationResult.getReturnedValue();
+
+        if (right == null) {
+            return;
+        }
+
+
+
+
+        int resultInt;
+        float resultFloat;
+
+
+        MultiplicativeType operand = multiplicativeExpression.getRelativeOperand();
+        switch (operand) {
+            case MUL:
+                if (left.getVariableType() == Type.INT && right.getVariableType() == Type.INT) {
+                    resultInt = (int) left.getValue() * (int) right.getValue();
+                    lastVisitationResult = new VisitationResult(new Variable(Type.INT, resultInt));
+                } else if (left.getVariableType() == Type.FLOAT && right.getVariableType() == Type.FLOAT) {
+                    resultFloat = (float) left.getValue() * (float) right.getValue();
+                    lastVisitationResult = new VisitationResult(new Variable(Type.FLOAT, resultFloat));
+                } else {
+                    throw new InvalidExpressionInterpretingException(left, right);
+                }
+                break;
+            case DIV:
+                if (left.getVariableType() == Type.INT && right.getVariableType() == Type.INT) {
+                    if ((int) right.getValue() == 0) {
+                        throw new DivisionByZeroInterpretingException();
+                    }
+                    resultInt = (int) left.getValue() / (int) right.getValue();
+                    lastVisitationResult = new VisitationResult(new Variable(Type.INT, resultInt));
+                } else if (left.getVariableType() == Type.FLOAT && right.getVariableType() == Type.FLOAT) {
+                    if ((Float) right.getValue() == 0.0f) {
+                        throw new DivisionByZeroInterpretingException();
+                    }
+                    resultFloat = (float) left.getValue() / (float) right.getValue();
+                    lastVisitationResult = new VisitationResult(new Variable(Type.FLOAT, resultFloat));
+                } else {
+                    throw new InvalidExpressionInterpretingException(left, right);
+                }
+                break;
+        }
+
+    }
+
+    @Override
+    public void visit(ArthmeticExpression arthmeticExpression) throws InterpretingException {
+        arthmeticExpression.getLeft().accept(this);
+        Variable left = lastVisitationResult.getReturnedValue();
+
+        arthmeticExpression.getRight().accept(this);
+        Variable right = lastVisitationResult.getReturnedValue();
+
+        if (right == null) {
+            return;
+        }
+
+
+
+
+        int resultInt;
+        float resultFloat;
+        String resultString;
+
+
+        AdditiveType operand = arthmeticExpression.getRelativeOperand();
+        switch (operand) {
+            case ADD:
+                if (left.getVariableType() == Type.INT && right.getVariableType() == Type.INT) {
+                    resultInt = (int) left.getValue() + (int) right.getValue();
+                    lastVisitationResult = new VisitationResult(new Variable(Type.INT, resultInt));
+                } else if (left.getVariableType() == Type.FLOAT && right.getVariableType() == Type.FLOAT) {
+                    resultFloat = (float) left.getValue() + (float) right.getValue();
+                    lastVisitationResult = new VisitationResult(new Variable(Type.FLOAT, resultFloat));
+                } else if (left.getVariableType() == Type.STRING && right.getVariableType() == Type.STRING) {
+                    resultString = (String) left.getValue() + (String) right.getValue();
+                    lastVisitationResult = new VisitationResult(new Variable(resultString));
+                } else {
+                    throw new InvalidExpressionInterpretingException(left, right);
+                }
+                break;
+            case SUB:
+                if (left.getVariableType() == Type.INT && right.getVariableType() == Type.INT) {
+                    resultInt = (int) left.getValue() - (int) right.getValue();
+                    lastVisitationResult = new VisitationResult(new Variable(Type.INT, resultInt));
+                } else if (left.getVariableType() == Type.FLOAT && right.getVariableType() == Type.FLOAT) {
+                    resultFloat = (float) left.getValue() - (float) right.getValue();
+                    lastVisitationResult = new VisitationResult(new Variable(Type.FLOAT, resultFloat));
+                } else {
+                    throw new InvalidExpressionInterpretingException(left, right);
+                }
+                break;
+        }
+
+    }
+
+    @Override
+    public void visit(NegatedExpression negatedExpression) throws InterpretingException {
+
+    negatedExpression.getExpression().accept(this);
+
+    Variable innerExpressionValue = lastVisitationResult.getReturnedValue();
+
+    if (innerExpressionValue.getVariableType() == Type.BOOL) {
+        // Negate the boolean value
+        boolean negatedValue = !(boolean) innerExpressionValue.getValue();
+        lastVisitationResult = new VisitationResult(new Variable(Type.BOOL, negatedValue));
+    } else if (innerExpressionValue.getVariableType() == Type.INT) {
+        // Negate the integer value
+        int negatedValue = -(int) innerExpressionValue.getValue();
+        lastVisitationResult = new VisitationResult(new Variable(Type.INT, negatedValue));
+    } else if (innerExpressionValue.getVariableType() == Type.FLOAT) {
+        // Negate the float value
+        float negatedValue = -(float) innerExpressionValue.getValue();
+        lastVisitationResult = new VisitationResult(new Variable(Type.FLOAT, negatedValue));
+    } else {
+        throw new InterpretingException("The negated expression must be of boolean, integer or float type");
+    }
+}
+
+    @Override
+    public void visit(CastExpression castExpression) throws InterpretingException {
+        // Visit the inner expression
+        castExpression.getExpression().accept(this);
+
+        Variable innerExpressionValue = lastVisitationResult.getReturnedValue(); //expression which we want to cast
+
+        Type targetType = castExpression.getType().getType(); //target type
+
+        switch (targetType) {
+            case INT:
+                if (innerExpressionValue.getVariableType() == Type.FLOAT) {
+                    int intValue = (int) (float) innerExpressionValue.getValue();
+                 lastVisitationResult = new VisitationResult(new Variable(Type.INT, intValue));
+                } else if (innerExpressionValue.getVariableType() == Type.STRING) {
+                  try {
+                    int intValue = Integer.parseInt((String) innerExpressionValue.getValue());
+                    lastVisitationResult = new VisitationResult(new Variable(Type.INT, intValue));
+                 } catch (NumberFormatException e) {
+                    throw new InterpretingException("Cannot cast string to int: invalid format");
+                }
+            }
+            break;
+        case FLOAT:
+            if (innerExpressionValue.getVariableType() == Type.INT) {
+                // Int to float: lossless conversion
+                float floatValue = (float) (int) innerExpressionValue.getValue();
+                lastVisitationResult = new VisitationResult(new Variable(Type.FLOAT, floatValue));
+            } else if (innerExpressionValue.getVariableType() == Type.STRING) {
+                // String to float
+                try {
+                    float floatValue = Float.parseFloat((String) innerExpressionValue.getValue());
+                    lastVisitationResult = new VisitationResult(new Variable(Type.FLOAT, floatValue));
+                } catch (NumberFormatException e) {
+                    throw new InterpretingException("Cannot cast string to float: invalid format");
+                }
+            }
+            break;
+        case STRING:
+            // Int or float to string: use the toString method
+            String stringValue = innerExpressionValue.getValue().toString();
+            lastVisitationResult = new VisitationResult(new Variable(stringValue));
+            break;
+        default:
+            throw new InterpretingException("Invalid target type for cast: " + targetType);
+    }
+}
 
 
     @Override
@@ -288,34 +544,6 @@ public class InterpretingVisitor  implements Visitor {
     }
 
 
-    @Override
-    public void visit(IdentifierAndLambdaCall identifierAndLambdaCall) {
-
-    }
-
-    @Override
-    public void visit(IdentifierExpression identifierExpression) {
-
-    }
-
-
-
-    @Override
-    public void visit(If anIf) {
-
-    }
-
-
-
-    @Override
-    public void visit(QueryExpression queryExpression) {
-
-    }
-
-    @Override
-    public void visit(IdentiferAndFieldReference identiferAndFieldReference) {
-
-    }
 
     public static void assertCorrectReturnedValueType(FunctionCallContext functionCallContext, VisitationResult visitationResult) throws InterpretingException {
         Type functionType = functionCallContext.getFunctionType();

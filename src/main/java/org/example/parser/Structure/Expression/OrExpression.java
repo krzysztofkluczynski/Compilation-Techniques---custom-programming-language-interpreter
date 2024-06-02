@@ -2,6 +2,7 @@ package org.example.parser.Structure.Expression;
 
 import lombok.Value;
 import org.example.interpreter.Visitor;
+import org.example.interpreter.error.InterpretingException;
 import org.example.token.Position;
 
 @Value
@@ -17,7 +18,7 @@ public class OrExpression implements IExpression {
     }
 
     @Override
-    public void accept(Visitor visitor) {
+    public void accept(Visitor visitor) throws InterpretingException {
         visitor.visit(this);
     }
 }
