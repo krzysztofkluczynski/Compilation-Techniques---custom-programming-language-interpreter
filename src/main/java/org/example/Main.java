@@ -42,6 +42,7 @@ public class Main {
 //                    break;
 //                }
 //            }
+
             Program program = parser.parseProgram();
             InterpretingVisitor interpretingVisitor = new InterpretingVisitor(program);
             Interpreter interpreter = new Interpreter(program);

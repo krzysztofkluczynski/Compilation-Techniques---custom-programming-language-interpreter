@@ -54,7 +54,7 @@ public class LexerUtils {
                     Map.entry("ASC", TokenType.ASCENDING),
                     Map.entry("DSC", TokenType.DESCENDING),
                     // Others
-                    Map.entry("main", TokenType.MAIN_FUNCTION),
+                    //Map.entry("main", TokenType.MAIN_FUNCTION),
                     Map.entry("fn", TokenType.FUNCTION),
                     Map.entry("return", TokenType.RETURN),
                     // Logical operators

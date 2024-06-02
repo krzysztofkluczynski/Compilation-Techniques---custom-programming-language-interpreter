@@ -6,7 +6,9 @@ import org.example.interpreter.error.NoMainFunctionInterpretingException;
 import org.example.interpreter.error.NoSuchFunctionInterpretingException;
 import org.example.interpreter.model.FunctionCallContext;
 import org.example.interpreter.model.Print;
+import org.example.interpreter.model.Variable;
 import org.example.interpreter.model.VisitationResult;
+import org.example.parser.Enum.Type;
 import org.example.parser.Structure.Expression.*;
 import org.example.parser.Structure.Expression.Literals.*;
 import org.example.parser.Structure.OtherComponents.Argument;
@@ -48,6 +50,39 @@ public class InterpretingVisitor  implements Visitor {
         startingFunctionCall.accept(this);
 
     }
+
+    public void visit(FunctionCall functionCall) throws InterpretingException {
+        FunctionDefinition functionDefinition = program.getFunctionDefinitions().get(functionCall.getName());
+        if (functionDefinition == null) {
+            if ("print".equals(functionCall.getName())) {
+                visitDefaultPrintFunctionCall(functionCall);
+                return;
+            }
+            throw new NoSuchFunctionInterpretingException(functionCall);
+        }
+
+    }
+
+    private void visitDefaultPrintFunctionCall(FunctionCall functionCall) throws InterpretingException {
+        List<Object> parsedArguments = getFunctionCallArgumentsAsValues(functionCall);
+        if (parsedArguments.size() == 1) {
+            Print printFunction = new Print((String) parsedArguments.get(0));
+            printFunction.execute();
+            lastVisitationResult.setReturnedValue(new Variable(Type.INT,"some", 1));
+        } else {
+            throw new IncorrectDefaultPrintFunctionCallInterpretingException(parsedArguments);
+        }
+    }
+
+    private List<Object> getFunctionCallArgumentsAsValues(FunctionCall functionCall) throws InterpretingException {
+        List<Object> parsedArguments = new ArrayList<>();
+        for (IExpression arg: functionCall.getArguments()) {
+            arg.accept(this);
+            parsedArguments.add(lastVisitationResult.getReturnedValue().getValue());
+        }
+        return parsedArguments;
+    }
+
 
     @Override
     public void visit(FunctionDefinition functionDefinition) {
@@ -99,10 +134,6 @@ public class InterpretingVisitor  implements Visitor {
 
     }
 
-    @Override
-    public void visit(LambdaExpression lambdaExpression) {
-
-    }
 
     @Override
     public void visit(LiteralBool literalBool) {
@@ -194,22 +225,6 @@ public class InterpretingVisitor  implements Visitor {
 
     }
 
-    public void visit(FunctionCall functionCall) throws InterpretingException {
-        FunctionDefinition functionDefinition = program.getFunctionDefinitions().get(functionCall.getName());
-        if (functionDefinition == null) {
-            if ("print".equals(functionCall.getName())) {
-                visitDefaultPrintFunctionCall(functionCall);
-                return;
-            }
-            throw new NoSuchFunctionInterpretingException(functionCall);
-        }
-
-    }
-
-    @Override
-    public void visit(QueryStatement queryStatement) {
-
-    }
 
     @Override
     public void visit(ReturnStatement returnStatement) {
@@ -221,25 +236,16 @@ public class InterpretingVisitor  implements Visitor {
 
     }
 
-    private void visitDefaultPrintFunctionCall(FunctionCall functionCall) throws InterpretingException {
-        List<Object> parsedArguments = getFunctionCallArgumentsAsValues(functionCall);
-        if (parsedArguments.size() == 1) {
-            Print printFunction = new Print((String) parsedArguments.get(0));
-            printFunction.execute();
-            lastVisitationResult.setReturnedValue(null);
-        } else {
-            throw new IncorrectDefaultPrintFunctionCallInterpretingException(parsedArguments);
-        }
+    @Override
+    public void visit(QueryExpression queryExpression) {
+
     }
 
-    private List<Object> getFunctionCallArgumentsAsValues(FunctionCall functionCall) throws InterpretingException {
-        List<Object> parsedArguments = new ArrayList<>();
-        for (IExpression arg: functionCall.getArguments()) {
-            arg.accept(this);
-            parsedArguments.add(lastVisitationResult.getReturnedValue().getValue());
-        }
-        return parsedArguments;
+    @Override
+    public void visit(IdentiferAndFieldReference identiferAndFieldReference) {
+
     }
+
 
 
 }

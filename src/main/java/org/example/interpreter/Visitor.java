@@ -33,9 +33,6 @@ public interface Visitor {
 
     void visit(IdentiferAndMethodCallExpression identiferAndMethodCallExpression);
 
-    void visit(LambdaExpression lambdaExpression);
-
-
     void visit(LiteralBool literalBool);
 
     void visit(LiteralDictionary literalDictionary);
@@ -74,9 +71,11 @@ public interface Visitor {
 
     void visit(FunctionCall functionCall) throws InterpretingException;
 
-    void visit(QueryStatement queryStatement);
-
     void visit(ReturnStatement returnStatement);
 
     void visit(WhileStatement whileStatement);
+
+    void visit(QueryExpression queryExpression);
+
+    void visit(IdentiferAndFieldReference identiferAndFieldReference);
 }

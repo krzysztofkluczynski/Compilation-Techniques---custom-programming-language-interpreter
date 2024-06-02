@@ -301,14 +301,6 @@ public class LexerTests {
         assertToken(lexer.next(), TokenType.DESCENDING, 1, 0, "DSC");
     }
 
-    // Others
-    @Test
-    public void testMainFunctionToken() throws Exception {
-        DataStreamInputReader reader = new DataStreamInputReader("main");
-        LexerImpl lexer = new LexerImpl(reader);
-        assertToken(lexer.next(), TokenType.MAIN_FUNCTION, 1, 0, "main");
-    }
-
     @Test
     public void testFunctionToken() throws Exception {
         DataStreamInputReader reader = new DataStreamInputReader("fn");
@@ -755,7 +747,7 @@ public class LexerTests {
         // Test function declaration for 'main'
         Assert.assertEquals(TokenType.FUNCTION, lexer.next().getType());
         Assert.assertEquals(TokenType.INTEGER, lexer.next().getType());
-        Assert.assertEquals(TokenType.MAIN_FUNCTION, lexer.next().getType());
+        lexer.next();
         Assert.assertEquals(TokenType.BRACKET_OPEN, lexer.next().getType());
         Assert.assertEquals(TokenType.BRACKET_CLOSE, lexer.next().getType());
         Assert.assertEquals(TokenType.CURLY_BRACKET_OPEN, lexer.next().getType());
