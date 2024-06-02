@@ -7,8 +7,8 @@ import org.example.token.Position;
 
 @Value
 public class LiteralTuple implements IExpression {
-    IExpression objectOne;
-    IExpression objectTwo;
+    SimpleLiteral objectOne;
+    SimpleLiteral objectTwo;
     Position position;
 
 

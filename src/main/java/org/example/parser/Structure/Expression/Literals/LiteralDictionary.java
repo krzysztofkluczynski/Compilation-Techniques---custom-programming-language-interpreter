@@ -8,8 +8,8 @@ import org.example.token.Position;
 import java.util.Map;
 
 @Value
-public class LiteralDictionary implements IExpression {
-    Map<IExpression, IExpression> value;
+public class LiteralDictionary implements SimpleLiteral {
+    Map<SimpleLiteral, SimpleLiteral> value;
     Position position;
 
     @Override

@@ -6,9 +6,14 @@ import org.example.interpreter.Visitor;
 import org.example.token.Position;
 
 @Value
-public class LiteralFloat implements IExpression {
+public class LiteralFloat implements SimpleLiteral {
     Float value;
     Position position;
+
+    @Override
+    public Object getValue() {
+        return value;
+    }
 
 
     @Override

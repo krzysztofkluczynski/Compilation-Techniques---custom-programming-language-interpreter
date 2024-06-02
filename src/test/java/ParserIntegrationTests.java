@@ -53,7 +53,7 @@ public class ParserIntegrationTests {
         Type type = defOne.getType().getType();
         Position position = defOne.getPosition();
         LiteralInteger integer = (LiteralInteger) defOne.getExpression();
-        int value = integer.getValue();
+        int value = (int) integer.getValue();
         Assert.assertEquals(name, "x");
         Assert.assertEquals(type, Type.INT);
         Assert.assertEquals(position.getLine(), 1);
@@ -64,9 +64,9 @@ public class ParserIntegrationTests {
         ReturnStatement returnStatement = (ReturnStatement) functionDefinitionList.get("function").getBody().getInstructions().get(1);
         ArthmeticExpression arthmeticExpression = (ArthmeticExpression) returnStatement.getExpression();
         LiteralInteger left = (LiteralInteger) arthmeticExpression.getLeft();
-        int leftValue = left.getValue();
+        int leftValue = (int) left.getValue();
         LiteralInteger right = (LiteralInteger) arthmeticExpression.getRight();
-        int rightValue = right.getValue();
+        int rightValue = (int) right.getValue();
         Assert.assertEquals(leftValue, 2);
         Assert.assertEquals(rightValue, 3);
 
@@ -516,9 +516,9 @@ public class ParserIntegrationTests {
         Assert.assertEquals(name, "dict");
 
         LiteralDictionary literalDictionary = (LiteralDictionary) definition.getExpression();
-        Map<IExpression, IExpression> map = literalDictionary.getValue();
-        Set<IExpression> keySet = map.keySet();
-        Iterator<IExpression> iterator = keySet.iterator();
+        Map<SimpleLiteral, SimpleLiteral> map = literalDictionary.getValue();
+        Set<SimpleLiteral> keySet = map.keySet();
+        Iterator<SimpleLiteral> iterator = keySet.iterator();
         LiteralString string1 = (LiteralString) iterator.next();
         LiteralString string2 = (LiteralString) iterator.next();
 
@@ -562,9 +562,9 @@ public class ParserIntegrationTests {
         Assert.assertEquals(name, "dict");
 
         LiteralDictionary literalDictionary = (LiteralDictionary) definition.getExpression();
-        Map<IExpression, IExpression> map = literalDictionary.getValue();
-        Set<IExpression> keySet = map.keySet();
-        Iterator<IExpression> iterator = keySet.iterator();
+        Map<SimpleLiteral, SimpleLiteral> map = literalDictionary.getValue();
+        Set<SimpleLiteral> keySet = map.keySet();
+        Iterator<SimpleLiteral> iterator = keySet.iterator();
         LiteralString string1 = (LiteralString) iterator.next();
         LiteralString string2 = (LiteralString) iterator.next();
 
@@ -646,9 +646,9 @@ public class ParserIntegrationTests {
         Assert.assertEquals(name, "dict");
 
         LiteralDictionary literalDictionary = (LiteralDictionary) definition.getExpression();
-        Map<IExpression, IExpression> map = literalDictionary.getValue();
-        Set<IExpression> keySet = map.keySet();
-        Iterator<IExpression> iterator = keySet.iterator();
+        Map<SimpleLiteral, SimpleLiteral> map = literalDictionary.getValue();
+        Set<SimpleLiteral> keySet = map.keySet();
+        Iterator<SimpleLiteral> iterator = keySet.iterator();
         LiteralString string1 = (LiteralString) iterator.next();
         LiteralString string2 = (LiteralString) iterator.next();
 

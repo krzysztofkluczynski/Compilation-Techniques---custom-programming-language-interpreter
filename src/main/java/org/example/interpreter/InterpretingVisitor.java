@@ -212,15 +212,7 @@ public class InterpretingVisitor  implements Visitor {
 
     }
 
-    @Override
-    public void visit(LiteralList literalList) {
 
-    }
-
-    @Override
-    public void visit(LiteralTuple literalTuple) {
-
-    }
 
     @Override
     public void visit(IdentiferAndMethodCallExpression identiferAndMethodCallExpression) {
@@ -228,9 +220,51 @@ public class InterpretingVisitor  implements Visitor {
     }
 
 
+
+
+    @Override
+    public void visit(LiteralTuple literalTuple) {
+        SimpleLiteral elementOne = (SimpleLiteral) literalTuple.getObjectOne();  // Retrieve the first element of the tuple
+        SimpleLiteral elementTwo = (SimpleLiteral) literalTuple.getObjectTwo();  // Retrieve the second element of the tuple
+
+        List<Object> tupleArray = new ArrayList<>();
+        tupleArray.add(elementOne.getValue());
+        tupleArray.add(elementTwo.getValue());
+
+        lastVisitationResult = new VisitationResult(new Variable(Type.TUPLE, tupleArray));
+    }
+
+
+    @Override
+    public void visit(LiteralList literalList) {
+        List<Object> values = new ArrayList<>();  // Create a new list to store the extracted values
+        for (SimpleLiteral literal : literalList.getValue()) {  // Assuming getLiterals() returns a list of Literal objects
+            values.add(literal.getValue());  // Extract the value of each literal and add it to the list
+        }
+        lastVisitationResult = new VisitationResult(new Variable(Type.LIST, values));
+    }
+
     @Override
     public void visit(LiteralDictionary literalDictionary) {
+        Map<Object, Object> newMap = new HashMap<>();
+        Map<?, ?> originalMap = literalDictionary.getValue();
 
+        for (Map.Entry<?, ?> entry : originalMap.entrySet()) {
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+
+            if (key instanceof SimpleLiteral) {
+                key = ((SimpleLiteral) key).getValue();
+            }
+
+            if (value instanceof SimpleLiteral) {
+                value = ((SimpleLiteral) value).getValue();
+            }
+
+            newMap.put(key, value);
+        }
+
+        lastVisitationResult = new VisitationResult(new Variable(Type.DICTIONARY, newMap));  // Store the new map in a new Variable
     }
 
     @Override
@@ -250,7 +284,7 @@ public class InterpretingVisitor  implements Visitor {
 
     @Override
     public void visit(LiteralString literalString) {
-        lastVisitationResult = new VisitationResult(new Variable(literalString.getValue()));
+        lastVisitationResult = new VisitationResult(new Variable((String) literalString.getValue()));
     }
 
 

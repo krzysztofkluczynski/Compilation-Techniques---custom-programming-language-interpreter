@@ -6,10 +6,15 @@ import org.example.interpreter.Visitor;
 import org.example.token.Position;
 
 @Value
-public class LiteralString implements IExpression {
+public class LiteralString implements SimpleLiteral {
     String value;
     Position position;
 
+
+    @Override
+    public Object getValue() {
+        return value;
+    }
 
     @Override
     public void accept(Visitor visitor) {

@@ -1,13 +1,17 @@
 package org.example.parser.Structure.Expression.Literals;
 
 import lombok.Value;
-import org.example.parser.Structure.Expression.IExpression;
 import org.example.interpreter.Visitor;
 import org.example.token.Position;
 @Value
-public class LiteralInteger implements IExpression {
+public class LiteralInteger implements SimpleLiteral {
     int value;
     Position position;
+
+    @Override
+    public Object getValue() {
+        return value;
+    }
 
 
     @Override

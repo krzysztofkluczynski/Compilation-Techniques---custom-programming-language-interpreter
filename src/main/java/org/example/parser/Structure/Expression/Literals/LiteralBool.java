@@ -6,9 +6,15 @@ import org.example.interpreter.Visitor;
 import org.example.token.Position;
 
 @Value
-public class LiteralBool implements IExpression {
+public class LiteralBool implements SimpleLiteral {
     Boolean value;
     Position position;
+
+
+    @Override
+    public Object getValue() {
+        return value;
+    }
 
     @Override
     public void accept(Visitor visitor) {

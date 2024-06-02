@@ -804,14 +804,14 @@ public class ParserImpl implements Parser {
             expression = new LiteralString(token.getValue(), position);
         }
         if (checkToken(TokenType.SQUARE_BRACKET_OPEN)) {
-            List<IExpression> literals = parseListLiteral();
+            List<SimpleLiteral> literals = parseListLiteral();
             expression = new LiteralList(literals, position);
         }
         if (checkToken(TokenType.BRACKET_OPEN)) {
             expression = parseTupleLiteral();
         }
         if (checkToken(TokenType.PIPE)) {
-            Map<IExpression, IExpression> map = parseDictionaryLiteral();
+            Map<SimpleLiteral, SimpleLiteral> map = parseDictionaryLiteral();
             expression = new LiteralDictionary(map, position);
         }
         if (expression == null) {
@@ -821,23 +821,23 @@ public class ParserImpl implements Parser {
         return expression;
     }
 
-    private Map<IExpression,IExpression> parseDictionaryLiteral() throws Exception {
+    private Map<SimpleLiteral,SimpleLiteral> parseDictionaryLiteral() throws Exception {
         if(!checkToken(TokenType.PIPE)) {
             return null;
         }
         nextToken();
-        IExpression objectOne;
-        IExpression objectTwo;
-        Map<IExpression, IExpression> map = new HashMap<>();
+        SimpleLiteral objectOne;
+        SimpleLiteral objectTwo;
+        Map<SimpleLiteral, SimpleLiteral> map = new HashMap<>();
         
         while(!checkToken(TokenType.PIPE)) { //dictionary literal ends with Semicolon
 
-            objectOne = parseLiteral();
+            objectOne = (SimpleLiteral) parseLiteral();
             if(!checkToken(TokenType.COLON)) {
                 throw new ParsingException(token.getPosition(), TokenType.COLON, token.getType());
             }
             nextToken();
-            objectTwo = parseLiteral();
+            objectTwo = (SimpleLiteral) parseLiteral();
             
             map.put(objectOne, objectTwo);
 
@@ -859,32 +859,32 @@ public class ParserImpl implements Parser {
             return null;
         }
         nextToken();
-        IExpression objectOne;
-        IExpression objectTwo;
+        SimpleLiteral objectOne;
+        SimpleLiteral objectTwo;
 
-        objectOne = parseLiteral();
+        objectOne = (SimpleLiteral) parseLiteral();
         if(!checkToken(TokenType.COMMA)) {
             throw new ParsingException(token.getPosition(), TokenType.COMMA, token.getType());
         }
             nextToken();
-            objectTwo = parseLiteral();
+            objectTwo = (SimpleLiteral) parseLiteral();
             if(!checkToken(TokenType.BRACKET_CLOSE)) {
                 throw new ParsingException(token.getPosition(), TokenType.BRACKET_CLOSE, token.getType());
             }
             return new LiteralTuple(objectOne, objectTwo, token.getPosition());
     }
 
-    private List<IExpression> parseListLiteral() throws Exception {
+    private List<SimpleLiteral> parseListLiteral() throws Exception {
         if(!checkToken(TokenType.SQUARE_BRACKET_OPEN)) {
             return null;
         }
         nextToken();
-        List<IExpression> literals = new ArrayList<>();
+        List<SimpleLiteral> literals = new ArrayList<>();
 
         while(!checkToken(TokenType.SQUARE_BRACKET_CLOSE)) {
             IExpression literal = parseLiteral();
 
-            literals.add(literal);
+            literals.add((SimpleLiteral) literal);
 
             if (checkToken(TokenType.SQUARE_BRACKET_CLOSE))
             {
@@ -897,8 +897,6 @@ public class ParserImpl implements Parser {
             }
 
         }
-
-
 
     return literals;
     }

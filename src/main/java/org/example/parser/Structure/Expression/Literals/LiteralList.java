@@ -9,7 +9,7 @@ import java.util.List;
 
 @Value
 public class LiteralList implements IExpression {
-    List<IExpression> value;
+    List<SimpleLiteral> value;
     Position position;
 
     @Override
