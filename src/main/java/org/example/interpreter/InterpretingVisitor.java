@@ -121,13 +121,56 @@ public class InterpretingVisitor  implements Visitor {
 
 
     @Override
-    public void visit(ConditionalStatement conditionalStatement) {
+    public void visit(ConditionalStatement conditionalStatement) throws InterpretingException {
+        List<If> ifs = conditionalStatement.getIfs();
+        boolean ifExecuteElse = true;
+
+        for (int i = 0; i < ifs.size(); i++) {
+            If anIf = ifs.get(i);
+            // Check if this is the last 'If' in the list
+            boolean isLastIf = (i == ifs.size() - 1);
+
+            if (anIf.getExpression() != null) {
+                anIf.getExpression().accept(this);
+                Object condition = lastVisitationResult.getReturnedValue().getValue();
+                // Execute the block if the condition is true
+                if (Boolean.TRUE.equals(condition)) {
+                    ifExecuteElse = false;
+                    anIf.getBlockStatement().accept(this);
+                }
+            } else if (isLastIf && ifExecuteElse) {
+                // If there's no expression and it's the last 'If', execute the block statement assuming its an else block
+                anIf.getBlockStatement().accept(this);
+            }
+        }
 
     }
 
     @Override
-    public void visit(ForStatement forStatement) {
+    public void visit(ForStatement forStatement) throws InterpretingException {
+        Variable variable = getLastFunctionCallContext(functionCallContexts).getVariable(forStatement.getCollectionIdentifer());
+        BlockStatement block = forStatement.getBlockStatement();  // Assuming you have a method to get the BlockStatement
 
+        if (variable.getVariableType().equals(Type.DICTIONARY)) {
+            Map<String, Object> map = (Map<String, Object>) variable.getValue();
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                Pair newPair = new Pair(entry.getKey(), entry.getValue());
+                getLastFunctionCallContext(functionCallContexts).
+                        addLocalVariableToLastScope(
+                                new Variable(Type.TUPLE, variable.getOptionalOne(), variable.getOptionalTwo(), forStatement.getIdentifer(), newPair));
+                block.accept(this);
+            }
+        } else if (variable.getVariableType().equals(Type.LIST)) {
+            List<Object> list = (List<Object>) variable.getValue();
+            for (Object item : list) {;
+                getLastFunctionCallContext(functionCallContexts).
+                        addLocalVariableToLastScope(
+                                new Variable(variable.getOptionalOne(), forStatement.getIdentifer(), item));
+                block.accept(this);  // Execute the block statement for each item
+            }
+        } else {
+            throw new InterpretingException("Invalid type for for loop: " + variable.getVariableType());
+        }
     }
 
 
@@ -140,7 +183,19 @@ public class InterpretingVisitor  implements Visitor {
 
 
     @Override
-    public void visit(WhileStatement whileStatement) {
+    public void visit(WhileStatement whileStatement) throws InterpretingException {
+        whileStatement.getExpression().accept(this);
+        Object condition = lastVisitationResult.getReturnedValue().getValue();
+        while (Boolean.TRUE.equals(condition)) {
+            whileStatement.getBlockStatement().accept(this);
+            if (lastVisitationResult.wasValueReturned()) {
+                return;
+            } else {
+                whileStatement.getExpression().accept(this);
+                condition = lastVisitationResult.getReturnedValue().getValue();
+            }
+        }
+
 
     }
 
@@ -157,31 +212,31 @@ public class InterpretingVisitor  implements Visitor {
     public void visit(DeclarationStatement declarationStatement) throws InterpretingException {
 
 
-//        if (declarationStatement.getType().getType() == Type.TUPLE ) {
-//            Type firstOptionalType = declarationStatement.getType().getFirstOptionalParam();
-//            Type secondOptionalType = declarationStatement.getType().getSecondOptionalParam();
-//            lastVisitationResult = new VisitationResult(
-//                    new Variable(Type.TUPLE, firstOptionalType, secondOptionalType, declarationStatement.getName()));
-//
-//        } else if (declarationStatement.getType().getType() == Type.DICTIONARY) {
-//            Type firstOptionalType = declarationStatement.getType().getFirstOptionalParam();
-//            Type secondOptionalType = declarationStatement.getType().getSecondOptionalParam();
-//            lastVisitationResult = new VisitationResult(
-//                    new Variable(Type.DICTIONARY, firstOptionalType, secondOptionalType, declarationStatement.getName()));
-//
-//        } else if (declarationStatement.getType().getType() == Type.LIST) {
-//            Type firstOptionalType = declarationStatement.getType().getFirstOptionalParam();
-//            lastVisitationResult = new VisitationResult(
-//                    new Variable(Type.LIST, firstOptionalType, declarationStatement.getName()));
-//
-//        } else {
-//            lastVisitationResult = new VisitationResult(
-//                    new Variable(declarationStatement.getType().getType(), declarationStatement.getName()));
-//        }
+        if (declarationStatement.getType().getType() == Type.TUPLE ) {
+            Type firstOptionalType = declarationStatement.getType().getFirstOptionalParam();
+            Type secondOptionalType = declarationStatement.getType().getSecondOptionalParam();
+            lastVisitationResult = new VisitationResult(
+                    new Variable(Type.TUPLE, firstOptionalType, secondOptionalType, declarationStatement.getName()));
 
+        } else if (declarationStatement.getType().getType() == Type.DICTIONARY) {
+            Type firstOptionalType = declarationStatement.getType().getFirstOptionalParam();
+            Type secondOptionalType = declarationStatement.getType().getSecondOptionalParam();
+            lastVisitationResult = new VisitationResult(
+                    new Variable(Type.DICTIONARY, firstOptionalType, secondOptionalType, declarationStatement.getName()));
 
-        lastVisitationResult = new VisitationResult(
-                new Variable(declarationStatement.getType().getType(), declarationStatement.getName()));
+        } else if (declarationStatement.getType().getType() == Type.LIST) {
+            Type firstOptionalType = declarationStatement.getType().getFirstOptionalParam();
+            lastVisitationResult = new VisitationResult(
+                    new Variable(Type.LIST, firstOptionalType, declarationStatement.getName()));
+
+        } else {
+            lastVisitationResult = new VisitationResult(
+                    new Variable(declarationStatement.getType().getType(), declarationStatement.getName()));
+        }
+
+//
+//        lastVisitationResult = new VisitationResult(
+//                new Variable(declarationStatement.getType().getType(), declarationStatement.getName()));
 
         getLastFunctionCallContext(functionCallContexts).addLocalVariableToLastScope(lastVisitationResult.getReturnedValue());
     }
@@ -318,20 +373,46 @@ public class InterpretingVisitor  implements Visitor {
                 result = !left.getValue().equals(right.getValue());
                 break;
             case MORE:
-                result = getLeftMoreThenRight(left.getValue(), right.getValue(), operand);
+                result = compareValues(left.getValue(), right.getValue(), operand);
                 break;
             case LESS:
-                result = !getLeftMoreThenRight(left.getValue(), right.getValue(), operand);
+                result = compareValues(left.getValue(), right.getValue(), operand);
+                break;
+            case MOREEQUAL:
+                result = compareValues(left.getValue(), right.getValue(), operand);
+                break;
+            case LESSEQUAL:
+                result = compareValues(left.getValue(), right.getValue(), operand);
                 break;
         }
         lastVisitationResult = new VisitationResult(new Variable(Type.BOOL, result));
 
+
     }
 
-    private Boolean getLeftMoreThenRight(Object left, Object right, RelativeType conditionOperand) throws InterpretingException {
+    private Boolean compareValues(Object left, Object right, RelativeType conditionOperand) throws InterpretingException {
         if (left instanceof Integer && right instanceof Integer) {
-            return (int) left > (int) right;
+            switch (conditionOperand) {
+                case MORE:
+                    return (int) left > (int) right;
+                case MOREEQUAL:
+                    return (int) left >= (int) right;
+                case LESS:
+                    return (int) left < (int) right;
+                case LESSEQUAL:
+                    return (int) left <= (int) right;
+            }
         } else if (left instanceof Float && right instanceof Float) {
+            switch(conditionOperand ) {
+                case MORE:
+                    return (float) left > (float) right;
+                case MOREEQUAL:
+                    return (float) left >= (float) right;
+                case LESS:
+                    return (float) left < (float) right;
+                case LESSEQUAL:
+                    return (float) left <= (float) right;
+            }
             return (float) left > (float) right;
         } else if ((left instanceof String && right instanceof String)) {
             String stringLeft = (String) left;

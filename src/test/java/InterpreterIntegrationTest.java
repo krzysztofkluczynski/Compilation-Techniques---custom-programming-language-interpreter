@@ -313,6 +313,26 @@ public class InterpreterIntegrationTest {
     }
 
     @Test
+    public void returnsmallerOrEqualIntegers() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn bool main() {
+                   return 2 <= 1; 
+                }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        boolean result = (boolean) interpreter.execute();
+        Assert.assertEquals(result, false);
+    }
+
+    @Test
     public void returnGreaterFloats() throws Exception {
         DataStreamInputReader reader = new DataStreamInputReader(
                 """
@@ -1171,9 +1191,7 @@ public class InterpreterIntegrationTest {
 
         Interpreter interpreter = new Interpreter(program);
 
-        Pair result = (Pair) interpreter.execute();
-        Assert.assertEquals(result.getSecond(), 1);
-        Assert.assertEquals(result.getFirst(), "a");
+        Assert.assertThrows(VariableValueTypeInterpretingException.class, interpreter::execute);
     }
 
 
@@ -1219,6 +1237,236 @@ public class InterpreterIntegrationTest {
 
     }
 
+
+    @Test
+    public void TestWhileStatement() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                   int counter = 0;
+                   while (counter < 5) {
+                       counter = counter + 1;
+                   }
+                 
+                   return counter;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 5);
+    }
+
+    @Test
+    public void TestWhileStatementTwo() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                   int counter = 0;
+                   while (counter <= 5) {
+                       counter = counter + 1;
+                   }
+                 
+                   return counter;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 6);
+    }
+
+    @Test
+    public void TestWhileStatementThree() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                   int counter = 6;
+                   while (counter > 2) {
+                       counter = counter - 1;
+                   }
+                  
+                   return counter;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 2);
+    }
+
+    @Test
+    public void TestWhileVariableBeyondTheScope() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                   int counter = 6;
+                   while (counter > 2) {
+                       int counter2 = 1;
+                       counter = counter - 1;
+                   }
+                  
+                   return counter2;
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        Assert.assertThrows(NoSuchVariableInterpretingException.class, interpreter::execute);
+    }
+
+    @Test
+    public void testIfStatement() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                     int x;
+                     if (true) {
+                          x = 3;
+                     } else {
+                          x = 4;
+                     }
+                   return x;
+                }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 3);
+    }
+
+
+    @Test
+    public void testIfStatementFalse() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                     int x;
+                     if (false) {
+                          x = 3;
+                     } else {
+                          x = 4;
+                     }
+                   return x;
+                }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 4);
+    }
+
+
+    @Test
+    public void testBothFalse() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                     int x;
+                     if (false) {
+                          x = 3;
+                     } elif (false) {
+                          x = 4;
+                     } else {
+                          x = 5;
+                     }
+                   return x;
+                }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 5);
+    }
+
+@Test
+    public void testSingleIf() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                     int x;
+                     if (5 > 3) {
+                          x = 3;
+                     } 
+                   return x;
+                }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 3);
+    }
+
+    @Test
+    public void testSingleIfFalse() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                     int x = 2;
+                     if (5 < 3) {
+                          x = 3;
+                     } 
+                   return x;
+                }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 2);
+    }
 
 
 }

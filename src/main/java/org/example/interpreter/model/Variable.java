@@ -47,18 +47,16 @@ public class Variable {
     public Variable(Type variableType, Type optionalOne, String name) throws InterpretingException {
         this.variableType = variableType;
         this.name = name;
-        this.value = value;
         this.optionalOne = optionalOne;
-        assertValueIsCorrectType();
+        //assertValueIsCorrectType();
     }
 
     public Variable(Type variableType, Type optionalOne, Type optionalTwo, String name) throws InterpretingException {
         this.variableType = variableType;
         this.name = name;
-        this.value = value;
         this.optionalOne = optionalOne;
         this.optionalTwo = optionalTwo;
-        assertValueIsCorrectType();
+        //assertValueIsCorrectType();
     }
 
     public Variable(Type variableType, Object value) {
@@ -77,6 +75,14 @@ public class Variable {
         return variableType;
     }
 
+    public Type getOptionalOne() {
+        return optionalOne;
+    }
+
+    public Type getOptionalTwo() {
+        return optionalTwo;
+    }
+
     public String getName() {
         return name;
     }
@@ -85,8 +91,10 @@ public class Variable {
         return value;
     }
 
-    public void setValue(Object value) {
+    public void setValue(Object value) throws VariableValueTypeInterpretingException {
+
         this.value = value;
+        assertValueIsCorrectType();
     }
 
     private void assertValueIsCorrectType() throws VariableValueTypeInterpretingException {
@@ -111,7 +119,7 @@ public class Variable {
                 }
                 Pair newPair = (Pair) value;
                 checkForComplex(newPair.getFirst(), optionalOne);
-                checkForComplex(newPair.getFirst(), optionalOne);
+                checkForComplex(newPair.getSecond(), optionalTwo);
                 break;
             case LIST:
                 throwException = !(value instanceof List);

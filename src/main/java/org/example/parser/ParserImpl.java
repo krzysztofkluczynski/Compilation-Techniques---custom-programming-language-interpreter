@@ -303,14 +303,14 @@ public class ParserImpl implements Parser {
         List<If> ifs = new ArrayList<>();
         ifs.add(ifStatement);
 
-        if(checkToken(TokenType.CURLY_BRACKET_CLOSE)) { //TODO, when there is { {
+        if(!checkToken(TokenType.ELSE) && !checkToken(TokenType.ELIF)) {
             return new ConditionalStatement(ifs, ifStatement.getPosition());
         }
 
 
         while(token.getType() != TokenType.ELSE) {
             if (!checkToken(TokenType.ELIF)) {
-                throw new ParsingException(token.getPosition(), TokenType.ELIF, token.getType());
+                throw new ParsingException(token.getPosition(), List.of(TokenType.ELIF, TokenType.ELSE), token.getType());
             }
             Position elifPosition = token.getPosition();
             proceedAndCheck(TokenType.BRACKET_OPEN);

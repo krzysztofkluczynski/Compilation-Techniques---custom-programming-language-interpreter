@@ -55,7 +55,7 @@ public interface Visitor {
 
     void visit(AssignmentWithQueryStatement assignmentWithQueryStatement) throws NoSuchVariableInterpretingException;
 
-    void visit(ConditionalStatement conditionalStatement);
+    void visit(ConditionalStatement conditionalStatement) throws InterpretingException;
 
     void visit(DeclarationStatement declarationStatement) throws InterpretingException;
 
@@ -63,13 +63,13 @@ public interface Visitor {
 
     void visit(DefinitionWithQueryStatement definitionWithQueryStatement);
 
-    void visit(ForStatement forStatement);
+    void visit(ForStatement forStatement) throws InterpretingException;
 
     void visit(FunctionCall functionCall) throws InterpretingException;
 
     void visit(ReturnStatement returnStatement) throws InterpretingException;
 
-    void visit(WhileStatement whileStatement);
+    void visit(WhileStatement whileStatement) throws InterpretingException;
 
     void visit(QueryExpression queryExpression);
 

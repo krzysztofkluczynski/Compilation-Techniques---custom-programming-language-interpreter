@@ -2,6 +2,7 @@ package org.example.interpreter.model;
 
 import org.example.interpreter.error.LocalVariableRepeatedInterpretingException;
 import org.example.interpreter.error.NoSuchVariableInterpretingException;
+import org.example.interpreter.error.VariableValueTypeInterpretingException;
 import org.example.parser.Enum.Type;
 
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class FunctionCallContext extends Scope {
         scopes.get(scopes.size() - 1).addLocalVariable(variable);
     }
 
-    public void updateVariable(String variableName, Object newValue) throws NoSuchVariableInterpretingException {
+    public void updateVariable(String variableName, Object newValue) throws NoSuchVariableInterpretingException, VariableValueTypeInterpretingException {
         Variable variable = getVariable(variableName);
         if (variable == null) {
             throw new NoSuchVariableInterpretingException(variableName);
