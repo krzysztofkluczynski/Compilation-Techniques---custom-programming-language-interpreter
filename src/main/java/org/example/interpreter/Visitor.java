@@ -57,7 +57,7 @@ public interface Visitor {
 
     void visit(ConditionalStatement conditionalStatement);
 
-    void visit(DeclarationStatement declarationStatement) throws LocalVariableRepeatedInterpretingException;
+    void visit(DeclarationStatement declarationStatement) throws InterpretingException;
 
     void visit(DefinitionWithExpressionStatement definitionWithExpressionStatement) throws InterpretingException;
 

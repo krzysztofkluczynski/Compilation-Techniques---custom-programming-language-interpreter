@@ -1,6 +1,7 @@
 package org.example.parser.Structure.Statement;
 
 import lombok.Value;
+import org.example.interpreter.error.InterpretingException;
 import org.example.interpreter.error.LocalVariableRepeatedInterpretingException;
 import org.example.parser.Structure.OtherComponents.TypeDeclaration;
 import org.example.interpreter.Visitor;
@@ -18,7 +19,7 @@ public class DeclarationStatement implements Statement {
     }
 
     @Override
-    public void accept(Visitor visitor) throws LocalVariableRepeatedInterpretingException {
+    public void accept(Visitor visitor) throws InterpretingException {
         visitor.visit(this);
     }
 }

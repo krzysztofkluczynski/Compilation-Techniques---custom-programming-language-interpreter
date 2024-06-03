@@ -1048,7 +1048,7 @@ public class InterpreterIntegrationTest {
                 """
                         
                 fn List<String> main() {
-                   List<String> f = [ "a", "b"];
+                   List<String> f = ["a", "b"];
                    return f;
                  }
             """
@@ -1183,8 +1183,7 @@ public class InterpreterIntegrationTest {
                 """
                         
                 fn List<String> main() {
-                   List<String> f;
-                   f = [1];
+                   List<String> f = [1];
                    return f;
                  }
             """
@@ -1195,8 +1194,7 @@ public class InterpreterIntegrationTest {
 
         Interpreter interpreter = new Interpreter(program);
 
-        List result = (List) interpreter.execute();
-        Assert.assertEquals(result, List.of(1));
+        Assert.assertThrows(VariableValueTypeInterpretingException.class, interpreter::execute);
     }
 
 

@@ -144,7 +144,7 @@ public class InterpretingVisitor  implements Visitor {
 
     }
 
-    //gdy zmienna już istnieje
+    //gdy zmienna już istnieje, a = 5;
     @Override
     public void visit(AssignmentWithExpressionStatement assignmentWithExpressionStatement) throws InterpretingException {
         FunctionCallContext functionCallContext = getLastFunctionCallContext(functionCallContexts);
@@ -152,22 +152,68 @@ public class InterpretingVisitor  implements Visitor {
         functionCallContext.updateVariable(assignmentWithExpressionStatement.getIdentifierName(), lastVisitationResult.getReturnedValue().getValue());
     }
 
+    //gdy zmienna nie istnieje,sama deklaracja, int a;;
     @Override
-    public void visit(DeclarationStatement declarationStatement) throws LocalVariableRepeatedInterpretingException {
-        IExpression assignedValue = null;
+    public void visit(DeclarationStatement declarationStatement) throws InterpretingException {
+
+
+//        if (declarationStatement.getType().getType() == Type.TUPLE ) {
+//            Type firstOptionalType = declarationStatement.getType().getFirstOptionalParam();
+//            Type secondOptionalType = declarationStatement.getType().getSecondOptionalParam();
+//            lastVisitationResult = new VisitationResult(
+//                    new Variable(Type.TUPLE, firstOptionalType, secondOptionalType, declarationStatement.getName()));
+//
+//        } else if (declarationStatement.getType().getType() == Type.DICTIONARY) {
+//            Type firstOptionalType = declarationStatement.getType().getFirstOptionalParam();
+//            Type secondOptionalType = declarationStatement.getType().getSecondOptionalParam();
+//            lastVisitationResult = new VisitationResult(
+//                    new Variable(Type.DICTIONARY, firstOptionalType, secondOptionalType, declarationStatement.getName()));
+//
+//        } else if (declarationStatement.getType().getType() == Type.LIST) {
+//            Type firstOptionalType = declarationStatement.getType().getFirstOptionalParam();
+//            lastVisitationResult = new VisitationResult(
+//                    new Variable(Type.LIST, firstOptionalType, declarationStatement.getName()));
+//
+//        } else {
+//            lastVisitationResult = new VisitationResult(
+//                    new Variable(declarationStatement.getType().getType(), declarationStatement.getName()));
+//        }
+
 
         lastVisitationResult = new VisitationResult(
-                    new Variable(declarationStatement.getType().getType(), declarationStatement.getName()));
+                new Variable(declarationStatement.getType().getType(), declarationStatement.getName()));
 
         getLastFunctionCallContext(functionCallContexts).addLocalVariableToLastScope(lastVisitationResult.getReturnedValue());
     }
 
+    //deklaracja z przypisaniem, int a = 5;
     @Override
     public void visit(DefinitionWithExpressionStatement definitionWithExpressionStatement) throws InterpretingException {
         IExpression assignedValue = definitionWithExpressionStatement.getExpression();
         assignedValue.accept(this);
-        lastVisitationResult = new VisitationResult(
+
+        if (definitionWithExpressionStatement.getType().getType() == Type.TUPLE ) {
+            Type firstOptionalType = definitionWithExpressionStatement.getType().getFirstOptionalParam();
+            Type secondOptionalType = definitionWithExpressionStatement.getType().getSecondOptionalParam();
+            lastVisitationResult = new VisitationResult(
+                    new Variable(Type.TUPLE, firstOptionalType, secondOptionalType, definitionWithExpressionStatement.getIdentifierName(), lastVisitationResult.getReturnedValue().getValue()));
+
+        } else if (definitionWithExpressionStatement.getType().getType() == Type.DICTIONARY) {
+            Type firstOptionalType = definitionWithExpressionStatement.getType().getFirstOptionalParam();
+            Type secondOptionalType = definitionWithExpressionStatement.getType().getSecondOptionalParam();
+            lastVisitationResult = new VisitationResult(
+                    new Variable(Type.DICTIONARY, firstOptionalType, secondOptionalType, definitionWithExpressionStatement.getIdentifierName(), lastVisitationResult.getReturnedValue().getValue()));
+
+        } else if (definitionWithExpressionStatement.getType().getType() == Type.LIST) {
+            Type firstOptionalType = definitionWithExpressionStatement.getType().getFirstOptionalParam();
+            lastVisitationResult = new VisitationResult(
+                    new Variable(Type.LIST, firstOptionalType, definitionWithExpressionStatement.getIdentifierName(), lastVisitationResult.getReturnedValue().getValue()));
+
+        } else {
+            lastVisitationResult = new VisitationResult(
                     new Variable(definitionWithExpressionStatement.getType().getType(), definitionWithExpressionStatement.getIdentifierName(), lastVisitationResult.getReturnedValue().getValue()));
+        }
+
 
         getLastFunctionCallContext(functionCallContexts).addLocalVariableToLastScope(lastVisitationResult.getReturnedValue());
     }
