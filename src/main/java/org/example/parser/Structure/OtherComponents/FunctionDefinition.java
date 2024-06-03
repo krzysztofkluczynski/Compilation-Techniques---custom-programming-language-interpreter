@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
 import org.example.interpreter.error.InterpretingException;
+import org.example.parser.Enum.Type;
 import org.example.parser.Node;
 import org.example.parser.Structure.Statement.BlockStatement;
 import org.example.interpreter.Visitor;
@@ -23,6 +24,12 @@ public class FunctionDefinition implements Node {
     Position position;
 
 
+    public TypeDeclaration getReturnType() {
+        if (returnType == null) {
+            return new TypeDeclaration(Type.VOID, position);
+        }
+        return returnType;
+    }
 
     @Override
     public void accept(Visitor visitor) throws InterpretingException {

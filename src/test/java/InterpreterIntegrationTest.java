@@ -1914,30 +1914,55 @@ public class InterpreterIntegrationTest {
         Assert.assertEquals(result, -3);
     }
 
-//    @Test
-//    public void TestFunctionCallTwo() throws Exception {
-//        DataStreamInputReader reader = new DataStreamInputReader(
-//                """
-//                            fn void increment(int x) {
-//                                x = x + 1;
-//                             }
-//
-//                             fn int main() {
-//                               int x = 3;
-//                               increment(x);
-//                               return x;
-//                             }
-//                        """
-//        );
-//        LexerImpl lexer = new LexerImpl(reader);
-//        ParserImpl parser = new ParserImpl(lexer);
-//        Program program = parser.parseProgram();
-//
-//        Interpreter interpreter = new Interpreter(program);
-//
-//        int result = (int) interpreter.execute();
-//        Assert.assertEquals(result, 4);
-//    }
+    @Test
+    public void TestFunctionCallTwo() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                            fn void fnprint(String x) {
+                                print(x);
+                             }
+
+                             fn int main() {
+                               String x = "Hello";
+                               fnprint(x);
+                               return 1;
+                             }
+                        """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 1);
+    }
+
+    @Test
+    public void TestFunctionCallThree() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                            fn int add(int x, int y) {
+                                return x+ y;
+                             }
+
+                             fn int main() {
+                              
+                               return add(1, 2);
+                             }
+                        """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 3);
+    }
+
 
 
 }

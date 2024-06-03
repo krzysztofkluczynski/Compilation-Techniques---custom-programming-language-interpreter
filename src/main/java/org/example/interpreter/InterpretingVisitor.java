@@ -798,11 +798,11 @@ public class InterpretingVisitor  implements Visitor {
 
     public static void assertCorrectReturnedValueType(FunctionCallContext functionCallContext, VisitationResult visitationResult) throws InterpretingException {
         Type functionType = functionCallContext.getFunctionType();
-        if (visitationResult == null || !visitationResult.wasValueReturned() || visitationResult.getReturnedValue() == null) {
+        if ((visitationResult == null || !visitationResult.wasValueReturned() || visitationResult.getReturnedValue() == null) && (functionType != Type.VOID)) {
             throw new NoValueReturnedFromFunctionInterpretingException(functionType.getName());
         }
         Type returnedType = visitationResult.getReturnedValue().getVariableType();
-        if (returnedType != functionType) {
+        if ((returnedType != functionType) && (functionType != Type.VOID)) {
             throw new IncorrectReturnedValueTypeInterpretingException(functionCallContext, returnedType);
         }
     }
