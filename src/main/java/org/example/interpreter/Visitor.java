@@ -53,7 +53,7 @@ public interface Visitor {
 
     void visit(AssignmentWithExpressionStatement assignmentWithExpressionStatement) throws InterpretingException;
 
-    void visit(AssignmentWithQueryStatement assignmentWithQueryStatement) throws NoSuchVariableInterpretingException;
+    void visit(AssignmentWithQueryStatement assignmentWithQueryStatement) throws InterpretingException;
 
     void visit(ConditionalStatement conditionalStatement) throws InterpretingException;
 
@@ -71,7 +71,7 @@ public interface Visitor {
 
     void visit(WhileStatement whileStatement) throws InterpretingException;
 
-    void visit(QueryExpression queryExpression);
+    void visit(QueryExpression queryExpression) throws InterpretingException;
 
     void visit(IdentiferAndFieldReference identiferAndFieldReference);
 }

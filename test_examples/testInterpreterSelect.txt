@@ -1,0 +1,13 @@
+fn List<int> main() {
+    Dictionary<String, int> var_dict = |
+    "dog": 3,
+    "cat": 4,
+    "cow": 5,
+    "hamster": 6
+     |;
+
+     List<int> list;
+     list = SELECT (var_dict.value) FROM var_dict;
+     return list;
+
+}

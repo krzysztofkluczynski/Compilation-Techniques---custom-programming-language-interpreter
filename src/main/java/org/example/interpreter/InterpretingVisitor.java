@@ -2,10 +2,7 @@ package org.example.interpreter;
 
 import org.example.interpreter.error.*;
 import org.example.interpreter.model.*;
-import org.example.parser.Enum.AdditiveType;
-import org.example.parser.Enum.MultiplicativeType;
-import org.example.parser.Enum.RelativeType;
-import org.example.parser.Enum.Type;
+import org.example.parser.Enum.*;
 import org.example.parser.Structure.Expression.*;
 import org.example.parser.Structure.Expression.Literals.*;
 import org.example.parser.Structure.OtherComponents.Argument;
@@ -400,10 +397,7 @@ public class InterpretingVisitor  implements Visitor {
         }
     }
 
-    @Override
-    public void visit(IdentiferAndFieldReference identiferAndFieldReference) {
 
-    }
 
 
 
@@ -413,22 +407,221 @@ public class InterpretingVisitor  implements Visitor {
     }
 
     @Override
-    public void visit(AssignmentWithQueryStatement assignmentWithQueryStatement) throws NoSuchVariableInterpretingException {
-//TODO
+    public void visit(AssignmentWithQueryStatement assignmentWithQueryStatement) throws InterpretingException {
+        FunctionCallContext functionCallContext = getLastFunctionCallContext(functionCallContexts);
+        assignmentWithQueryStatement.getQueryExpression().accept(this);
+        functionCallContext.updateVariable(assignmentWithQueryStatement.getIdentifierName(), lastVisitationResult.getReturnedValue().getValue());
+
     }
 
+
+
+    @Override
+    public void visit(IdentiferAndFieldReference identiferAndFieldReference) {
+
+    }
+
+    @Override
+    public void visit(QueryExpression queryExpression) throws InterpretingException {
+
+        IdentiferAndFieldReference identiferAndFieldReferenceFirst = (IdentiferAndFieldReference) queryExpression.getFirstSelectExpression();
+        IdentiferAndFieldReference identiferAndFieldReferenceSecond = (IdentiferAndFieldReference) queryExpression.getSecondSelectExpression();
+
+        IdentifierExpression identifierExpression = queryExpression.getFromIdentifer();
+
+        Variable dictionaryVariable = getLastFunctionCallContext(functionCallContexts).getVariable(identifierExpression.getName());
+
+        if (dictionaryVariable.getVariableType() != Type.DICTIONARY) {
+            throw new InterpretingException("Invalid type for query: " + dictionaryVariable.getVariableType());
+        }
+
+        RelationExpression whereExpression = (RelationExpression) queryExpression.getWhereExpression();
+
+
+
+        IdentiferAndFieldReference orderByExpression = (IdentiferAndFieldReference) queryExpression.getOrderByExpression();
+
+
+
+
+        Map<Object, Object> dictionary = (Map<Object, Object>) dictionaryVariable.getValue();
+
+        List<Object> resultList = new ArrayList<>();
+        Map<Object, Object> resultMap = new HashMap<>();
+        Type typeKey = dictionaryVariable.getOptionalOne();
+        Type typeValue = dictionaryVariable.getOptionalTwo();
+        Type listType = null;
+
+
+        if (identiferAndFieldReferenceFirst == null && identiferAndFieldReferenceSecond == null) {
+            throw new InterpretingException("Invalid field reference in query");
+        }
+
+        //order by part
+        if (orderByExpression != null) {
+            String orderByString = orderByExpression.getSecondIdentiferName();
+            AscOrDESC ascOrDESC = queryExpression.getAscOrDESC();
+            if (orderByString.equals("key")) {
+                if (ascOrDESC == AscOrDESC.ASC) {
+                    //sort map by keys in ascending order
+                } else {
+                    //sort map by keys in descending order
+                }
+            } else if (orderByString.equals("value")) {
+                if (ascOrDESC == AscOrDESC.ASC) {
+                    //sort map by values in ascending order
+                } else {
+                    //sort map by values in descending order
+                }
+            }
+        }
+
+
+
+        if (identiferAndFieldReferenceFirst != null && identiferAndFieldReferenceSecond == null)  { //przypisanie wartosci key/value do listy
+
+
+            for (Map.Entry<Object, Object> entry : dictionary.entrySet()) {
+                Map<Object, Object> entryMap = new HashMap<>();
+
+                //where part
+                if (whereExpression != null) {
+                    IdentiferAndFieldReference whereField = (IdentiferAndFieldReference) whereExpression.getLeft();
+                    RelativeType where = whereExpression.getRelativeOperand();
+                    SimpleLiteral whereValue = (SimpleLiteral) whereExpression.getRight();
+
+                    if (whereField.getSecondIdentiferName().equals("key")) {
+                        if (where == RelativeType.EQUAL) {
+                            if (!entry.getKey().equals(whereValue.getValue())) {
+                                continue;
+                            }
+                        } else if (where == RelativeType.NOT_EQUAL) {
+                            if (entry.getKey().equals(whereValue.getValue())) {
+                                continue;
+                            }
+                        }
+                    } else if (whereField.getSecondIdentiferName().equals("value")) {
+                        if (where == RelativeType.EQUAL) {
+                            if (!entry.getValue().equals(whereValue.getValue())) {
+                                continue;
+                            }
+                        } else if (where == RelativeType.NOT_EQUAL) {
+                            if (entry.getValue().equals(whereValue.getValue())) {
+                                continue;
+                            }
+                        } else if (where == RelativeType.MORE) {
+                            if (!(entry.getValue() instanceof Integer) || (int) entry.getValue() <= (int) whereValue.getValue()) {
+                                continue;
+                            }
+                        } else if (where == RelativeType.LESS) {
+                            if (!(entry.getValue() instanceof Integer) || (int) entry.getValue() >= (int) whereValue.getValue()) {
+                                continue;
+                            }
+                        } else if (where == RelativeType.MOREEQUAL) {
+                            if (!(entry.getValue() instanceof Integer) || (int) entry.getValue() < (int) whereValue.getValue()) {
+                                continue;
+                            }
+                        } else if (where == RelativeType.LESSEQUAL) {
+                            if (!(entry.getValue() instanceof Integer) || (int) entry.getValue() > (int) whereValue.getValue()) {
+                                continue;
+                            }
+                        }
+                    }
+                }
+
+
+
+                if (identiferAndFieldReferenceFirst.getSecondIdentiferName().equals("key")) {
+                    resultList.add(entry.getKey());
+                    listType = typeKey;
+                } else if (identiferAndFieldReferenceFirst.getSecondIdentiferName().equals("value")) {
+                    resultList.add(entry.getValue());
+                    listType = typeValue;
+                }
+
+            }
+
+
+
+
+
+
+            lastVisitationResult = new VisitationResult(new Variable(Type.LIST, listType, resultList));
+
+        } else if (identiferAndFieldReferenceFirst != null && identiferAndFieldReferenceSecond != null) { //przypisanie wartosci do nowego slownika
+
+
+            for (Map.Entry<Object, Object> entry : dictionary.entrySet()) {
+
+                //where part
+                if (whereExpression != null) {
+                    IdentiferAndFieldReference whereField = (IdentiferAndFieldReference) whereExpression.getLeft();
+                    RelativeType where = whereExpression.getRelativeOperand();
+                    SimpleLiteral whereValue = (SimpleLiteral) whereExpression.getRight();
+
+                    if (whereField.getSecondIdentiferName().equals("key")) { //zakladamy ze dla key mozemy wykonywac jedyne operacje rownosciowe
+                        if (where == RelativeType.EQUAL) {
+                            if (!entry.getKey().equals(whereValue.getValue())) {
+                                continue;
+                            }
+                        } else if (where == RelativeType.NOT_EQUAL) {
+                            if (entry.getKey().equals(whereValue.getValue())) {
+                                continue;
+                            }
+                        }
+                    } else if (whereField.getSecondIdentiferName().equals("value")) {
+                        if (where == RelativeType.EQUAL) {
+                            if (!entry.getValue().equals(whereValue.getValue())) {
+                                continue;
+                            }
+                        } else if (where == RelativeType.NOT_EQUAL) {
+                            if (entry.getValue().equals(whereValue.getValue())) {
+                                continue;
+                            }
+                        } else if (where == RelativeType.MORE) {
+                            if (!(entry.getValue() instanceof Integer) || (int) entry.getValue() <= (int) whereValue.getValue()) {
+                                continue;
+                            }
+                        } else if (where == RelativeType.LESS) {
+                            if (!(entry.getValue() instanceof Integer) || (int) entry.getValue() >= (int) whereValue.getValue()) {
+                                continue;
+                            }
+                        } else if (where == RelativeType.MOREEQUAL) {
+                            if (!(entry.getValue() instanceof Integer) || (int) entry.getValue() < (int) whereValue.getValue()) {
+                                continue;
+                            }
+                        } else if (where == RelativeType.LESSEQUAL) {
+                            if (!(entry.getValue() instanceof Integer) || (int) entry.getValue() > (int) whereValue.getValue()) {
+                                continue;
+                            }
+                        }
+                    }
+                }
+
+                if (identiferAndFieldReferenceFirst.getSecondIdentiferName().equals("key") && identiferAndFieldReferenceSecond.getSecondIdentiferName().equals("value")) {
+                    resultMap.put(entry.getKey(), entry.getValue());
+                } else if (identiferAndFieldReferenceFirst.getSecondIdentiferName().equals("value") && identiferAndFieldReferenceSecond.getSecondIdentiferName().equals("key")) {
+                    resultMap.put(entry.getValue(), entry.getKey());
+                }
+
+            }
+
+            if (identiferAndFieldReferenceFirst.getSecondIdentiferName().equals("key")) { //przypisanie wartosci key/value do slownika
+                lastVisitationResult = new VisitationResult(new Variable(Type.DICTIONARY, typeKey, typeValue, resultMap));
+            }
+            else {
+                lastVisitationResult = new VisitationResult(new Variable(Type.DICTIONARY, typeValue, typeKey, resultMap));
+            }
+
+
+
+        }
+    }
 
     @Override
     public void visit(IdentifierAndLambdaCall identifierAndLambdaCall) {
 
     }
-
-
-    @Override
-    public void visit(QueryExpression queryExpression) {
-
-    }
-
 
     @Override
     public void visit(OrExpression orExpression) throws InterpretingException {
