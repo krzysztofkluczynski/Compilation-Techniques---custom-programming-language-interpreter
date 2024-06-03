@@ -29,7 +29,7 @@ Korzystanie z LTS wersji Java zapewnia stabilność, bezpieczeństwo oraz długo
 ### **<br>Cechy języka:**
 * **Statyczne typowanie**, wszystkie typy danych muszą być jasno zadeklarowane zgodnie ze składnią języka
 * **Silne typowanie**, automatyczne konwersje między typami nie są obsługiwane, takie operacje wymagają jasnego zdefiniowania za pomocą wbudowanych w język mechanizmów 
-* **Referencje**, argumenty są przekazywane do funkcji oraz metod przez referencję (podobnie jak w języku Python)
+* **Argumenty**, argumenty są przekazywane przez wartość, co oznacza, że funkcje nie mogą zmieniać wartości przekazanych argumentów
 * **Mutowalność**, zmienne są mutowalne
 * **Funkcja main**, plik źródłowy musi zawierać jedną bezargumentową funkcję main zwracającą int
 * **Zakres zmiennych**, zmienne są widoczne jedynie w bloku kodu między nawiasami klamrowymi {}, gdy zostały w nim zainicjowane lub przekazane jako parametr w przypadku funkcji.

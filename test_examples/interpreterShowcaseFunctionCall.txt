@@ -1,0 +1,24 @@
+fn int sum(List<int> list) {
+    int sum = 0;
+    for (int i : list) {
+        print($String i);
+        sum = sum + i;
+    }
+    return sum;
+ }
+
+ fn int main() {
+    Dictionary<String, int> var_dict = |
+    "dog": 0,
+    "cat": 2,
+    "cow": 3,
+    "hamster": 1
+     |;
+
+     List<int> list;
+     list = SELECT (var_dict.value) FROM var_dict WHERE (var_dict.key != "cat");
+
+     int x = sum(list);
+
+    return -x + 1 * 3;
+ }

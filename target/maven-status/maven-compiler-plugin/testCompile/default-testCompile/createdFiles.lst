@@ -1,0 +1,5 @@
+LexerTests.class
+InterpreterExceptionsTests.class
+InterpreterIntegrationTest.class
+ParserIntegrationTests.class
+ParserUnitTests.class
