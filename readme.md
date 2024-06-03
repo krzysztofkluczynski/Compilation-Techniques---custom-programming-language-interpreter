@@ -47,9 +47,12 @@ Aby uruchomić interpreter, konieczna jest zainstalowana Java 17. Uruchamiamy go
 
 ```
 java -jar <jar file path> <file path>
+
+//Przykład
+//java -jar .\target\TKOM_PROJECT-1.0-SNAPSHOT.jar .\test_examples\interpreterShowcaseFunctionCall.txt
 ```
 
-Wynik działania naszego programu powinien wyświetlić się w konsoli.
+Wynik działania naszego programu powinien wyświetlić się w konsoli wraz ze zwracaną przez funkcję main wartością.
 
 
 ## **<br>Najważniejsze konstrukcje językowe wraz z przykładami:**
@@ -71,15 +74,6 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli.
       float var_float = 3.2;
       String a = "Hello";
       String b = "World";
-
-      
-      //String posiada dwie wbudowane metody, które można wywołać na obiketach tego typu
-      int x = var_string.length() //zwraca długość łańcucha znaków
-      int y = a.compare(b) //zwraca -1 lub 0 lub 1 w zależności od kolejności alfabetycznej słów
-      
-      //Wartości zwracane przez compare decydują o kolejności sortowania w metodzie sort słownika.
-      //Jeśli a jest leksykograficznie mniejsze(pierwsze w kolejności alfabetycznej) od b, wynik będzie ujemny, co spowoduje, że a zostanie umieszczone przed b. 
-      //Jeśli jest większe, wynik będzie dodatni, co spowoduje umieszczenie b przed a. Jeśli są równe, wynik będzie zero, co oznacza, że ich kolejność nie ulega zmianie.
       ```
 
     <br>
