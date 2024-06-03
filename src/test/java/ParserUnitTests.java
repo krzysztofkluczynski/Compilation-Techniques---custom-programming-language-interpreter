@@ -399,7 +399,7 @@ public class ParserUnitTests {
         Map<String, FunctionDefinition> functionDefinitionList = program.getFunctionDefinitions();
         Assert.assertEquals(functionDefinitionList.size(), 1);
         Assert.assertEquals(functionDefinitionList.containsKey("printIfEven"), true);
-        Assert.assertEquals(functionDefinitionList.get("printIfEven").getReturnType(), null);
+        Assert.assertEquals(functionDefinitionList.get("printIfEven").getReturnType().getType(), Type.VOID);
         Assert.assertEquals(functionDefinitionList.get("printIfEven").getBody().getInstructions().size(), 1);
     }
 

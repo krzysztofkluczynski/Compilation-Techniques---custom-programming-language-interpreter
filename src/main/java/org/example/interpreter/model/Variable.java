@@ -59,6 +59,21 @@ public class Variable {
         //assertValueIsCorrectType();
     }
 
+    public Variable(Type variableType, Type optionalOne, Object value) throws InterpretingException {
+        this.variableType = variableType;
+        this.value = value;
+        this.optionalOne = optionalOne;
+        //assertValueIsCorrectType();
+    }
+
+    public Variable(Type variableType, Type optionalOne, Type optionalTwo, Object value) throws InterpretingException {
+        this.variableType = variableType;
+        this.value = value;
+        this.optionalOne = optionalOne;
+        this.optionalTwo = optionalTwo;
+        //assertValueIsCorrectType();
+    }
+
     public Variable(Type variableType, Object value) {
         this.variableType = variableType;
         this.value = value;

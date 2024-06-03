@@ -1,6 +1,7 @@
 package org.example.parser.Structure.Expression;
 
 import lombok.Value;
+import org.example.interpreter.error.InterpretingException;
 import org.example.parser.Enum.AscOrDESC;
 import org.example.parser.Structure.Expression.IExpression;
 import org.example.parser.Structure.Expression.IdentifierExpression;
@@ -25,7 +26,7 @@ public class QueryExpression implements IExpression {
     }
 
     @Override
-    public void accept(Visitor visitor) {
+    public void accept(Visitor visitor) throws InterpretingException {
         visitor.visit(this);
     }
 }
