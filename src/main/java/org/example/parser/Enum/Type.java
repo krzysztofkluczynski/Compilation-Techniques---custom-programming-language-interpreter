@@ -7,7 +7,8 @@ public enum Type {
     STRING("String"),
     LIST("List"),
     TUPLE("Tuple"),
-    DICTIONARY("Dictionary");
+    DICTIONARY("Dictionary"),
+    VOID("void");
 
 
     private final String name;

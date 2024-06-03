@@ -116,10 +116,6 @@ public class InterpretingVisitor  implements Visitor {
     }
 
 
-
-
-
-
     @Override
     public void visit(ConditionalStatement conditionalStatement) throws InterpretingException {
         List<If> ifs = conditionalStatement.getIfs();
@@ -133,13 +129,11 @@ public class InterpretingVisitor  implements Visitor {
             if (anIf.getExpression() != null) {
                 anIf.getExpression().accept(this);
                 Object condition = lastVisitationResult.getReturnedValue().getValue();
-                // Execute the block if the condition is true
                 if (Boolean.TRUE.equals(condition)) {
                     ifExecuteElse = false;
                     anIf.getBlockStatement().accept(this);
                 }
             } else if (isLastIf && ifExecuteElse) {
-                // If there's no expression and it's the last 'If', execute the block statement assuming its an else block
                 anIf.getBlockStatement().accept(this);
             }
         }
@@ -148,25 +142,44 @@ public class InterpretingVisitor  implements Visitor {
 
     @Override
     public void visit(ForStatement forStatement) throws InterpretingException {
+        Type mainType = forStatement.getType().getType();
+        Type firstOptionalType = forStatement.getType().getFirstOptionalParam();
+        Type secondOptionalType = forStatement.getType().getSecondOptionalParam();
+
         Variable variable = getLastFunctionCallContext(functionCallContexts).getVariable(forStatement.getCollectionIdentifer());
         BlockStatement block = forStatement.getBlockStatement();  // Assuming you have a method to get the BlockStatement
 
+
         if (variable.getVariableType().equals(Type.DICTIONARY)) {
-            Map<String, Object> map = (Map<String, Object>) variable.getValue();
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (variable.getOptionalOne() != firstOptionalType || variable.getOptionalTwo() != secondOptionalType) {
+                throw new UnableToAssignVariableException(variable, mainType);
+            }
+            Map<Object, Object> map = (Map<Object, Object>) variable.getValue();
+            for (Map.Entry<Object, Object> entry : map.entrySet()) {
+
                 Pair newPair = new Pair(entry.getKey(), entry.getValue());
-                getLastFunctionCallContext(functionCallContexts).
-                        addLocalVariableToLastScope(
-                                new Variable(Type.TUPLE, variable.getOptionalOne(), variable.getOptionalTwo(), forStatement.getIdentifer(), newPair));
+                FunctionCallContext functionCallContext = getLastFunctionCallContext(functionCallContexts);
+                Variable newVariable = new Variable(Type.TUPLE, variable.getOptionalOne(), variable.getOptionalTwo(), forStatement.getIdentifer(), newPair);
+                functionCallContext.addLocalVariableToLastScope(newVariable);
+
                 block.accept(this);
+
+                functionCallContext.removeLocalVariable(newVariable);
             }
         } else if (variable.getVariableType().equals(Type.LIST)) {
+            if (variable.getOptionalOne() != mainType) {
+                throw new UnableToAssignVariableException(variable, mainType);
+            }
             List<Object> list = (List<Object>) variable.getValue();
-            for (Object item : list) {;
-                getLastFunctionCallContext(functionCallContexts).
-                        addLocalVariableToLastScope(
-                                new Variable(variable.getOptionalOne(), forStatement.getIdentifer(), item));
-                block.accept(this);  // Execute the block statement for each item
+            for (Object item : list) {
+
+                FunctionCallContext functionCallContext = getLastFunctionCallContext(functionCallContexts);
+                Variable newVariable = new Variable(variable.getOptionalOne(), forStatement.getIdentifer(), item);
+                functionCallContext.addLocalVariableToLastScope(newVariable);
+
+                block.accept(this);
+
+                functionCallContext.removeLocalVariable(newVariable);
             }
         } else {
             throw new InterpretingException("Invalid type for for loop: " + variable.getVariableType());
@@ -234,9 +247,6 @@ public class InterpretingVisitor  implements Visitor {
                     new Variable(declarationStatement.getType().getType(), declarationStatement.getName()));
         }
 
-//
-//        lastVisitationResult = new VisitationResult(
-//                new Variable(declarationStatement.getType().getType(), declarationStatement.getName()));
 
         getLastFunctionCallContext(functionCallContexts).addLocalVariableToLastScope(lastVisitationResult.getReturnedValue());
     }
@@ -273,6 +283,129 @@ public class InterpretingVisitor  implements Visitor {
         getLastFunctionCallContext(functionCallContexts).addLocalVariableToLastScope(lastVisitationResult.getReturnedValue());
     }
 
+    @Override
+    public void visit(IdentiferAndMethodCallExpression identiferAndMethodCallExpression) throws InterpretingException {
+        String variableName = identiferAndMethodCallExpression.getName();
+        FunctionCall methodCall = identiferAndMethodCallExpression.getMethodCall();
+        List<Object> parsedArguments = getFunctionCallArgumentsAsValues(methodCall);
+
+        Variable collectionVariable = getLastFunctionCallContext(functionCallContexts).getVariable(variableName);
+
+        Type collectionType = collectionVariable.getVariableType();
+        Type firstOptionalType = collectionVariable.getOptionalOne();
+        Type secondOptionalType = collectionVariable.getOptionalTwo();
+
+        if (collectionType == Type.LIST) {
+            List<Object> list = (List<Object>) collectionVariable.getValue();
+
+            switch(methodCall.getName()) {
+                case "add":
+                    if (parsedArguments.size() != 1) {
+                        throw new InvalidNumberofArgumentsException(methodCall.getName(), 1, parsedArguments.size());
+                    }
+                    list.add(parsedArguments.get(0));
+                    break;
+                case "delete":
+                    if (parsedArguments.size() != 1) {
+                        throw new InvalidNumberofArgumentsException(methodCall.getName(), 1, parsedArguments.size());
+                    }
+                    list.remove(parsedArguments.get(0));
+                    break;
+                case "get":
+                    if (parsedArguments.size() != 1) {
+                        throw new InvalidNumberofArgumentsException(methodCall.getName(), 1, parsedArguments.size());
+                    }
+                    lastVisitationResult = new VisitationResult(new Variable(firstOptionalType, list.get((int)parsedArguments.get(0))));
+                    break;
+                case "set":
+                    if (parsedArguments.size() != 2) {
+                        throw new InvalidNumberofArgumentsException(methodCall.getName(), 1, parsedArguments.size());
+                    }
+                    list.set((Integer) parsedArguments.get(0), parsedArguments.get(1));
+                    break;
+            }
+
+            getLastFunctionCallContext(functionCallContexts).updateVariable(variableName, list);
+
+        } else if (collectionType == Type.DICTIONARY) {
+            Map<Object, Object> map = (Map<Object, Object>) collectionVariable.getValue();
+            switch (methodCall.getName()) {
+                case "add":
+                    if (parsedArguments.size() != 2) {
+                        throw new InvalidNumberofArgumentsException(methodCall.getName(), 2, parsedArguments.size());
+                    }
+                    map.put(parsedArguments.get(0), parsedArguments.get(1));
+                    break;
+                case "delete":
+                    if (parsedArguments.size() != 1) {
+                        throw new InvalidNumberofArgumentsException(methodCall.getName(), 1, parsedArguments.size());
+                    }
+                    map.remove(parsedArguments.get(0));
+                    break;
+                case "get":
+                    if (parsedArguments.size() != 1) {
+                        throw new InvalidNumberofArgumentsException(methodCall.getName(), 1, parsedArguments.size());
+                    }
+                    lastVisitationResult = new VisitationResult(new Variable(secondOptionalType, map.get(parsedArguments.get(0))));
+                    break;
+                case "set":
+                    if (parsedArguments.size() != 2) {
+                        throw new InvalidNumberofArgumentsException(methodCall.getName(), 2, parsedArguments.size());
+                    }
+                    if (!map.containsKey(parsedArguments.get(0))) {
+                        throw new InterpretingException("Key does not exist in the dictionary");
+                    }
+                    map.put(parsedArguments.get(0), parsedArguments.get(1));
+                    break;
+                case "ifexists":
+                    if (parsedArguments.size() != 1) {
+                        throw new InvalidNumberofArgumentsException(methodCall.getName(), 1, parsedArguments.size());
+                    }
+                    lastVisitationResult = new VisitationResult(new Variable(Type.BOOL, map.containsKey(parsedArguments.get(0))));
+                    break;
+            }
+
+            getLastFunctionCallContext(functionCallContexts).updateVariable(variableName, map);
+
+
+        } else if (collectionType == Type.TUPLE) {
+            Pair pair = (Pair) collectionVariable.getValue();
+            switch (methodCall.getName()) {
+                case "get":
+                    if (parsedArguments.size() != 1) {
+                        throw new InvalidNumberofArgumentsException(methodCall.getName(), 1, parsedArguments.size());
+                    }
+                    int index = (int) parsedArguments.get(0);
+                    Object result = index == 0 ? pair.getFirst() : index == 1 ? pair.getSecond() : null;
+                    lastVisitationResult = new VisitationResult(new Variable(index == 0 ? firstOptionalType : index == 1 ? secondOptionalType : null, result));
+                    break;
+                case "set":
+                    if (parsedArguments.size() != 2) {
+                        throw new InvalidNumberofArgumentsException(methodCall.getName(), 2, parsedArguments.size());
+                    }
+                    int indexSet = (int) parsedArguments.get(0);
+                    if (indexSet == 0) {
+                        pair.setFirst(parsedArguments.get(1));
+                    } else if (indexSet == 1) {
+                        pair.setSecond(parsedArguments.get(1));
+                    } else {
+                        throw new InterpretingException("Invalid index for tuple: " + indexSet);
+                    }
+
+                    break;
+            }
+            getLastFunctionCallContext(functionCallContexts).updateVariable(variableName, pair);
+        } else {
+            throw new InterpretingException("Invalid type for method call: " + collectionType);
+        }
+    }
+
+    @Override
+    public void visit(IdentiferAndFieldReference identiferAndFieldReference) {
+
+    }
+
+
 
     @Override
     public void visit(DefinitionWithQueryStatement definitionWithQueryStatement) {
@@ -284,11 +417,6 @@ public class InterpretingVisitor  implements Visitor {
 //TODO
     }
 
-    @Override
-    public void visit(IdentiferAndMethodCallExpression identiferAndMethodCallExpression) {
-
-    }
-
 
     @Override
     public void visit(IdentifierAndLambdaCall identifierAndLambdaCall) {
@@ -296,25 +424,11 @@ public class InterpretingVisitor  implements Visitor {
     }
 
 
-
-
-
-//    @Override
-//    public void visit(If anIf) {
-//
-//    }
-
-
-
     @Override
     public void visit(QueryExpression queryExpression) {
 
     }
 
-    @Override
-    public void visit(IdentiferAndFieldReference identiferAndFieldReference) {
-
-    }
 
     @Override
     public void visit(OrExpression orExpression) throws InterpretingException {
@@ -361,7 +475,6 @@ public class InterpretingVisitor  implements Visitor {
         if (right == null) {
             return;
         }
-
 
         Boolean result = null;
         RelativeType operand = relationExpression.getRelativeOperand();
@@ -710,15 +823,10 @@ public class InterpretingVisitor  implements Visitor {
         for (int i = 0; i < params.size(); i++) {
             Argument currParam = params.get(i);
             Object currArg = arguments.get(i);
-            Variable nextVar = new Variable(currParam.getType().getType(), currParam.getName(), currArg);
+            Variable nextVar = new Variable(currParam.getType().getType(), currParam.getType().getFirstOptionalParam(), currParam.getType().getSecondOptionalParam(), currParam.getName(), currArg);
             variables.put(nextVar.getName(), nextVar);
         }
         return variables;
     }
-
-
-
-
-
 
 }

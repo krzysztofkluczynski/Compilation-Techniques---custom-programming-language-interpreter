@@ -1,5 +1,6 @@
 package org.example.interpreter.model;
 
+import org.example.interpreter.error.InterpretingException;
 import org.example.interpreter.error.LocalVariableRepeatedInterpretingException;
 import org.example.interpreter.error.NoSuchVariableInterpretingException;
 import org.example.interpreter.error.VariableValueTypeInterpretingException;
@@ -29,9 +30,6 @@ public class FunctionCallContext extends Scope {
         scopes.remove(scopes.size() - 1);
     }
 
-    public boolean hasMoreScopes() {
-        return !scopes.isEmpty();
-    }
 
     public Type getFunctionType() {
         return functionType;
@@ -53,6 +51,10 @@ public class FunctionCallContext extends Scope {
 
     public void addLocalVariableToLastScope(Variable variable) throws LocalVariableRepeatedInterpretingException {
         scopes.get(scopes.size() - 1).addLocalVariable(variable);
+    }
+
+    public void removeLocalVariable(Variable variable) throws InterpretingException {
+        scopes.get(scopes.size() - 1).removeLocalVariable(variable);
     }
 
     public void updateVariable(String variableName, Object newValue) throws NoSuchVariableInterpretingException, VariableValueTypeInterpretingException {

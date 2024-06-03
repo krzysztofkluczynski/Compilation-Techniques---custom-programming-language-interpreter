@@ -1468,5 +1468,476 @@ public class InterpreterIntegrationTest {
         Assert.assertEquals(result, 2);
     }
 
+    @Test
+    public void testForLoop() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                     List<int> list = [1, 2, 3, 4, 5];
+                     int x = 1;
+                     for (int i : list) {
+                          if (i == 3) {
+                              x = i;
+                          }
+                     }
+                   return x;
+                }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 3);
+    }
+
+
+    @Test
+    public void testForLoopTwo() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                     List<int> list = [1, 2, 3, 4, 5];
+                     int x = 1;
+                     for (int i : list) {
+                          x = i;
+                     }
+                   return x;
+                }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 5);
+    }
+
+
+    @Test
+    public void testForLoopReference() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn List<int> main() {
+                     List<int> list = [1, 2, 3, 4, 5];
+                     int x = 1;
+                     for (int i : list) {
+                          print($String i);
+                     }
+                   return list;
+                }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        List result = (List) interpreter.execute();
+        Assert.assertEquals(result, List.of(1, 2, 3, 4, 5));
+    }
+
+
+    @Test
+    public void TestDictionaryForLoop() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                                    
+                            fn Tuple<String, int> main() {
+                                 Dictionary<String, int> var_dict = |
+                                                                                  "dog": 3,
+                                                                                  "cat": 4,
+                                                                                  "cow": 1,
+                                                                                  "hamster": 6
+                                                                              |;
+                                                                              
+                                 for (Tuple<String, int> t : var_dict) {
+                                      return t;
+                                 }
+                             
+                            }
+                        """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        Pair result = (Pair) interpreter.execute();
+        Assert.assertEquals(result.getFirst(), "dog");
+        Assert.assertEquals(result.getSecond(), 3);
+
+    }
+
+
+    @Test
+    public void TestDictionaryForLoopTypesExcpetion() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                                    
+                            fn Tuple<String, int> main() {
+                                 Dictionary<String, int> var_dict = |
+                                                                                  "dog": 3,
+                                                                                  "cat": 4,
+                                                                                  "cow": 1,
+                                                                                  "hamster": 6
+                                                                              |;
+                                                                              
+                                 for (Tuple<String, String> t : var_dict) {
+                                      return t;
+                                 }
+                             
+                            }
+                        """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        Assert.assertThrows(UnableToAssignVariableException.class, interpreter::execute);
+    }
+
+
+    @Test
+    public void TestListForLoopTypesExcpetion() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                                    
+                            fn Tuple<String, int> main() {
+                                 List<int> var_dict = [1, 2, 3];
+                                                                              
+                                 for (List<String> s : var_dict) {
+                                      return s;
+                                 }
+                             
+                            }
+                        """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        Assert.assertThrows(UnableToAssignVariableException.class, interpreter::execute);
+    }
+
+    @Test
+    public void TestListMethodGet() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                   List<int> f = [1, 2, 3];
+                   return f.get(2);
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 3);
+    }
+
+    @Test
+    public void TestListMethodAdd() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                   List<int> f = [1, 2, 3];
+                   f.add(4);
+                   return f.get(3);
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 4);
+    }
+
+    @Test
+    public void TestListMethodSet() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                   List<int> f = [1, 2, 3];
+                   f.set(2, 4);
+                   return f.get(2);
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 4);
+    }
+
+
+    @Test
+    public void TestListMethodDelete() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                   List<int> f = [1, 2, 3];
+                   f.delete(2);
+                   return f.get(1);
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 3);
+    }
+
+
+    @Test
+    public void TestTupleMethodGet() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn String main() {
+                   Tuple<String, int> f = ("a", 1);
+                   return f.get(0);
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        String result = (String) interpreter.execute();
+        Assert.assertEquals(result, "a");
+    }
+
+    @Test
+    public void TestTupleMethodGetException() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        
+                fn int main() {
+                    //comment
+                   Tuple<String, int> f = ("a", 1);
+                   f.set(1, 5);
+                   return f.get(1);
+                 }
+            """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 5);
+    }
+
+
+    @Test
+    public void TestDictionaryMethodGet() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                                    
+                            fn int main() {
+                               Dictionary<String, int> var_dict = |
+                                               "dog": 3,
+                                               "cat": 4,
+                                               "cow": 5,
+                                               "hamster": 6
+                                           |;
+                                           
+                               
+                               return var_dict.get("cow");
+                             }
+                        """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 5);
+    }
+
+
+    @Test
+    public void TestDictionaryMethodSet() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                                    
+                            fn int main() {
+                               Dictionary<String, int> var_dict = |
+                                               "dog": 3,
+                                               "cat": 4,
+                                               "cow": 5,
+                                               "hamster": 6
+                                           |;
+                                           
+                               var_dict.set("cow", 10);
+                               return var_dict.get("cow");
+                             }
+                        """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 10);
+    }
+
+    @Test
+    public void TestDictionaryMethodDelete() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                                    
+                            fn bool main() {
+                               Dictionary<String, int> var_dict = |
+                                               "dog": 3,
+                                               "cat": 4,
+                                               "cow": 5,
+                                               "hamster": 6
+                                           |;
+                                           
+                               var_dict.delete("cow");
+                               return var_dict.ifexists("cow");
+                             }
+                        """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        boolean result = (boolean) interpreter.execute();
+        Assert.assertEquals(result, false);
+    }
+
+
+    @Test
+    public void TestDictionaryMethodAdd() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                                    
+                            fn int main() {
+                               Dictionary<String, int> var_dict = |
+                                               "dog": 3,
+                                               "cat": 4,
+                                               "cow": 5,
+                                               "hamster": 6
+                                           |;
+                                           
+                               var_dict.add("bird", 10);
+                               return var_dict.get("bird");
+                             }
+                        """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 10);
+    }
+
+
+    @Test
+    public void TestFunctionCall() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                            fn int sum(List<int> list) {
+                                int sum = 0;
+                                for (int i : list) {
+                                    sum = sum + i;
+                                }
+                                return sum;
+                             }
+                                    
+                             fn int main() {
+                               List<int> f = [1, 2, 3];
+                               int x = sum(f);
+                                         
+                               return -x + 1 * 3;
+                             }
+                        """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, -3);
+    }
+
+//    @Test
+//    public void TestFunctionCallTwo() throws Exception {
+//        DataStreamInputReader reader = new DataStreamInputReader(
+//                """
+//                            fn void increment(int x) {
+//                                x = x + 1;
+//                             }
+//
+//                             fn int main() {
+//                               int x = 3;
+//                               increment(x);
+//                               return x;
+//                             }
+//                        """
+//        );
+//        LexerImpl lexer = new LexerImpl(reader);
+//        ParserImpl parser = new ParserImpl(lexer);
+//        Program program = parser.parseProgram();
+//
+//        Interpreter interpreter = new Interpreter(program);
+//
+//        int result = (int) interpreter.execute();
+//        Assert.assertEquals(result, 4);
+//    }
+
 
 }

@@ -28,6 +28,9 @@ public class ParserImpl implements Parser {
 
     private void nextToken() throws ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, IntMaxValueExceededException, IOException, IdentifierTooLongException, DecimalMaxValueExceededException {
         token = lexer.next();
+        if (token.getType().equals(TokenType.ONE_LINE_COMMENT) || token.getType().equals(TokenType.MULTI_LINE_COMMENT)) {
+            nextToken();
+        }
     }
 
     /*
@@ -403,7 +406,14 @@ public class ParserImpl implements Parser {
             return functionCall;
         } else if (token.getType() == TokenType.EQUAL) {
             return parseAssignment(name, identifierPosition);
-        } else {
+        } else if (checkToken(TokenType.DOT)) {
+            nextToken();
+            IExpression methodCall = parseMethodCallOrLambda(name);
+            nextToken();
+            return methodCall;
+        }
+
+        else {
             List<TokenType> allowedTypes = List.of(TokenType.BRACKET_OPEN, TokenType.EQUAL);
             throw new ParsingException(identifierPosition, allowedTypes, token.getType());
         }

@@ -27,7 +27,7 @@ public interface Visitor {
 
     void visit(LiteralTuple literalTuple);
 
-    void visit(IdentiferAndMethodCallExpression identiferAndMethodCallExpression);
+    void visit(IdentiferAndMethodCallExpression identiferAndMethodCallExpression) throws InterpretingException;
 
     void visit(LiteralBool literalBool);
 
