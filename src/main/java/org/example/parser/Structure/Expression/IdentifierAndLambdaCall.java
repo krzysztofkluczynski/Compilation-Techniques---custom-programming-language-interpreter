@@ -1,6 +1,7 @@
 package org.example.parser.Structure.Expression;
 
 import lombok.Value;
+import org.example.interpreter.error.InvalidTypeForMethodCallInterpretingException;
 import org.example.parser.Structure.OtherComponents.Argument;
 import org.example.interpreter.Visitor;
 import org.example.token.Position;
@@ -16,7 +17,7 @@ public class IdentifierAndLambdaCall implements IExpression {
     Position position;
 
     @Override
-    public void accept(Visitor visitor) {
+    public void accept(Visitor visitor) throws InvalidTypeForMethodCallInterpretingException {
         visitor.visit(this);
     }
 }

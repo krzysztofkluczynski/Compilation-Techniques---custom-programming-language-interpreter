@@ -46,7 +46,7 @@ public class InterpretingVisitor  implements Visitor {
 
     }
 
-    public void visit(FunctionCall functionCall) throws InterpretingException {
+    public void visit(FunctionCall functionCall) throws InterpretingException, InvalidTypeForMethodCallInterpretingException {
         FunctionDefinition functionDefinition = program.getFunctionDefinitions().get(functionCall.getName());
         if (functionDefinition == null) {
             if ("print".equals(functionCall.getName())) {
@@ -71,7 +71,7 @@ public class InterpretingVisitor  implements Visitor {
         removeLastFunctionCallContext(functionCallContexts);
     }
 
-    private void visitDefaultPrintFunctionCall(FunctionCall functionCall) throws InterpretingException {
+    private void visitDefaultPrintFunctionCall(FunctionCall functionCall) throws InterpretingException, InvalidTypeForMethodCallInterpretingException {
         List<Object> parsedArguments = getFunctionCallArgumentsAsValues(functionCall);
         if (parsedArguments.size() == 1) {
             Print printFunction = new Print((String) parsedArguments.get(0));
@@ -82,7 +82,7 @@ public class InterpretingVisitor  implements Visitor {
         }
     }
 
-    private List<Object> getFunctionCallArgumentsAsValues(FunctionCall functionCall) throws InterpretingException {
+    private List<Object> getFunctionCallArgumentsAsValues(FunctionCall functionCall) throws InterpretingException, InvalidTypeForMethodCallInterpretingException {
         List<Object> parsedArguments = new ArrayList<>();
         for (IExpression arg: functionCall.getArguments()) {
             arg.accept(this);
@@ -98,7 +98,7 @@ public class InterpretingVisitor  implements Visitor {
     }
 
     @Override
-    public void visit(BlockStatement blockStatement) throws InterpretingException {
+    public void visit(BlockStatement blockStatement) throws InterpretingException, InvalidTypeForMethodCallInterpretingException {
         FunctionCallContext functionCallContext = getLastFunctionCallContext(functionCallContexts);
         functionCallContext.addScope(new Scope());
         List<Statement> instructions = blockStatement.getInstructions();
@@ -281,7 +281,7 @@ public class InterpretingVisitor  implements Visitor {
     }
 
     @Override
-    public void visit(IdentiferAndMethodCallExpression identiferAndMethodCallExpression) throws InterpretingException {
+    public void visit(IdentiferAndMethodCallExpression identiferAndMethodCallExpression) throws InterpretingException, InvalidTypeForMethodCallInterpretingException {
         String variableName = identiferAndMethodCallExpression.getName();
         FunctionCall methodCall = identiferAndMethodCallExpression.getMethodCall();
         List<Object> parsedArguments = getFunctionCallArgumentsAsValues(methodCall);
@@ -393,17 +393,52 @@ public class InterpretingVisitor  implements Visitor {
             }
             getLastFunctionCallContext(functionCallContexts).updateVariable(variableName, pair);
         } else {
-            throw new InterpretingException("Invalid type for method call: " + collectionType);
+            throw new InvalidTypeForMethodCallInterpretingException(collectionType);
         }
     }
 
 
+    @Override
+    public void visit(IdentifierAndLambdaCall identifierAndLambdaCall) throws InvalidTypeForMethodCallInterpretingException {
+        //TODO
+        String variableName = identifierAndLambdaCall.getName();
 
+        Variable collectionVariable = getLastFunctionCallContext(functionCallContexts).getVariable(variableName);
+
+        Type collectionType = collectionVariable.getVariableType();
+        Type firstOptionalType = collectionVariable.getOptionalOne();
+        Type secondOptionalType = collectionVariable.getOptionalTwo();
+
+        if (collectionType != Type.DICTIONARY)  {
+            throw new InvalidTypeForMethodCallInterpretingException(collectionType);
+        }
+
+    }
 
 
     @Override
-    public void visit(DefinitionWithQueryStatement definitionWithQueryStatement) {
+    public void visit(DefinitionWithQueryStatement definitionWithQueryStatement) throws InterpretingException {
+        QueryExpression assignedValue = definitionWithQueryStatement.getQueryExpression();
+        assignedValue.accept(this);
 
+
+        if (definitionWithQueryStatement.getType().getType() == Type.DICTIONARY) {
+            Type firstOptionalType = definitionWithQueryStatement.getType().getFirstOptionalParam();
+            Type secondOptionalType = definitionWithQueryStatement.getType().getSecondOptionalParam();
+            lastVisitationResult = new VisitationResult(
+                    new Variable(Type.DICTIONARY, firstOptionalType, secondOptionalType, definitionWithQueryStatement.getIdentifierName(), lastVisitationResult.getReturnedValue().getValue()));
+
+        } else if (definitionWithQueryStatement.getType().getType() == Type.LIST) {
+            Type firstOptionalType = definitionWithQueryStatement.getType().getFirstOptionalParam();
+            lastVisitationResult = new VisitationResult(
+                    new Variable(Type.LIST, firstOptionalType, definitionWithQueryStatement.getIdentifierName(), lastVisitationResult.getReturnedValue().getValue()));
+
+        } else {
+            throw new InterpretingException("Invalid type for query: " + definitionWithQueryStatement.getType().getType());
+        }
+
+
+        getLastFunctionCallContext(functionCallContexts).addLocalVariableToLastScope(lastVisitationResult.getReturnedValue());
     }
 
     @Override
@@ -414,12 +449,6 @@ public class InterpretingVisitor  implements Visitor {
 
     }
 
-
-
-    @Override
-    public void visit(IdentiferAndFieldReference identiferAndFieldReference) {
-
-    }
 
     @Override
     public void visit(QueryExpression queryExpression) throws InterpretingException {
@@ -618,10 +647,8 @@ public class InterpretingVisitor  implements Visitor {
         }
     }
 
-    @Override
-    public void visit(IdentifierAndLambdaCall identifierAndLambdaCall) {
 
-    }
+
 
     @Override
     public void visit(OrExpression orExpression) throws InterpretingException {
@@ -1022,4 +1049,9 @@ public class InterpretingVisitor  implements Visitor {
         return variables;
     }
 
+    @Override
+    public void visit(IdentiferAndFieldReference identiferAndFieldReference) {
+        String firstIdentiferName = identiferAndFieldReference.getFirstIdentiferName();
+        String secondIdentiferName = identiferAndFieldReference.getSecondIdentiferName();
+    }
 }

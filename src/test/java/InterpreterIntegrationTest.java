@@ -1963,31 +1963,6 @@ public class InterpreterIntegrationTest {
         Assert.assertEquals(result, 3);
     }
 
-//    @Test
-//    public void TestFunctionCallFour() throws Exception {
-//        DataStreamInputReader reader = new DataStreamInputReader(
-//                """
-//                            fn void increment(int x) {
-//                                x = x + 1;
-//                             }
-//
-//                             fn int main() {
-//                              int x = 1;
-//                              increment(x);
-//                               return x;
-//                             }
-//                        """
-//        );
-//        LexerImpl lexer = new LexerImpl(reader);
-//        ParserImpl parser = new ParserImpl(lexer);
-//        Program program = parser.parseProgram();
-//
-//        Interpreter interpreter = new Interpreter(program);
-//
-//        int result = (int) interpreter.execute();
-//        Assert.assertEquals(result, 2);
-//    }
-
     @Test
     public void TestSelectStatement() throws Exception {
         DataStreamInputReader reader = new DataStreamInputReader(
@@ -2133,7 +2108,120 @@ public class InterpreterIntegrationTest {
         List result = (List) interpreter.execute();
         Assert.assertEquals(result, List.of("dog"));
     }
+    @Test
+    public void TestSelectStatementDictionaryDefinition() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn Dictionary<int, String> main() {
+                            Dictionary<String, int> var_dict = |
+                            "dog": 3,
+                            "cat": 4,
+                            "cow": 5,
+                            "hamster": 6
+                             |;
+                           
+                             Dictionary<int, String> list = SELECT (var_dict.value, var_dict.key) FROM var_dict;
+                             return list;
+                           
+                         }
+                        """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
 
+        Interpreter interpreter = new Interpreter(program);
+
+        Map result = (Map) interpreter.execute();
+        Assert.assertEquals(result, Map.of(3, "dog", 4, "cat", 5, "cow", 6, "hamster"));
+    }
+
+    @Test
+    public void TestSelectStatementListWhereDefinition() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn List<String> main() {
+                            Dictionary<String, int> var_dict = |
+                            "dog": 3,
+                            "cat": 4,
+                            "cow": 5,
+                            "hamster": 6
+                             |;
+                           
+                             List<String> list = SELECT (var_dict.key) FROM var_dict WHERE (var_dict.value > 3);
+                             return list;
+                           
+                         }
+                        """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        List result = (List) interpreter.execute();
+        Assert.assertEquals(result, List.of("hamster", "cat", "cow"));
+    }
+
+
+    @Test
+    public void TestSelectStatementListWhereSingleDefinition() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn int main() {
+                            Dictionary<String, int> var_dict = |
+                            "dog": 3,
+                            "cat": 4,
+                            "cow": 5,
+                            "hamster": 6
+                             |;
+                           
+                             List<int> list = SELECT (var_dict.value) FROM var_dict WHERE (var_dict.key == "dog");
+                             
+                             return list.get(0);
+                          
+                         }
+                        """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        int result = (int) interpreter.execute();
+        Assert.assertEquals(result, 3);
+    }
+
+    @Test
+    public void TestSelectStatementListWhereSingleValueDefinition() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn List<String> main() {
+                            Dictionary<String, int> var_dict = |
+                            "dog": 3,
+                            "cat": 4,
+                            "cow": 5,
+                            "hamster": 6
+                             |;
+                           
+                             List<String> list = SELECT (var_dict.key) FROM var_dict WHERE (var_dict.key == "dog");
+                             
+                             return list;
+                           
+                         }
+                        """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        List result = (List) interpreter.execute();
+        Assert.assertEquals(result, List.of("dog"));
+    }
 
     @Test
     public void TestSelectStatementListWhereSingleValueNotEqual() throws Exception {

@@ -11,7 +11,7 @@ public interface Visitor {
     void visit(Program program) throws InterpretingException;
     void visit(FunctionDefinition functionDefinition) throws InterpretingException;
 
-    void visit(BlockStatement blockStatement) throws InterpretingException;
+    void visit(BlockStatement blockStatement) throws InterpretingException, InvalidTypeForMethodCallInterpretingException;
 
 
     void visit(MultiplicativeExpression multiplicativeExpression) throws InterpretingException;
@@ -27,7 +27,7 @@ public interface Visitor {
 
     void visit(LiteralTuple literalTuple);
 
-    void visit(IdentiferAndMethodCallExpression identiferAndMethodCallExpression) throws InterpretingException;
+    void visit(IdentiferAndMethodCallExpression identiferAndMethodCallExpression) throws InterpretingException, InvalidTypeForMethodCallInterpretingException;
 
     void visit(LiteralBool literalBool);
 
@@ -41,7 +41,7 @@ public interface Visitor {
 
     void visit(AndExpression andExpression) throws InterpretingException;
 
-    void visit(IdentifierAndLambdaCall identifierAndLambdaCall);
+    void visit(IdentifierAndLambdaCall identifierAndLambdaCall) throws InvalidTypeForMethodCallInterpretingException;
 
     void visit(IdentifierExpression identifierExpression) throws NoSuchVariableInterpretingException;
 
@@ -61,11 +61,11 @@ public interface Visitor {
 
     void visit(DefinitionWithExpressionStatement definitionWithExpressionStatement) throws InterpretingException;
 
-    void visit(DefinitionWithQueryStatement definitionWithQueryStatement);
+    void visit(DefinitionWithQueryStatement definitionWithQueryStatement) throws InterpretingException;
 
     void visit(ForStatement forStatement) throws InterpretingException;
 
-    void visit(FunctionCall functionCall) throws InterpretingException;
+    void visit(FunctionCall functionCall) throws InterpretingException, InvalidTypeForMethodCallInterpretingException;
 
     void visit(ReturnStatement returnStatement) throws InterpretingException;
 
