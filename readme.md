@@ -159,12 +159,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli wraz ze z
          to odwrócona kolejność porównania. Tutaj wartości są porównywane w odwrotnej kolejności, co powoduje sortowanie malejące.
          W tym przypadku, lambda sortuje słownik w kolejności malejącej według wartości. Algorytm porównuje wartości dwóch elementów, i jeżeli wartość a jest mniejsza od wartości b, dokonuje zamiany ich miejscami. Celem jest uporządkowanie elementów od największej do najmniejszej wartości.
 
-      3. Sortowanie po długości klucza rosnąco:<br>
-         sort((Tuple<String, int> a, Tuple<String, int> b) => a.get(0).length() > b.get(0).length());
-         porównuje długości kluczy a i b. Elementy zostaną posortowane według długości ich klucza, od najkrótszego do najdłuższego.
-         Tutaj słownik jest sortowany rosnąco według długości kluczy. Funkcja lambda porównuje długości kluczy (string) dwóch elementów. Jeśli klucz elementu a jest dłuższy niż klucz elementu b, elementy są zamieniane miejscami. Proces jest kontynuowany do momentu, gdy wszystkie klucze są uporządkowane od najkrótszego do najdłuższego.
-        
-      4. Sortowanie alfabetyczne kluczy :<br>
+      3. Sortowanie alfabetyczne kluczy :<br>
          sort((Tuple<String, int> a, Tuple<String, int> b) => a.get(0) > (b.get(0));
          wykorzystuje funkcję compare do porównania kluczy. Ta funkcja lambda sortuje słownik alfabetycznie na podstawie kluczy. Taka składania jest możliwa dzięki możliwości porównywania stringów.
       <br>
