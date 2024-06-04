@@ -629,7 +629,9 @@ Wszystkie błędy są traktowane równorzędnie i powodują zatrzymanie wykonywa
        return 0;
      }
      ```
-    
+
+  * `Excpetion` - 
+
 
 Przykładowy komunikat o błędzie:
 
@@ -796,10 +798,10 @@ ERROR in Position(line=0, character=0) | Identifier exceeds maximum length with 
 
   * `InterpretingException` - w niektórych sytuacjach rzucany jest ogólny wyjątek z odpowiednim komuikatem 
   
-    Przykłady(sytuacji jest więcej niż te wyienione poniżej)
+    Przykłady (sytuacji jest więcej niż te wymienione poniżej):
     * pętla for dla typów innych niż słownik lub lista
     * ustawienie wartości dla klucza, który nie istnieje w słowniku
-    * przkreoczenie indeksu podczas operacji get
+    * przekroczenie indeksu podczas operacji get
     * próba przypisania wyrażenia select do typu innych niż słownik lub lista
   
 
@@ -839,7 +841,7 @@ Proces działania leksera polega na czytaniu kodu źródłowego znak po znaku, a
 Gdy token zostanie poprawnie zidentyfikowany, jest on przekazywany do parsera. Istotne jest, że lekser czyta nowe znaki tylko wtedy, gdy parser o to wyraźnie prosi.
 Taka strategia pomaga w optymalizacji całego procesu analizy tekstu źródłowego.
 
-Moduł lekser składa się z jednej głównej klasy `Lexer`, która posiada metody do analizy leksykalnej. Wykorzystywane są tutaj tokeny, które zostały zdefiniowane za pomocą typu Enum - TokenType(poniżej lista tokenów)
+Moduł lekser składa się z jednej głównej klasy `Lexer`, która posiada metody do analizy leksykalnej. Wykorzystywane są tutaj tokeny, które zostały zdefiniowane za pomocą typu Enum - TokenType(poniżej lista tokenów).
 W LexerUtils zostały zdefiniowane metody wspomagające działanie leksera, a nie dotyczące samej analizy lekykalnej
 
 Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
@@ -913,14 +915,14 @@ Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
 jest kluczowym modułem współpracującym ściśle z analizatorem leksykalnym.
 Ten ostatni dostarcza parserowi kolejne tokeny, które są podstawowymi jednostkami leksykalnymi przetwarzanymi przez lekser.
 
-Klasa Parser zajmuję się syntaktyczną analizą tokenów wygenerowanych przez lekser i budowaniem odpowienich obiektów (drzewa składniowego).
+Klasa Parser zajmuje się syntaktyczną analizą tokenów wygenerowanych przez lekser i budowaniem odpowienich obiektów (drzewa składniowego).
 Głównym zadaniem parsera jest sprawdzenie, czy otrzymane tokeny są zgodne ze zdefiniowaną gramatyką języka oraz utworzenie z nich odpowiednich struktur.
 Dzięki temu możliwe jest rozpoznawanie zdefiniowanych konstrukcji językowych.
 Struktury, które parser tworzy implementują interfejs Node, możemy je pogrupować także na Statement, Expression oraz Other, co również zostało zrobione za pomocą interfejsów.
 
 **3. Analizator semantyczny i interpreter**
-<br>Analizator semantyczny, będący często ostatnim etapem interpretera, jest modułem odpowiedzialnym za rozumienie znaczenia wyrażeń zgodnie z regułami semantycznymi języka.
-Głównym zadaniem analizatora semantycznego jest przetwarzanie drzewa rozbioru składniowego (parsowanego wcześniej przez parser) i weryfikacja zgodności semantycznej programu.
+<br>Interpreter, jest modułem odpowiedzialnym za rozumienie znaczenia wyrażeń zgodnie z regułami semantycznymi języka.
+Głównym zadaniem interpretera jest przetwarzanie drzewa rozbioru składniowego (parsowanego wcześniej przez parser) i weryfikacja zgodności semantycznej programu.
 Analizator semantyczny dokonuje takich czynności jak sprawdzanie typów danych, rozpoznawanie zmiennych, kontrola poprawności wyrażeń oraz wykrywanie błędów semantycznych.
 
 Interpreter ma za zadanie sekwencyjne wykonanie instrukcji zawartych drzewie zbudowanym przez parser.

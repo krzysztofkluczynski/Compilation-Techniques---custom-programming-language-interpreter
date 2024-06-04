@@ -6,8 +6,9 @@ fn List<int> main() {
     "hamster": 6
      |;
 
-     List<int> list;
-     list = SELECT (var_dict.value) FROM var_dict;
-     return list;
+     List<int> list =  SELECT (var_dict.value) FROM var_dict;
 
+
+
+     return list;
 }

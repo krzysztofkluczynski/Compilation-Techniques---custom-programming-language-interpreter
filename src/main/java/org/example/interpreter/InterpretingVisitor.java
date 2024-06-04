@@ -74,8 +74,13 @@ public class InterpretingVisitor  implements Visitor {
     private void visitDefaultPrintFunctionCall(FunctionCall functionCall) throws InterpretingException, InvalidTypeForMethodCallInterpretingException {
         List<Object> parsedArguments = getFunctionCallArgumentsAsValues(functionCall);
         if (parsedArguments.size() == 1) {
-            Print printFunction = new Print((String) parsedArguments.get(0));
-            printFunction.execute();
+            try {
+                Print printFunction = new Print((String) parsedArguments.get(0));
+                printFunction.execute();
+            } catch (Exception e) {
+                throw new IncorrectDefaultPrintFunctionCallInterpretingException(parsedArguments);
+            }
+
             lastVisitationResult.setReturnedValue(new Variable(Type.INT,"some", 1));
         } else {
             throw new IncorrectDefaultPrintFunctionCallInterpretingException(parsedArguments);
@@ -320,6 +325,8 @@ public class InterpretingVisitor  implements Visitor {
                     }
                     list.set((Integer) parsedArguments.get(0), parsedArguments.get(1));
                     break;
+                default:
+                    throw new InvalidTypeForMethodCallInterpretingException(collectionType);
             }
 
             getLastFunctionCallContext(functionCallContexts).updateVariable(variableName, list);
@@ -360,6 +367,8 @@ public class InterpretingVisitor  implements Visitor {
                     }
                     lastVisitationResult = new VisitationResult(new Variable(Type.BOOL, map.containsKey(parsedArguments.get(0))));
                     break;
+                default:
+                        throw new InvalidTypeForMethodCallInterpretingException(collectionType);
             }
 
             getLastFunctionCallContext(functionCallContexts).updateVariable(variableName, map);
