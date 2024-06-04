@@ -40,7 +40,7 @@ Korzystanie z LTS wersji Java zapewnia stabilność, bezpieczeństwo oraz długo
 Aby zbudować projekt, należy wykonać komendę:
 
 ```
-mvn clean install
+mvn clean package
 ```
 
 Aby uruchomić interpreter, konieczna jest zainstalowana Java 17. Uruchamiamy go przy użyciu wcześniej spakowanego pliku jar, za pomocą polecenia zawierającego jako argumenty ścieżki do pliku jar oraz pliku z naszym kodem:
@@ -61,22 +61,33 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli wraz ze z
     ```
     //This is comment
     ``` 
-    
-    <br>
+
+  * Komentarz jednoliniowy
+  
+    ```
+    /*
+    This is a multiline comment
+    */
+    ``` 
+
 * **Typy danych:** 
-    * `bool`: Reprezentuje wartości logiczne, które mogą być `True` lub `False`.
-    * `int`: Reprezentuje liczby całkowite z zakresu od -2147483648 do 2147483648.
-    * `float`: Reprezentuje liczby zmiennoprzecinkowe pojedynczej precyzji z zakresu od 1.40129846432481707e-45 do 3.40282346638528860e+38.
-    * `String`: Reprezentuje sekwencję znaków, która może zawierać litery, cyfry, białe znaki oraz znaki specjalne, o maksymalnej długości 200 znaków.
+    * `bool`: Reprezentuje wartości logiczne, które mogą być `true` lub `false`.
+    * `int`: Reprezentuje liczby całkowite. Zakres możliwy do ustawienia jako parametr programu. 
+    * `float`: Reprezentuje liczby zmiennoprzecinkowe pojedynczej precyzji. Zakres możliwy do ustawienia jako parametr programu.
+    * `String`: Reprezentuje sekwencję znaków, która może zawierać litery, cyfry, białe znaki oraz znaki specjalne. Maksmalna długość łańcucha możliwa do ustawienia jako parametr programu.
+  
+
+  Zakresy oraz długość łańcucha posiadają domyślne wartości zdefiniowanie w analizatorze leksykalnym. Nie ma konieczności podawania ich jako argumenty wywołania programu, jednak jest to możliwe.
+
       ```
-      bool var_bool = True;
+      bool var_bool = true;
       int var_int = 2;
       float var_float = 3.2;
       String a = "Hello";
       String b = "World";
       ```
 
-    <br>
+
 * **Kolekcje:**
     * `List`: Kolekcja elementów uporządkowanych, która pozwala na przechowywanie wielu elementów o tym samym typie.
     Dostępne operacje:
@@ -88,7 +99,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli wraz ze z
         List<int> var_list = [1, 2, 3, 4, 5];
         
         var_list.add(12); //dodanie elementu na koniec listy
-        var_list.delete(0); //usunięcie pierwszego elementu z listy
+        var_list.delete(0); //usunięcie podanego elementu z listy, w tym przypadku liczby 2
         var_list.get(0); //uzyskanie pierwszego elementu z listy
         var_list.set(0, 2); //ustawienie wartości znajdującej się na pozycji o indeskie 0 na 2
         ```
@@ -133,14 +144,8 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli wraz ze z
       // Sortowanie po wartościach malejąco
       var_dict.sort((Tuple<String, int> a,Tuple<String, int> b) => a.get(1) < b.get(1)); //jezeli wartość a jest mniejsza od wartości b to to a powinno byc pierwsze
 
-      // Sortowanie po długości klucza rosnąco
-      var_dict.sort((Tuple<String, int> a,Tuple<String, int> b) => a.get(0).length() > b.get(0).length(); 
-
-      // Sortowanie po długości klucza malejąco
-      var_dict.sort((Tuple<String, int> a,Tuple<String, int> b) => a.get(1).length() > b.get(1)); 
-
-      // Sortowanie alfabetyczne kluczy z użyciem funkcji compare 
-      var_dict.sort((a, b) => ((Tuple<String, int> a,Tuple<String, int> b) => a.compare(b)); 
+      // Sortowanie alfabetyczne kluczy 
+      var_dict.sort((a, b) => ((Tuple<String, int> a,Tuple<String, int> b) => a.get(0) > b.get(0));); 
        
       ```
       Omówienie przykładowych sortowań
@@ -157,16 +162,11 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli wraz ze z
       3. Sortowanie po długości klucza rosnąco:<br>
          sort((Tuple<String, int> a, Tuple<String, int> b) => a.get(0).length() > b.get(0).length());
          porównuje długości kluczy a i b. Elementy zostaną posortowane według długości ich klucza, od najkrótszego do najdłuższego.
-         Tutaj słownik jest sortowany rosnąco według długości kluczy. Funkcja lambda porównuje długości kluczy (string) dwóch elementów. Jeśli klucz elementu a jest dłuższy niż klucz elementu b, elementy są zamieniane miejscami. Proces jest kontynuowany do momentu, gdy wszystkie klucze są uporządkowane od najkrótszego do najdłuższego. 
-
-      4. Sortowanie po długości klucza malejąco:<br>
-         sort((Tuple<String, int> a, Tuple<String, int> b) => a.get(0).length() < b.get(0).length());
-         to odwrócona kolejność porównania długości kluczy. Elementy zostaną posortowane według długości ich klucza, od najdłuższego do najkrótszego.
-         W tym scenariuszu, algorytm sortuje słownik malejąco według długości kluczy. Porównuje długości kluczy dwóch elementów, i jeżeli klucz a jest krótszy od klucza b, dokonuje zamiany ich miejscami. Cel jest taki, aby klucze zostały uporządkowane od najdłuższego do najkrótszego.
+         Tutaj słownik jest sortowany rosnąco według długości kluczy. Funkcja lambda porównuje długości kluczy (string) dwóch elementów. Jeśli klucz elementu a jest dłuższy niż klucz elementu b, elementy są zamieniane miejscami. Proces jest kontynuowany do momentu, gdy wszystkie klucze są uporządkowane od najkrótszego do najdłuższego.
         
-      5. Sortowanie alfabetyczne kluczy z użyciem funkcji compare:<br>
-         sort((Tuple<String, int> a, Tuple<String, int> b) => a.get(0).compare(b.get(0));
-         wykorzystuje funkcję compare do porównania kluczy. Ta funkcja lambda sortuje słownik alfabetycznie na podstawie kluczy. Wykorzystuje funkcję compare, aby porównać klucze dwóch elementów leksykograficznie. Jeśli klucz a powinien występować przed kluczem b w kolejności alfabetycznej, elementy pozostają na swoich miejscach; w przeciwnym razie są zamieniane. Celem jest uporządkowanie kluczy od A do Z.
+      4. Sortowanie alfabetyczne kluczy :<br>
+         sort((Tuple<String, int> a, Tuple<String, int> b) => a.get(0) > (b.get(0));
+         wykorzystuje funkcję compare do porównania kluczy. Ta funkcja lambda sortuje słownik alfabetycznie na podstawie kluczy. Taka składania jest możliwa dzięki możliwości porównywania stringów.
       <br>
         
     <br>
@@ -178,8 +178,8 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli wraz ze z
     Przykładowe operacje: 
 
     ```
-    bool var_true = True;
-    bool var_false = False;
+    bool var_true = true;
+    bool var_false = false;
     
     bool a = var_true and var_false; // a = False
     bool b = var_true or not var_false; // b = True
@@ -222,7 +222,7 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli wraz ze z
       bool var1 = a != 2;
       bool var2 = a >= 2;
       
-      //przyklady rowniez w sekcji "petle warunkowe"
+      //przyklady rowniez w sekcji nizej "intrukcje warunkowe"
       ```
 
     <br>
@@ -285,8 +285,9 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli wraz ze z
       ```
       List<int> list = [1, 2, 3, 4, 5, 6, 7, 8];
     
-      for (int x : list) {  //inkrementacja każdego elementu w liście
-          x = x + 1;
+      int sum;
+      for (int x : list) {  
+          sum = sum + x;
       }
       
       Dictionary<String, int> var_dict = |
@@ -297,170 +298,176 @@ Wynik działania naszego programu powinien wyświetlić się w konsoli wraz ze z
       |;
       
           
-      for (Tuple<String, int> i : var_doct) { 
-          i.set(1, 0); //zeruje wszystke wartości w słowniku
+      for (Tuple<String, int> i : var_dict) { 
+          print(i.get(0));
       }
       ```
 
-  <br>
 * **Funkcje:**
     <br>W języku, każda funkcja zaczyna się od słowa kluczowego `fn` (skrót od function), po którym następuje deklaracja typu zwracanego funkcji - jeśli funkcja nic nie zwraca, typ ten jest `void`. Każdy argument funkcji musi być również opisany przez swój typ. Ciało funkcji znajduje się w nawiasach klamrowych.
-    <br>Zmienne przekazywane do funkcji są przekazywane przez referencję, co oznacza, że funkcja może modyfikować ich wartość.
+    <br>Zmienne przekazywane do funkcji są przekazywane przez wartość.
     <br>Nie ma możliwości przeciążania funkcji.
-    <br>Funkcje mogą być wywoływane rekursywnie - funkcja może wywołać samą siebie podczas wykonywania. Maksymalne ograniczenie na liczbę wywołań rekurencyjnych wynosi 200 (patrz sekcję "Obsługa błędów").
-    <br>Aby program działał poprawnie, musi zawierać dokładnie jedną specjalnie zdefiniowaną funkcję, zwyczajowo nazywaną `main`. Jest to funkcja, od której zaczyna się wykonywanie programu. W języku `main` zazwyczaj zwraca wartość całkowitą (typ `int`) jako kod wyjścia programu.<br><br>
+    <br>Aby program działał poprawnie, musi zawierać dokładnie jedną specjalnie zdefiniowaną funkcję, nazywaną `main`. Jest to funkcja, od której zaczyna się wykonywanie programu. W języku `main` może zwracać dowolną wartość.<br>
 
-     * funkcja niezwracająca wartości
+  * funkcja niezwracająca wartości
 
-       ```
-       //funkcja wypisująca na ekran czy podana liczba jest większa niż 0
-       fn void printIfEven(int number) {
-          if (number > 0) {
-              print("The number is bigger than 0.");
-          } else {
-              print("The number is less than 0.");
-          }
-       }
+         ```
+         //funkcja wypisująca na ekran czy podana liczba jest większa niż 0
+         fn void printIfPositiveorNegative(int number) {
+            if (number > 0) {
+                print("The number is bigger than 0.");
+            } else {
+                print("The number is less than 0.");
+            }
+         }
       
       
-       fn int main() {
-          int x = 26;
-          printIfEven(x);
+         fn int main() {
+            int x = 26;
+            printIfPositiveorNegative(x);
     
-          return 0;
-       }
-       ```
+            return 0;
+         }
+         ```
 
-     * funkcja bezargumentowa
-       ```
-       //funkcja zwracająca maksymalną możliwą liczbę typu int oraz jej wywowłanie w funkcji main
-       fn int getMaxInt() {
-           return 2147483647;
-       }
+  * funkcja bezargumentowa
+  
+         ```
+         //funkcja zwracająca maksymalną możliwą liczbę typu int oraz jej wywowłanie w funkcji main
+         fn int getMaxInt() {
+             return 2147483647;
+         }
     
     
-       fn int main() {
-           int x = getmaxInt();
-           print($String x)
-           return 0;
-       }
+         fn int main() {
+             int x = getmaxInt();
+             print($String x)
+             return 0;
+         }
+         ```
        
        
-     * funkcja zmieniająca wartość przekazanego przez referencję argumentu
-       ```
-       //funkcja wykonująca inkrementację dla przekazanego typu int
-       fn void increment(int x) {
-           x = x + 1;
-       }
+  * funkcja zwracająca sume z otrzymanej listy
+
+         ```
+         //funkcja wykonująca inkrementację dla przekazanego typu int
+         fn int sum(List<int> list) {
+             int sum;
+              for (int x : list) {
+                 sum = sum + x;
+             }
+                return sum;
+         }
 
 
-       fn int main() {
-           int x = 256;
-           increment(x);
-           print($String x); // x = 257
-           return 0;
-       }
-       ```
+         fn int main() {
+             int x;
+             List<int> x = [1, 2, 3, 4, 5, 6, 7, 8];
+             int y = sum(x);
+             print($String y); 
+             return 0;
+         }
+         ```
       
-       <br>
+    
 
-* **Funkcje wbudowane:**
-    * print
-      <br>Funkcja print powoduje wypisanie tekstu w konsoli, przyjmuje jedynie argumenty typu String. 
-      ```
-      fn int main() {
-          print("Hello");
-          return 0;
-      }
-      ```
+  * **Funkcje wbudowane:**
+      * print
+        <br>Funkcja print powoduje wypisanie tekstu w konsoli, przyjmuje jedynie argumenty typu String. 
+        ```
+        fn int main() {
+            print("Hello");
+            return 0;
+        }
+        ```
 
-    <br>
-* **Operatory rzutowania:**
-    <br> Z racji tego, że język jest statycznie typowany, zostały utworzone mechanizmy rzutowania. Aby rzutować zmienną na inny typ, musimy użyć `$` oraz nazwy typu, na jaki rzutujemy.<br>
-    W przypadku rzutowania `float` na `int` cyfry po przecinku są ucinane. 
+      <br>
+  * **Operatory rzutowania:**
+      <br> Z racji tego, że język jest statycznie typowany, zostały utworzone mechanizmy rzutowania. Aby rzutować zmienną na inny typ, musimy użyć `$` oraz nazwy typu, na jaki rzutujemy.<br>
+      W przypadku rzutowania `float` na `int` cyfry po przecinku są ucinane. 
 
-    * int na float: rzutowanie bezstratne
-      ```
-      fn int main() {
-          int x = 2;
-          float y = $float x; // y = 2.0
-          return 0;
-      }
-      ```
-    * float na int: obcięcie cyfr po przecinku
-      ```
-      fn int main() {
-          float x = 3.93;
-          int y = $int x; // y = 3
-          return 0;
-      }
-      ```
-    * int na string
-      ```
-      fn int main() {
-          int x = 3;
-          String y = $String x;
-          return 0;
-      }
-      ```
-    * float na string
-      ```
-      fn int main() {
-          float x = 3.2;
-          String y = $String x;
-          return 0;
-      }
-      ```
-    * string na int
-      ```
-      fn int main() {
-          String x = "3";
-          int y = $String x;
-          return 0;
-      }
-      ```
-    * string na float
-      ```
-      fn int main() {
-          String x = "3.2";
-          float y = $float x;
-          return 0;
-      }
-      ```
+      * int na float: rzutowanie bezstratne
+        ```
+        fn int main() {
+            int x = 2;
+            float y = $float x; // y = 2.0
+            return 0;
+        }
+        ```
+      * float na int: obcięcie cyfr po przecinku
+        ```
+        fn int main() {
+            float x = 3.93;
+            int y = $int x; // y = 3
+            return 0;
+        }
+        ```
+      * int na string
+        ```
+        fn int main() {
+            int x = 3;
+            String y = $String x;
+            return 0;
+        }
+        ```
+      * float na string
+        ```
+        fn int main() {
+            float x = 3.2;
+            String y = $String x;
+            return 0;
+        }
+        ```
+      * string na int
+        ```
+        fn int main() {
+            String x = "3";
+            int y = $String x;
+            return 0;
+        }
+        ```
+      * string na float
+        ```
+        fn int main() {
+            String x = "3.2";
+            float y = $float x;
+            return 0;
+        }
+        ```
 
-    <br>
-* **Zapytania na słownikach:** 
-    * Możliwe jest wykonanie zapytania na strukturze słownika w sposób deklaratywny. Wynik może zostać przypisany do innej kolekcji
-      ```
-      Dictionary<String, int> var_dict = |
-          "dog": 3,
-          "cat": 4,
-          "cow": 1,
-          "hamster": 6
-      |;
+      <br>
+  * **Zapytania na słownikach:** 
+      * Możliwe jest wykonanie zapytania na strukturze słownika w sposób deklaratywny. Wynik może zostać przypisany do innej kolekcji
+        ```
+        Dictionary<String, int> var_dict = |
+            "dog": 3,
+            "cat": 4,
+            "cow": 1,
+            "hamster": 6
+        |;
       
-      List<Tuple<String, int>> query_result =    /moze lepiej to przypisać do słownika niz listy krotek?
-                                SELECT 
-                            ("key_" + var_dict.key, var_dict.value * 3)
-                                FROM
-                            var dict
-                                WHERE
-                            (var_dict.value > 2)
-                                ORDER BY
-                            var_dict.value
-                                ASC
+        Dict<String, int> query_result =    
+                                  SELECT 
+                              (var_dict.key, var_dict.value)
+                                  FROM
+                              var dict
+                                  WHERE
+                              (var_dict.value > 2)
+                                  ORDER BY
+                              var_dict.value
+                                  ASC
 
-      List<String> query_result2 = 
-                                SELECT 
-                            (var_dict.key)
-                                FROM
-                            var_dict
-                                WHERE
-                            (var_dict.value != 3 and var_dict.value > 0)
-                                ORDER BY
-                            var_dict.value
-                                DESC
-      ```
+        List<String> query_result2 = 
+                                  SELECT 
+                              (var_dict.key)
+                                  FROM
+                              var_dict
+                                  WHERE
+                              (var_dict.value != 3)
+                                  ORDER BY
+                              var_dict.value
+                                  DESC
+        ```
 
 ## **<br>Gramatyka:**
 Poniżej opisana jest gramatyka naszego języka. Posiada ona kilka "skrótów" ułatwiających jej analizę i zrozumienie ( np. definicja character jako dowolnego znaku unicode czy pominięcie definicji spacji). Niestety takie ułatwienia uniemożliwiają testowanie jej za pomocą gotowych narzędzi.
@@ -500,9 +507,9 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
  
  where_clause               = "WHERE", "(", expression, ")";
 
- order_by_clause            = "ORDER BY", expression, ("ASC" | "DESC");  //czy tutaj identifier.identifer jest poprawnym rozwiązaniem zamiast expression?
+ order_by_clause            = "ORDER BY", expression, ("ASC" | "DESC");  
   
- function_call_or_assignment = identifier, (, "(", arguments-list, ")", | ["=", (expression | query_statement)], ),  ";";
+ function_call_or_assignment = identifier, (, "(", arguments-list, ")", | ["=", expression] ),  ";";
  
  arguments-list             = [ expression, { ",", expression } ]; 
  
@@ -540,14 +547,15 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
  tuple_declaration          = "Tuple", "<", type_basic, ",", type_basic, ">";
  list_declaration           = "List", "<", type_basic, ">" ;
 
- literal                    = boolean | string | integer | float | complex_literal;
+literal                     = boolean | string | integer | float | complex_literal;
+ basic_literal              = boolean | string | integer | float;
  complex_literal            = dictionary_literal | tuple_literal | list_literal
 
- dictionary_literal         = "|", {literal, ":", literal, [","]}, "|";
- tuple_literal              =  "(", literal, ",", literal, ")";
- list_literal               =  "[", [literal, {",", literal}], "]";
+ dictionary_literal         = "|", {basic_literal, ":", basic_literal, [","]}, "|";
+ tuple_literal              =  "(", basic_literal, ",", basic_literal, ")";
+ list_literal               =  "[", [basic_literal, {",", basic_literal}], "]";
 
- boolean                    = "True" | "False";
+ boolean                    = "true" | "false";
  string                     = '"', { character  }, '"'; 
  float                      = integer, ".", digit, { digit } ; 
  integer                    = non_zero_digit, { digit } 

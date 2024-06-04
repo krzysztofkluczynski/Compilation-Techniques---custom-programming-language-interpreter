@@ -1,4 +1,5 @@
 fn int sum(List<int> list) {
+    //one line comment
     int sum = 0;
     for (int i : list) {
         print($String i);
@@ -7,7 +8,12 @@ fn int sum(List<int> list) {
     return sum;
  }
 
+
  fn int main() {
+    /*
+    multi line comment
+    */
+
     Dictionary<String, int> var_dict = |
     "dog": 0,
     "cat": 2,
@@ -19,6 +25,12 @@ fn int sum(List<int> list) {
      list = SELECT (var_dict.value) FROM var_dict WHERE (var_dict.key != "cat");
 
      int x = sum(list);
+     print("Sum of list without cat value: " + $String x);
+
+     list.set(0, 5);
+     String s = "List value at index 0 after change: " + $String list.get(0);
+     print(s);
+
 
     return -x + 1 * 3;
  }
