@@ -583,11 +583,7 @@ literal                     = boolean | string | integer | float | complex_liter
 
 Błędy programu są przekazywane użytkownikowi poprzez komunikaty wyświetlane w konsoli.
 Wszystkie błędy są traktowane równorzędnie i powodują zatrzymanie wykonywania programu.
-Poniżej znajduje się format komunikatu o błędzie:
 
-```
-ERROR in <Line Number>:<Column Number> | <Error message>
-```
 
 ### Przykładowe błędy
 * #### Lekser:
@@ -595,34 +591,33 @@ ERROR in <Line Number>:<Column Number> | <Error message>
   * `UnknownTokenException` - nieznany token
      ```
     fn int main() {
-      float x = 1. //bład w definicji literału
+      float x% = 1. //bład w definicji identifer
       return 0;
     }
     ```
 
-  * `StringOverflowException` - Zbyt długi łańcuch String
+  * `StringMaxSizeExceededException` - Zbyt długi łańcuch String
      ```
     fn int main() {
       String x = "aaaaaaaa..." //maksymalna długośc to 200 znaków, więc dla czytelności ten przykład pozostaje z ...
       return 0;
     }
     ```
-    ```
-    ERROR in <Line Number>:<Column Number> | String too long (max size is 100)
-    ```
-  * `IntOutsideRangeException` - Wartość int poza zakresem
+
+  * `IntMaxValueExceededException` - Wartość int poza zakresem
        ```
     fn int main() {
       int x = 99999999999999999;
       return 0;
     }
     ```
-    ```
-    ERROR in <Line Number>:<Column Number> |  int outside the allowed range
-    ```
-  * `FloatOutsideRangeException` - Wartość float poza zakresem
-    ```
-    ERROR in <Line Number>:<Column Number> | float outside the allowed range
+
+  * `DecimalMaxValueExceededExcpetion` - Wartość float poza zakresem
+       ```
+    fn int main() {
+      floar x = 1.999999999999999999999999999999;
+      return 0;
+    }
     ```
   * `IdentiferTooLongException` - Zbyt długi identyfikator
        ```
@@ -631,216 +626,187 @@ ERROR in <Line Number>:<Column Number> | <Error message>
       return 0;
     }
     ```
-    ```
-    ERROR in <Line Number>:<Column Number> |  int outside the allowed range
-    ```
 
-  * `EndOfFileReachedException` - Dojście do końca pliku 
+  * `ReachedEOFException` - Dojście do końca pliku 
      ```
      fn int main() {
        String example = "aaa
        return 0;
      }
      ```
-     ```
-     ERROR in <Line Number>:<Column Number> |  Reached end of file
-     ```
     
-  * `UnknownSymbolException` - nieznany symbol
-    ```
-    fn int main() {
-      int some%variable = 5; 
-      return 0;
-    
-    }
-    ```
-    ```
-    ERROR in <Line Number>:<Column Number> |  Unknown type of symbol
-    ```
+
+Przykładowy komunikat o błędzie:
+
+```
+ERROR in Position(line=0, character=0) | Identifier exceeds maximum length with a length of 100
+```
 
 
-<br><br><br>
+<br><br>
 * #### Parser
-  * `TokenProcessingException` - Niepoprawna składnia 
+  * `ParsingException` - Bardzo ogólny błąd parsowania, zwraca tokeny jakich oczekiwał nasz program oraz token jaki przeczytał oraz jego pozycje. 
     ```
     fn int main() {
-      int x = 3 //brak srednika
-      iny y = 4; //literówka
+      iny y = 4 //brak srednika
       return 0;
     }
     ```
     ```
-    ERROR in <Line Number>:<Column Number> | Syntax Error
+    Parsing ERROR in" + Position(line=0, character=0) | EXPECTED tokens: SEMICOLON , GOT: RETURN
     ```
-  * `UnexpectedTokenException` -  nieoczekiwany token / Niepoprawna składania tokenów
+
+
+  * `DuplicateIdentiferException` - powtórzona nazwa identyfikatora w przypadku funkcji
     ```
-    fn int main() {
-      x = 5;
-      while [x != 5] { //w wyrazeniu if nawaisy powinny być  ()
-      x = x + 1;
-      }
+    fn int func() {
       return 0;
     }
-    ```
-    ```
-    ERROR in <Line Number>:<Column Number> | Unexpected token
-    ```
-
-
-  * `GlobalVariableException` - Definicja zmiennych poza {} (utworzenie zmiennej globalnej)
-    ```
-    int global_variable;
   
-    fn int main() {
+    fn int func() {
       int x = 3;
       String a = x;
       return 0;
     }
     ```
     ```
-    ERROR in <Line Number>:<Column Number> | Variable defined outside scope (global variable creation)
-    ```
-  * `VariableBeyondScopeException` - Odwołanie się do zmiennej spoza {}
-    ```
-    fn int add(int x, iny y) {
-      int b = x + y;
-      return b;
-    }
-  
-    fn int main() {
-      z = add(2, 3);
-      print($String b); 
-      return 0;
-    }
-    ```
-  
-    ```
-    ERROR in <Line Number>:<Column Number> | Accessing variable beyond scope
-    ```
-
-    ```
-    ERROR in <Line Number>:<Column Number> | Wrong number of arguments, expected 2
-    ```
-  * `MissingBracketsExceptions` - Brak nawiasu zamykającego
-     ```
-    fn int main() {
-      String example = "aaa"
-      return 0;
-    
-    ```
-    ```
-    ERROR in <Line Number>:<Column Number> |  Missing closing bracket
-    ```
-    
-  * `KeywordUsageException` - Użycie słów kluczowych jako identyfikatory
-    ```
-    fn int main() {
-      int float = 1;
-      return 0;
-    }
-    ```
-    ```
-    ERROR in <Line Number>:<Column Number> |  Attempted use of reserved keyword
+    "Parsing ERROR In: Position(line=0, character=0) | Duplicate identifer name: func
     ```
 
 
   <br><br>
 * #### Interpreter
-    
-  * `RecursionDepthExceedException` - Przekroczenie maksymalnej liczby wywołań rekurencji
-    ```
-    ERROR in <Line Number>:<Column Number> | Maximum recursion depth exceeded.
-    ```
-    
-  * `UnsupportedOperationException ` - Niedozwolona operacja na typach
+ 
+  * `DivisionByZeroInterpretingException ` - Dzielenie przez 0
     ```
     fn int main() {
-      int x = 3;
-      print("The number is: " + x)
-      bool x = 2 * True;
-      return 0;
+      return 5 / 0;
     }
     ```
 
-    ```
-     ERROR in <Line Number>:<Column Number> | operator "+" not applicable to types String and int
-    ```
-    
-  * `TypesDoNotMatchException` - przypisanie niepoprawnej wartości do typu LUB typ deklarowany różny od przekazanego (również w przypadku złożonych struktur i wartości zwracanych przez funkcję)
+  * `IncorrectReturnedValueTypeInterpretingException` - niepoprawna wartość zwraca przez funkcję
     ```
       fn int main() {
-        Dictionary<String, int> = |
-            12: "cat"
-        |
+        
+        return "String";
+    }
+    ```
+
+  * `IncorrectDefaultPrintFunctionCallException` - błąd przy wykonaniu funkcji print, np. zła liczba argumentów
+   ```
+      fn int main() {
+        print("Hello", "World");
         return 0;
     }
     ```
 
-    ```
-    ERROR in <Line Number>:<Column Number> | cannot assign value of type int to type float
-    ```
-
-  * `UndefinedIdentiferException` Odwołanie się do nieistniejącej zmiennej/funkcji
-      ```
-      fn int main() {
-        int x = 3;
-        float y = a + $float x;
-        return 0;
-    }
-    ```
-
-    ```
-     ERROR in <Line Number>:<Column Number> | variable "a" undefined
-    ```
-
-  * `IdentiferRedefinedException` - Utworzenie funkcji/zmiennej o tej samej nazwie
+  * `InvalidExpressionInterpretingException` - Niepoprawne wyrażenie, operacja arytmetyczna na niepoprawnych typach
       ```
       fn int add(int x, int y) {
-        return x+y;
-      }  
-    
-      fn float add(float x, float y) {
-        return x+y;
+        return 3.5 + 3;
+    }
+    ```
+
+  * `InvalidFunctionCallInterpretingException` - bląd przy wywołaniu funkcji, np. niepoprawna liczba argumentów
+    ```
+      fn int add(int x, int y) {
+        return 3.5 + 3;
+    }    ```
+
+  * `InvalidLogicStatementInterpreting` - Niepoprawne wyrażenie, operacja porównania na niepoprawnych typach
+    ```
+    fn int f() {
+      return 3 > "String";
+    }
+    ```
+
+  * `InvalidNumberofArgumentsException` - zła ilość argumentów w wywołaniu metody
+    ```
+  
+    fn int add(List<int> list) {
+      return list.get(0, 1);
+    }
+    ```
+  * `InvalidTypeForMethodCallInterpretingException` - wywołanie metody na zły typie
+    ```
+  
+    fn int add(List<int> list) {
+      return list.ifexists(1); //wywolanie metody przewidzianej dla slownikow na liscie
+    }
+    ```
+
+  * `LocalVariableRepeatedExceptiom` - redefinicja/redeklaracja zmiennej
+    ```
+  
+    fn int add(List<int> list) {
+      int x = 0;
+      int x = 1;
       }
+      ```
+
+  * `NoMainFunctionInterpretingException` - Brak funkcji main w programie
+    ```
   
-      fn int main() {
-        int x = 3;
-        String a = x;
-        return 0;
-    }
-    ```
+    fn int add(List<int> list) {
+      int x = 0;
+      int x = 1;
+      }
+      ```    
 
+  * `NoSuchFunctionInterpretingException` - próba wywołania nieistniejącej funkcji
     ```
-    ERROR in <Line Number>:<Column Number> | function "add" redefined
-    ```
-  * `MissingReturnstatementException` - Brak return w funkcji
-    ```
-    ERROR in <Line Number>:<Column Number> | Missing return statement in non-void function
-    ```
-
-  * `InvalidNumberofArgumentsException` - Wywołanie funkcji ze złą liczbą argumentów
-    ```
-    fn int add(int x, int y) {
-        return ($float x) + (float $y);
-    }
-
-
-    fn int main() {
-      int x = add(1, 2);
-    }
-    ```
-
-  * `MissingMainFunctionException` - Brak zdefiniowanej funkcji main w programie
-    ```
-    int x = 5;
   
-    fn int add(int x, int y) {
-      return x+y;
-    }
+    fn int add(List<int> list) {
+      return sub(0);
+      }
+      ```    
+
+  * `NoSuchVariableInterpretingException` - próba odwołania się do nieistniejącej zmiennej
     ```
+  
+    fn int add(List<int> list) {
+      return sub(0);
+      }
+      ```    
+
+  * `NoValueReturnedFromFunctionException` - funkcja nie zwraca wartości, a nie jest typu "void"
     ```
-    ERROR in <Line Number>:<Column Number> | Missing definition of the main function in the program
+  
+    fn int add(List<int> list) {
+      
+      }
+      ```   
+
+  * `UnableToAssignVariableException` - funkcja nie zwraca wartości, a nie jest typu "void"
     ```
+  
+    fn void add(List<int> list) {
+        List<int> x = [1, 2, 3];
+        for (String i : x) { //types do not match
+            if (i == 2) {
+                return i;
+            }
+        }
+      }
+      ```     
+
+  * `VariableValueTypeInterpretingException` - błąd podczas operacji na zmiennej, błędny typ
+    ```
+  
+    fn int add(List<int> list) {
+      int x = "String";
+    return 0;
+      }
+      ```   
+
+  * `InterpretingException` - w niektórych sytuacjach rzucany jest ogólny wyjątek z odpowiednim komuikatem 
+  
+    Przykłady(sytuacji jest więcej niż te wyienione poniżej)
+    * pętla for dla typów innych niż słownik lub lista
+    * ustawienie wartości dla klucza, który nie istnieje w słowniku
+    * przkreoczenie indeksu podczas operacji get
+    * próba przypisania wyrażenia select do typu innych niż słownik lub lista
+  
 
 ## **<br>Wymagania funkcjonalne:**
 * Interpreter pozwala na uruchomienie kodu zapisanego w pliku tekstowym
@@ -853,7 +819,7 @@ ERROR in <Line Number>:<Column Number> | <Error message>
 * Język jest statycznie typowany
 * Język jest silnie typowany
 * Zmienne są mutowalne
-* Zmienne są przekazywane do funkcji przez referencję
+* Zmienne są przekazywane do funkcji przez wartość
 
 ## **<br>Wymagania niefunkcjonalne:**
 * Interpreter powinien zapewniać deterministyczne działanie, co oznacza, że ten sam kod źródłowy zawsze produkuje te same wyniki przy identycznych warunkach wejściowych, zapewniając stabilność działania aplikacji.
@@ -864,21 +830,22 @@ ERROR in <Line Number>:<Column Number> | <Error message>
 * Każdy z modułów powinien być dokładnie przetestowany (wstępny opis sposobu testowania poniżej)
 
 ## **<br>Zwięzły opis realizacji:**
-Program będzie składał się z modułów, które będą odpowiedzialne za kolejne etapy analizy oraz przetwarzania plików wejściowych. 
-Cały proces będzie wspierany przez dodatkowe moduły m.in. moduł obsługi błędów. Poniżej krótkie omówienie modułów oraz ich podstawowych założeń
+Program składa się z modułów, które odpowiadają za kolejne etapy analizy oraz przetwarzania plików wejściowych. 
+Moduły zostały umieszczone w oddzielnych folderach, co pozwala na łatwe zarządzanie kodem oraz jego rozbudowę.
+Oprócz modułów odpowiedzialnych za analizę leksykalną, składniową i wykonanie, program zawiera moduły do wczytania wejścia oraz zarządzania taokenami.
+Każda z części programu posiada swoje zdefiniowane wyjątki, które są rzucane w przypadku błędów.
+
 
 **1. Analizator leksykalny (Lekser)**
 <br>Lekser jest kluczowym modułem odpowiedzialnym za analizę leksykalną tekstu źródłowego.
 Jego głównym zadaniem jest przekształcenie ciągu znaków na sekwencje tokenów, które stanowią podstawowe jednostki leksykalne języka programowania.
 
-<br>Proces działania leksera polega na czytaniu kodu źródłowego znak po znaku, aż do momentu wykrycia sekwencji odpowiadającej jednemu zdefiniowanemu tokenowi.
+Proces działania leksera polega na czytaniu kodu źródłowego znak po znaku, aż do momentu wykrycia sekwencji odpowiadającej jednemu zdefiniowanemu tokenowi.
 Gdy token zostanie poprawnie zidentyfikowany, jest on przekazywany do parsera. Istotne jest, że lekser czyta nowe znaki tylko wtedy, gdy parser o to wyraźnie prosi.
 Taka strategia pomaga w optymalizacji całego procesu analizy tekstu źródłowego.
 
-Moduł leksera będzie zawierał **przynajmniej** dwie klasy:
-* Lexer - klasa odpowiedzialna za analizę tekstu źródłowego i generowanie tokenów
-* Token - klasa reprezentująca pojedyńczy token wygenerowany przez lekser. Każdy token w programie musi mieć zdefiniowany swój typ oraz pozycje w pliku (numer linii i kolumna). Typ tokenu będzie wyrażony za pomocą _enum_.
-
+Moduł lekser składa się z jednej głównej klasy `Lexer`, która posiada metody do analizy leksykalnej. Wykorzystywane są tutaj tokeny, które zostały zdefiniowane za pomocą typu Enum - TokenType(poniżej lista tokenów)
+W LexerUtils zostały zdefiniowane metody wspomagające działanie leksera, a nie dotyczące samej analizy lekykalnej
 
 Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
 * Operatory arytmetyczne
@@ -939,8 +906,7 @@ Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
   * Comma `,`
   * Dot `.`
   * Identifier
-  * BoolTrueLiteral `True`
-  * BoolFalseLiteral `False`
+  * BooleanLiteral
   * StringLiteral 
   * IntLiteral
   * FloatLiteral
@@ -952,90 +918,108 @@ Tokeny zdefiniowane w języku(Nazwa Tokenu `typ`):
 jest kluczowym modułem współpracującym ściśle z analizatorem leksykalnym.
 Ten ostatni dostarcza parserowi kolejne tokeny, które są podstawowymi jednostkami leksykalnymi przetwarzanymi przez lekser.
 
-Moduł parsera będzie zawierał **przynajmniej** trzy klasy:
-* Parser: Klasa zajmująca się syntaktyczną analizą tokenów wygenerowanych przez lekser i budowaniem drzewa składniowego.
-* AST (Abstract Syntax Tree): Klasa reprezentująca abstrakcyjne drzewo składniowe, które jest wynikiem działania parsera.
-* AST Node: Klasa reprezentująca węzeł drzewa składniowego, zawierająca informacje o rodzaju węzła i jego dzieciach.
-
-<br>Głównym zadaniem parsera jest sprawdzenie, czy otrzymane tokeny są zgodne ze zdefiniowaną gramatyką języka oraz utworzenie drzewa rozbioru składniowego.
-Poprzez analizę drzewa rozbioru składniowego możliwe jest rozpoznawanie zdefiniowanych konstrukcji językowych.
-Takie drzewo pozwala na reprezentację tych konstrukcji w sposób zrozumiały dla interpretera lub kompilatora.
+Klasa Parser zajmuję się syntaktyczną analizą tokenów wygenerowanych przez lekser i budowaniem odpowienich obiektów (drzewa składniowego).
+Głównym zadaniem parsera jest sprawdzenie, czy otrzymane tokeny są zgodne ze zdefiniowaną gramatyką języka oraz utworzenie z nich odpowiednich struktur.
+Dzięki temu możliwe jest rozpoznawanie zdefiniowanych konstrukcji językowych.
+Struktury, które parser tworzy implementują interfejs Node, możemy je pogrupować także na Statement, Expression oraz Other, co również zostało zrobione za pomocą interfejsów.
 
 **3. Analizator semantyczny i interpreter**
-<br>Analizator semantyczny, będący często ostatnim etapem interpretera własnego języka, jest modułem odpowiedzialnym za rozumienie znaczenia wyrażeń zgodnie z regułami semantycznymi języka.
+<br>Analizator semantyczny, będący często ostatnim etapem interpretera, jest modułem odpowiedzialnym za rozumienie znaczenia wyrażeń zgodnie z regułami semantycznymi języka.
 Głównym zadaniem analizatora semantycznego jest przetwarzanie drzewa rozbioru składniowego (parsowanego wcześniej przez parser) i weryfikacja zgodności semantycznej programu.
 Analizator semantyczny dokonuje takich czynności jak sprawdzanie typów danych, rozpoznawanie zmiennych, kontrola poprawności wyrażeń oraz wykrywanie błędów semantycznych.
 
 Interpreter ma za zadanie sekwencyjne wykonanie instrukcji zawartych drzewie zbudowanym przez parser.
-Moduł interpretera będzie posiadał **przynajmniej** dwie główne klasy:
-* Interpreter Engine: Klasa odpowiedzialna za interpretację drzewa składniowego i wykonanie odpowiednich operacji w zależności od analizowanego kodu
-* Interpreter: Główna klasa programu, odpowiedzialna za koordynację działania wszystkich modułów oraz interpretację kodu źródłowego.
 
-**3. Moduły dodatkowe:**
-* Moduł obsługi błędów - odpowiada za identyfikację, zarządzanie i obsługę różnych rodzajów błędów w programie, co często obejmuje zgłaszanie wyjątków, obsługę błędów syntaktycznych i semantycznych. Współpracuje z każdym z głównych modułów programu
-* Moduł obsługi plików tekstowych - wspomaga operacje odczytywania zawartości z pliku tekstowego. Współpracuje z analizatorem leksykalnym
+W projekcie został zastosowany wzorzec wizytator, klasa interpretingVisitor dziedziczy po interfejsie Visitor, który zawiera metody visit dla każdego typu węzła drzewa składniowego. Każda metoda visit odpowiada za interpretacje danego typu węzła.
+
 
 ## **<br>Sposób testowania:**
-Każdy z modułów będzie posiadał testy jednostkowe weryfikujące jego poprawne działanie oraz obsługę wyjątków. Testowanie będzie odbywać się za pomocą biblioteki JUnit<br>
-<br> Poniżej przedstawiono kilka przykładów testów, jakie mogą być wykonane, mają one na celu jedynie przedstawienie zamysłu z jakim zostaną zaimplementowane te właściwe.
+Każdy z modułów będzie posiadał testy weryfikujące jego poprawne działanie oraz obsługę wyjątków. Testowanie będzie odbywać się za pomocą biblioteki JUnit<br>
+<br> Poniżej przedstawiono kilka przykładów testów, zostały wykonane.
 
 * **Lekser**
-   <br>Testy leksera będą sprawdzać, czy moduł poprawnie przekształca strumień znaków na sekwencję tokenów, co zweryfikuje poprawną analizę leksykalną.  W trakcie testów sprawdzane będą różne przypadki, w tym sytuacje związane z różnymi rodzajami tokenów oraz ewentualne zachowanie wobec błędów leksykalnych.
-    ```java
-    public class LexerTest {
-
+   <br>Testy leksera będą testami jednostkowymi. Będą sprawdzać, czy moduł poprawnie przekształca strumień znaków na sekwencję tokenów, co zweryfikuje poprawną analizę leksykalną.  W trakcie testów sprawdzane będą różne przypadki, w tym sytuacje związane z różnymi rodzajami tokenów oraz ewentualne zachowanie wobec błędów leksykalnych. Przestowano tworzenie każdego tokenu z osobna, a także konstrukcje bardziej zaawansowane.
+W sumie wykonano 68 testów, które zajmują ponad 1000 linii kodu.
+  Przykład testu:  
+  ```java
     @Test
-    public void testLexicalAnalysis() {
-        Lexer lexer = new Lexer();
-        String input = "int x = 10;";
-        List<Token> expectedTokens = Arrays.asList(
-            new Token(TokenType.Integer, "int"),
-            new Token(TokenType.IDENTIFIER, "x"),
-            new Token(TokenType.AssignOperator, "="),
-            new Token(TokenType.IntegerLiteral, "10"),
-            new Token(TokenType.Semicolon, ";")
+    public void testLexerTokenTypesAndPositions() throws IOException, ReachedEOFException, StringMaxSizeExceeded, UnkownTokenException, IntMaxValueExceededException, DecimalMaxValueExceededException, IdentifierTooLongException {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                   int a = 31234; float b = 3.14; bool c = true; String x = "ala ma kota123";
+                   """
         );
-        List<Token> actualTokens = lexer.analyze(input);
-        assertEquals(expectedTokens, actualTokens);
-     }
+        LexerImpl lexer = new LexerImpl(reader);
+
+        assertToken(lexer.next(), TokenType.INTEGER, 1, 0, "int");
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 4, "a");
+        assertToken(lexer.next(), TokenType.EQUAL, 1, 6, "=");
+        assertToken(lexer.next(), TokenType.INT_LITERAL, 1, 8, 31234);
+        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 13, ";");
+
+        assertToken(lexer.next(), TokenType.FLOAT, 1, 15, "float");
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 21, "b");
+        assertToken(lexer.next(), TokenType.EQUAL, 1, 23, "=");
+        assertToken(lexer.next(), TokenType.FLOAT_LITERAL, 1, 25, 3.14f);
+        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 29, ";");
+
+        assertToken(lexer.next(), TokenType.BOOL, 1, 31, "bool");
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 36, "c");
+        assertToken(lexer.next(), TokenType.EQUAL, 1, 38, "=");
+        assertToken(lexer.next(), TokenType.BOOL_LITERAL, 1, 40, true);
+        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 44, ";");
+
+        assertToken(lexer.next(), TokenType.STRING, 1, 46, "String");
+        assertToken(lexer.next(), TokenType.IDENTIFIER, 1, 53, "x");
+        assertToken(lexer.next(), TokenType.EQUAL, 1, 55, "=");
+        assertToken(lexer.next(), TokenType.STRING_LITERAL, 1, 57, "ala ma kota123");
+        assertToken(lexer.next(), TokenType.SEMICOLON, 1, 73, ";");
     }
     ```
   
 * **Parser**
-<br> Tutaj sam zamysł testowania będzie wyglądał podobnie jak w przypadku leksera. Zamiast sekwencji znaków parser dostanie sekwencję tokenów i na jej podstawie będzie generował drzewo składniowe.
-   ```java
-   public class ParserTest {
 
-       @Test
-       public void testSyntaxAnalysis() {
-           Parser parser = new Parser();
-           List<Token> tokens = Arrays.asList(
-               new Token(TokenType.INT_KEYWORD, "int"),
-               new Token(TokenType.IDENTIFIER, "x"),
-               new Token(TokenType.ASSIGNMENT_OPERATOR, "="),
-               new Token(TokenType.INTEGER_LITERAL, "10"),
-               new Token(TokenType.SEMICOLON, ";")
-           );
-           SyntaxTree expectedTree = ... // Zakładając, że mamy zdefiniowane oczekiwane drzewo składniowe
-           SyntaxTree actualTree = parser.parse(tokens);
-           assertEquals(expectedTree, actualTree);
-       }
-   }
-   ```
+<br> Parser został przetestowany na dwa sposoby. Po pierwsze, testy jednostkowe sprawdzające, czy parser poprawnie przetwarza listę tokenów na obiekty. Po drugie, testy integracyjne, gdzie parser jest wykorzystywany wraz z lekserem, tzn na wejściu dostaje strumień znaków (obiekt leksera).
+W przypadku testów jednostkowych użyto mockito do mockowania zachowania leksera. W sumie wykonano 32 testy, znajdujące się w plikach ParserIntegrationTest oraz ParserUnitTest. Samych asercji jest znacznie więcej
+
 
 * **Analizator semantyczny i interpreter**
-<br>Testy jednostkowe mogą obejmować sprawdzanie poprawności wykonania pojedynczych instrukcji,
-ewaluację wyrażeń, czy też odpowiednie zachowanie interpretera w różnych scenariuszach.<br><br>
 
-   ```java
-      public class SemanticAnalyzerTest {
+W przypadku interpretera przeprowadzaone testy można nazwać bardziej testami integracyjnymi niż jednostkowymi.
+Testowano bowiem, zachowanie programu oraz współpracę trzech modułów: leksera, parsera oraz interpretera.
+Asercji poddawano wartość zwracaną przez funkcję main w przypdaku różnych zachowań. W przypadku błędów, sprawdzano czy rzucany jest odpowiedni wyjątek.
+Przynajmniej w podstawowym stopniu udało się wykonać testy dla wszystkich klas z drzewa składniowego. Na dzień 04.06.2024 wykonano 97 testów, które zajmują 2200 linii kodu.
 
-       @Test
-       public void testSemanticAnalysis() {
-           SemanticAnalyzer analyzer = new SemanticAnalyzer();
-           SyntaxTree tree = ... // Zakładając, że mamy zdefiniowane drzewo składniowe do analizy semantycznej
-           assertTrue(analyzer.analyze(tree)); // Sprawdzamy, czy analiza semantyczna jest poprawna, metoda anaylze zwraca true, jeśli tak
-       }
-   }
-   ```
-   W przypadku interpretera możemy sprawdzać, czy poprawnie wykonuje on całe programy w różnych przypadkach użycia. Mogą to być testy jednostkowe, które obejmują wykonanie skryptów o złożonej strukturze. Takie testy mogą pełnić rolę testów integracyjnych
+Przykładowy test:
+```java
+    @Test
+    public void TestSelectReturn() throws Exception {
+        DataStreamInputReader reader = new DataStreamInputReader(
+                """
+                        fn List<String> main() {
+                            Dictionary<String, int> var_dict = |
+                            "dog": 3,
+                            "cat": 4,
+                            "cow": 5,
+                            "hamster": 6
+                             |;
+                           
+                             return SELECT (var_dict.value) FROM var_dict WHERE (var_dict.value <= 4);
+                            
+                           
+                         }
+                        """
+        );
+        LexerImpl lexer = new LexerImpl(reader);
+        ParserImpl parser = new ParserImpl(lexer);
+        Program program = parser.parseProgram();
+
+        Interpreter interpreter = new Interpreter(program);
+
+        List result = (List) interpreter.execute();
+        Assert.assertEquals(result, List.of(4, 3));
+    }
+```
+
+
+Interpreter był także testowany w sposób bardziej "manualny", wykorzystując plik wejściowy oraz funkcję main naszego projektu. Przykłady plików wejściowych znajdują się w folderze test_examples.

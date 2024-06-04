@@ -4,7 +4,6 @@ import org.example.lexer.Lexer;
 import org.example.lexer.error.*;
 import org.example.parser.Enum.*;
 import org.example.parser.Error.DuplicateIdentiferException;
-import org.example.parser.Error.GlobalVariableException;
 import org.example.parser.Error.ParsingException;
 import org.example.parser.Structure.Expression.*;
 import org.example.parser.Structure.Expression.Literals.*;
