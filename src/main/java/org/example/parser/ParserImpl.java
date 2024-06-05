@@ -16,6 +16,7 @@ import org.example.token.TokenType;
 import java.util.*;
 import java.io.IOException;
 
+
 public class ParserImpl implements Parser {
     Lexer lexer;
     Token token;
@@ -965,11 +966,10 @@ public class ParserImpl implements Parser {
       | identifier, [ ".", (function_call | identifier, "(" lambda_expression ")") ]
      */
     private IExpression parseLambda(String name) throws Exception {
-        nextToken();
         proceedAndCheck(TokenType.BRACKET_OPEN);
         proceedAndCheck(TokenType.BRACKET_OPEN);
         List<Argument> arguments = parseParameters();
-        proceedAndCheck(TokenType.FLOAT.LAMBDA);
+        proceedAndCheck(TokenType.LAMBDA);
         nextToken();
         RelationExpression expression = (RelationExpression) parseExpression();
         if(!checkToken(TokenType.BRACKET_CLOSE)) {

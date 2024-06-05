@@ -9,8 +9,9 @@ fn int sum(List<int> list) {
     return sum;
  }
 
+//int gloabl = 4;
 
- fn int main() {
+fn int main() {
     /*
     multi line comment
     */
@@ -27,9 +28,12 @@ fn int sum(List<int> list) {
      print(test);
 
      List<int> list;
+
      list = SELECT (var_dict.value) FROM var_dict WHERE (var_dict.key != "cat");
 
-     int x = sum(list);
+     int x = sum([1, 2, 3]);
+     int y = sum(list);
+
      print("Sum of list without cat value: " + $String x);
 
      list.set(0, 5);
@@ -38,4 +42,4 @@ fn int sum(List<int> list) {
 
 
     return -x + 1 * 3;
- }
+}

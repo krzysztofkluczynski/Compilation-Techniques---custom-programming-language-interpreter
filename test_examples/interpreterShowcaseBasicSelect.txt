@@ -18,5 +18,8 @@ fn List<int> main() {
 
      List<String> list5 = SELECT (var_dict.key) FROM var_dict WHERE (var_dict.key != "dog");
 
+     //dict.sort((Tuple<String, int> a,Tuple<String, int> b) => a.get(1) > b.get(1));
+
+
      return SELECT (var_dict.value) FROM var_dict WHERE (var_dict.value <= 4);
 }

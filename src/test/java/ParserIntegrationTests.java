@@ -617,90 +617,91 @@ public class ParserIntegrationTests {
         Assert.assertEquals(StringRight.getValue(), "Krzysztof");
     }
 
-    public void testLambda() throws Exception {
-        DataStreamInputReader reader = new DataStreamInputReader(
-                """
-                                fn bool add(int x, int y) {
-                                     Dictionary<String, int> dict = | "Krzysztof" : 32,
-                                                                    "Klaudia" : 33
-                                     |;
-                                     
-                                     dict.sort((Tuple<String, int> a,Tuple<String, int> b) => a.get(1) > b.get(1));
-                                   }
-                        """
-        );
-
-        LexerImpl lexer = new LexerImpl(reader);
-        ParserImpl parser = new ParserImpl(lexer);
-        Program program = parser.parseProgram();
-        Map<String, FunctionDefinition> functionDefinitionList = program.getFunctionDefinitions();
-
-        DefinitionWithExpressionStatement definition = (DefinitionWithExpressionStatement) functionDefinitionList.get("add").getBody().getInstructions().get(0);
-
-        TypeDeclaration typeDeclaration = definition.getType();
-        Assert.assertEquals(typeDeclaration.getType(), Type.DICTIONARY);
-        Assert.assertEquals(typeDeclaration.getFirstOptionalParam(), Type.STRING);
-        Assert.assertEquals(typeDeclaration.getSecondOptionalParam(), Type.INT);
-
-        String name = definition.getIdentifierName();
-        Assert.assertEquals(name, "dict");
-
-        LiteralDictionary literalDictionary = (LiteralDictionary) definition.getExpression();
-        Map<SimpleLiteral, SimpleLiteral> map = literalDictionary.getValue();
-        Set<SimpleLiteral> keySet = map.keySet();
-        Iterator<SimpleLiteral> iterator = keySet.iterator();
-        LiteralString string1 = (LiteralString) iterator.next();
-        LiteralString string2 = (LiteralString) iterator.next();
-
-        Assert.assertEquals(string1.getValue(), "Klaudia");
-        Assert.assertEquals(string2.getValue(), "Krzysztof");
-
-        LiteralInteger literalInteger1 = (LiteralInteger) map.get(string1);
-        LiteralInteger literalInteger2 = (LiteralInteger) map.get(string2);
-
-        Assert.assertEquals(map.get(string1), literalInteger1);
-        Assert.assertEquals(map.get(string2), literalInteger2);
-
-        IdentifierAndLambdaCall lambdaExpression = (IdentifierAndLambdaCall) functionDefinitionList.get("add").getBody().getInstructions().get(1);
-        String mainName = lambdaExpression.getName();
-        List<Argument> argumentList = lambdaExpression.getArgumentList();
-        RelationExpression expression = (RelationExpression) lambdaExpression.getExpression();
-
-        Assert.assertEquals(mainName, "dict");
-        Assert.assertEquals(argumentList.size(), 2);
-
-        Assert.assertEquals(argumentList.get(0).getName(), "a");
-        Assert.assertEquals(argumentList.get(1).getName(), "b");
-
-        Assert.assertEquals(argumentList.get(0).getType().getType(), Type.TUPLE);
-        Assert.assertEquals(argumentList.get(0).getType().getFirstOptionalParam(), Type.STRING);
-        Assert.assertEquals(argumentList.get(0).getType().getSecondOptionalParam(), Type.INT);
-
-        Assert.assertEquals(argumentList.get(1).getType().getType(), Type.TUPLE);
-        Assert.assertEquals(argumentList.get(1).getType().getFirstOptionalParam(), Type.STRING);
-        Assert.assertEquals(argumentList.get(1).getType().getSecondOptionalParam(), Type.INT);
-
-        IdentiferAndMethodCallExpression left = (IdentiferAndMethodCallExpression) expression.getLeft();
-        IdentiferAndMethodCallExpression right = (IdentiferAndMethodCallExpression) expression.getRight();
-        Assert.assertEquals(expression.getRelativeOperand(), RelativeType.MORE);
-        Assert.assertEquals(left.getName(), "a");
-        Assert.assertEquals(right.getName(), "b");
-
-
-        FunctionCall leftMethodCall = left.getMethodCall();
-        FunctionCall rightMethodCall = right.getMethodCall();
-
-        Assert.assertEquals(leftMethodCall.getName(), "get");
-        Assert.assertEquals(rightMethodCall.getName(), "get");
-
-
-        LiteralInteger parameter1 = (LiteralInteger) leftMethodCall.getArguments().get(0);
-        LiteralInteger parameter2 = (LiteralInteger) rightMethodCall.getArguments().get(0);
-
-        Assert.assertEquals(parameter1.getValue(), 1);
-        Assert.assertEquals(parameter2.getValue(), 1);
-
-    }
+//    @Test
+//    public void testLambda() throws Exception {
+//        DataStreamInputReader reader = new DataStreamInputReader(
+//                """
+//                                fn bool add(int x, int y) {
+//                                     Dictionary<String, int> dict = | "Krzysztof" : 32,
+//                                                                    "Klaudia" : 33
+//                                     |;
+//
+//                                     dict.sort((Tuple<String, int> a,Tuple<String, int> b) => a.get(1) > b.get(1));
+//                                   }
+//                        """
+//        );
+//
+//        LexerImpl lexer = new LexerImpl(reader);
+//        ParserImpl parser = new ParserImpl(lexer);
+//        Program program = parser.parseProgram();
+//        Map<String, FunctionDefinition> functionDefinitionList = program.getFunctionDefinitions();
+//
+//        DefinitionWithExpressionStatement definition = (DefinitionWithExpressionStatement) functionDefinitionList.get("add").getBody().getInstructions().get(0);
+//
+//        TypeDeclaration typeDeclaration = definition.getType();
+//        Assert.assertEquals(typeDeclaration.getType(), Type.DICTIONARY);
+//        Assert.assertEquals(typeDeclaration.getFirstOptionalParam(), Type.STRING);
+//        Assert.assertEquals(typeDeclaration.getSecondOptionalParam(), Type.INT);
+//
+//        String name = definition.getIdentifierName();
+//        Assert.assertEquals(name, "dict");
+//
+//        LiteralDictionary literalDictionary = (LiteralDictionary) definition.getExpression();
+//        Map<SimpleLiteral, SimpleLiteral> map = literalDictionary.getValue();
+//        Set<SimpleLiteral> keySet = map.keySet();
+//        Iterator<SimpleLiteral> iterator = keySet.iterator();
+//        LiteralString string1 = (LiteralString) iterator.next();
+//        LiteralString string2 = (LiteralString) iterator.next();
+//
+//        Assert.assertEquals(string1.getValue(), "Klaudia");
+//        Assert.assertEquals(string2.getValue(), "Krzysztof");
+//
+//        LiteralInteger literalInteger1 = (LiteralInteger) map.get(string1);
+//        LiteralInteger literalInteger2 = (LiteralInteger) map.get(string2);
+//
+//        Assert.assertEquals(map.get(string1), literalInteger1);
+//        Assert.assertEquals(map.get(string2), literalInteger2);
+//
+//        IdentifierAndLambdaCall lambdaExpression = (IdentifierAndLambdaCall) functionDefinitionList.get("add").getBody().getInstructions().get(1);
+//        String mainName = lambdaExpression.getName();
+//        List<Argument> argumentList = lambdaExpression.getArgumentList();
+//        RelationExpression expression = (RelationExpression) lambdaExpression.getExpression();
+//
+//        Assert.assertEquals(mainName, "dict");
+//        Assert.assertEquals(argumentList.size(), 2);
+//
+//        Assert.assertEquals(argumentList.get(0).getName(), "a");
+//        Assert.assertEquals(argumentList.get(1).getName(), "b");
+//
+//        Assert.assertEquals(argumentList.get(0).getType().getType(), Type.TUPLE);
+//        Assert.assertEquals(argumentList.get(0).getType().getFirstOptionalParam(), Type.STRING);
+//        Assert.assertEquals(argumentList.get(0).getType().getSecondOptionalParam(), Type.INT);
+//
+//        Assert.assertEquals(argumentList.get(1).getType().getType(), Type.TUPLE);
+//        Assert.assertEquals(argumentList.get(1).getType().getFirstOptionalParam(), Type.STRING);
+//        Assert.assertEquals(argumentList.get(1).getType().getSecondOptionalParam(), Type.INT);
+//
+//        IdentiferAndMethodCallExpression left = (IdentiferAndMethodCallExpression) expression.getLeft();
+//        IdentiferAndMethodCallExpression right = (IdentiferAndMethodCallExpression) expression.getRight();
+//        Assert.assertEquals(expression.getRelativeOperand(), RelativeType.MORE);
+//        Assert.assertEquals(left.getName(), "a");
+//        Assert.assertEquals(right.getName(), "b");
+//
+//
+//        FunctionCall leftMethodCall = left.getMethodCall();
+//        FunctionCall rightMethodCall = right.getMethodCall();
+//
+//        Assert.assertEquals(leftMethodCall.getName(), "get");
+//        Assert.assertEquals(rightMethodCall.getName(), "get");
+//
+//
+//        LiteralInteger parameter1 = (LiteralInteger) leftMethodCall.getArguments().get(0);
+//        LiteralInteger parameter2 = (LiteralInteger) rightMethodCall.getArguments().get(0);
+//
+//        Assert.assertEquals(parameter1.getValue(), 1);
+//        Assert.assertEquals(parameter2.getValue(), 1);
+//
+//    }
 
 
     @Test

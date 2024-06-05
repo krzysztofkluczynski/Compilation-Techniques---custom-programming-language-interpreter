@@ -483,8 +483,8 @@ Niestety nie da się ominąć braku definicji znaków białych, przez co podczas
                             | for_loop
                             | declaration_or_definition
                             | function_call_or_assignment
-                            | return_statement
-                            | expression;
+                            | return_statement;
+                            
                                                  
  conditional                = "if", "(", expression, ")", block,
                             [ { "elif", "(", expression, ")", block },  
