@@ -630,7 +630,6 @@ Wszystkie błędy są traktowane równorzędnie i powodują zatrzymanie wykonywa
      }
      ```
 
-  * `Excpetion` - 
 
 
 Przykładowy komunikat o błędzie:
@@ -642,7 +641,7 @@ ERROR in Position(line=0, character=0) | Identifier exceeds maximum length with 
 
 <br><br>
 * #### Parser
-  * `ParsingException` - Bardzo ogólny błąd parsowania, zwraca tokeny jakich oczekiwał nasz program oraz token jaki przeczytał oraz jego pozycje. 
+  * `ParsingException` -  ogólny błąd parsowania, zwraca tokeny jakich oczekiwał nasz program oraz token jaki przeczytał oraz jego pozycje. 
     ```
     fn int main() {
       iny y = 4 //brak srednika
@@ -708,7 +707,12 @@ ERROR in Position(line=0, character=0) | Identifier exceeds maximum length with 
     ```
       fn int add(int x, int y) {
         return 3.5 + 3;
-    }    ```
+    }    
+    fn int f() {
+      return add(3);
+    }
+    
+    ```
 
   * `InvalidLogicStatementInterpreting` - Niepoprawne wyrażenie, operacja porównania na niepoprawnych typach
     ```
@@ -774,7 +778,7 @@ ERROR in Position(line=0, character=0) | Identifier exceeds maximum length with 
       }
       ```   
 
-  * `UnableToAssignVariableException` - funkcja nie zwraca wartości, a nie jest typu "void"
+  * `UnableToAssignVariableException` - bląd przy przypisaniu wartości do zmiennej, np. przy pętli for
     ```
   
     fn void add(List<int> list) {
@@ -796,7 +800,7 @@ ERROR in Position(line=0, character=0) | Identifier exceeds maximum length with 
       }
       ```   
 
-  * `InterpretingException` - w niektórych sytuacjach rzucany jest ogólny wyjątek z odpowiednim komuikatem 
+  * `InterpretingException` - w niektórych sytuacjach rzucany jest ogólny wyjątek z odpowiednim komunikatem 
   
     Przykłady (sytuacji jest więcej niż te wymienione poniżej):
     * pętla for dla typów innych niż słownik lub lista
@@ -920,10 +924,10 @@ Głównym zadaniem parsera jest sprawdzenie, czy otrzymane tokeny są zgodne ze 
 Dzięki temu możliwe jest rozpoznawanie zdefiniowanych konstrukcji językowych.
 Struktury, które parser tworzy implementują interfejs Node, możemy je pogrupować także na Statement, Expression oraz Other, co również zostało zrobione za pomocą interfejsów.
 
-**3. Analizator semantyczny i interpreter**
+**3. interpreter**
 <br>Interpreter, jest modułem odpowiedzialnym za rozumienie znaczenia wyrażeń zgodnie z regułami semantycznymi języka.
 Głównym zadaniem interpretera jest przetwarzanie drzewa rozbioru składniowego (parsowanego wcześniej przez parser) i weryfikacja zgodności semantycznej programu.
-Analizator semantyczny dokonuje takich czynności jak sprawdzanie typów danych, rozpoznawanie zmiennych, kontrola poprawności wyrażeń oraz wykrywanie błędów semantycznych.
+Interpreter dokonuje takich czynności jak sprawdzanie typów danych, rozpoznawanie zmiennych, kontrola poprawności wyrażeń oraz wykrywanie błędów semantycznych.
 
 Interpreter ma za zadanie sekwencyjne wykonanie instrukcji zawartych drzewie zbudowanym przez parser.
 
@@ -980,7 +984,7 @@ W sumie wykonano 68 testów, które zajmują ponad 1000 linii kodu.
 W przypadku testów jednostkowych użyto mockito do mockowania zachowania leksera. W sumie wykonano 32 testy, znajdujące się w plikach ParserIntegrationTest oraz ParserUnitTest. Samych asercji jest znacznie więcej
 
 
-* **Analizator semantyczny i interpreter**
+* **interpreter**
 
 W przypadku interpretera przeprowadzaone testy można nazwać bardziej testami integracyjnymi niż jednostkowymi.
 Testowano bowiem, zachowanie programu oraz współpracę trzech modułów: leksera, parsera oraz interpretera.
@@ -1021,4 +1025,4 @@ Przykładowy test:
 
 Interpreter był także testowany w sposób bardziej "manualny", wykorzystując plik wejściowy oraz funkcję main naszego projektu. Przykłady plików wejściowych znajdują się w folderze test_examples.
 
-Sumaryczna liczba testów to 227.
+Sumaryczna liczba wszystkich testów to 227.
