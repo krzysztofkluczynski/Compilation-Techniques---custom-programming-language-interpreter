@@ -149,7 +149,7 @@ public class InterpretingVisitor  implements Visitor {
         Type secondOptionalType = forStatement.getType().getSecondOptionalParam();
 
         Variable variable = getLastFunctionCallContext(functionCallContexts).getVariable(forStatement.getCollectionIdentifer());
-        BlockStatement block = forStatement.getBlockStatement();  // Assuming you have a method to get the BlockStatement
+        BlockStatement block = forStatement.getBlockStatement();
 
 
         if (variable.getVariableType().equals(Type.DICTIONARY)) {
@@ -495,7 +495,7 @@ public class InterpretingVisitor  implements Visitor {
             throw new InterpretingException("Invalid field reference in query");
         }
 
-        //order by part
+        //order by part - TODO
         if (orderByExpression != null) {
             String orderByString = orderByExpression.getSecondIdentiferName();
             AscOrDESC ascOrDESC = queryExpression.getAscOrDESC();
@@ -973,9 +973,9 @@ public class InterpretingVisitor  implements Visitor {
 
     @Override
     public void visit(LiteralList literalList) {
-        List<Object> values = new ArrayList<>();  // Create a new list to store the extracted values
-        for (SimpleLiteral literal : literalList.getValue()) {  // Assuming getLiterals() returns a list of Literal objects
-            values.add(literal.getValue());  // Extract the value of each literal and add it to the list
+        List<Object> values = new ArrayList<>();
+        for (SimpleLiteral literal : literalList.getValue()) {
+            values.add(literal.getValue());
         }
         lastVisitationResult = new VisitationResult(new Variable(Type.LIST, values));
     }
@@ -1000,7 +1000,7 @@ public class InterpretingVisitor  implements Visitor {
             newMap.put(key, value);
         }
 
-        lastVisitationResult = new VisitationResult(new Variable(Type.DICTIONARY, newMap));  // Store the new map in a new Variable
+        lastVisitationResult = new VisitationResult(new Variable(Type.DICTIONARY, newMap));
     }
 
     @Override
