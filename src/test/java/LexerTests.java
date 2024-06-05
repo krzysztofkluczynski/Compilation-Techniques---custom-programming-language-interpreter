@@ -404,6 +404,7 @@ public class LexerTests {
         DataStreamInputReader reader = new DataStreamInputReader("123456");
         LexerImpl lexer = new LexerImpl(reader);
         assertToken(lexer.next(), TokenType.INT_LITERAL, 1, 0, 123456);
+        //System.out.println((lexer.next().getType()));
     }
 
 

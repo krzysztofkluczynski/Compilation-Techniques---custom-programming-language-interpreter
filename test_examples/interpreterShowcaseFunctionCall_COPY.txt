@@ -1,3 +1,4 @@
+//Starting with comment
 fn int sum(List<int> list) {
     //one line comment
     int sum = 0;
@@ -28,7 +29,7 @@ fn int sum(List<int> list) {
      List<int> list;
      list = SELECT (var_dict.value) FROM var_dict WHERE (var_dict.key != "cat");
 
-     int x = sum(list, 2);
+     int x = sum(list);
      print("Sum of list without cat value: " + $String x);
 
      list.set(0, 5);

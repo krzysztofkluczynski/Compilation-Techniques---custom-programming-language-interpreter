@@ -38,12 +38,17 @@ public class ParserImpl implements Parser {
     public Program parseProgram() throws Exception {
         Map<String, FunctionDefinition> functionDefinitions = new HashMap<>();
         FunctionDefinition funDef;
-        while ((funDef = parseFunctionDefinition()) != null) {
+        while ((token.getType() != TokenType.END_OF_FILE)) {
+            funDef = parseFunctionDefinition();
+            if (funDef == null) {
+                throw new ParsingException(token.getPosition(), TokenType.FUNCTION, token.getType());
+            }
             if (functionDefinitions.containsKey(funDef.getName())) {
                 throw new DuplicateIdentiferException(funDef.getPosition(), funDef.getName());
             }
             functionDefinitions.put(funDef.getName(), funDef);
         }
+
         return new Program(functionDefinitions);
     }
 

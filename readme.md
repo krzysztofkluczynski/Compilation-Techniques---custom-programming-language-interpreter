@@ -1020,3 +1020,5 @@ Przykładowy test:
 
 
 Interpreter był także testowany w sposób bardziej "manualny", wykorzystując plik wejściowy oraz funkcję main naszego projektu. Przykłady plików wejściowych znajdują się w folderze test_examples.
+
+Sumaryczna liczba testów to 227.

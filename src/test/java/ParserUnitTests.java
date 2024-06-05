@@ -327,7 +327,6 @@ public class ParserUnitTests {
     public void EmptyFunctionsMap() throws Exception {
         Position p = new Position(0, 0);
         List<Token> tokens = Arrays.asList(
-                new KeywordOrOperandToken(TokenType.INTEGER, p,"int"),
                 new KeywordOrOperandToken(TokenType.IDENTIFIER, p,"x"),
                 new KeywordOrOperandToken(TokenType.EQUAL, p,"="),
                 new IntegerToken(p, 2),
@@ -340,8 +339,7 @@ public class ParserUnitTests {
         when(mockLexer.next()).thenAnswer(invocation -> tokenIterator.hasNext() ? tokenIterator.next() : null);
 
         ParserImpl parser = new ParserImpl(mockLexer);
-        Program program = parser.parseProgram();
-        Assert.assertEquals(program.getFunctionDefinitions().size(), 0);
+        Assert.assertThrows(ParsingException.class, parser::parseProgram);
 
     }
 

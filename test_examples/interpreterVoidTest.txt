@@ -1,0 +1,13 @@
+fn void printer(List<int> list) {
+    for (int i : list) {
+        print($String i);
+    }
+ }
+
+//int x = 0;
+
+ fn int main() {
+    List<int> list = [1, 2, 3, 4, 5];
+    printer(list);
+    return list.get(0);
+ }

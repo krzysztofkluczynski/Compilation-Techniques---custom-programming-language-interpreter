@@ -8,7 +8,15 @@ fn List<int> main() {
 
      List<int> list =  SELECT (var_dict.value) FROM var_dict;
 
+     Dictionary<int, String> dict = SELECT (var_dict.value, var_dict.key) FROM var_dict;
 
+     List<String> list2 =  SELECT (var_dict.key) FROM var_dict WHERE (var_dict.value > 3);
 
-     return list;
+     List<int> list3 = SELECT (var_dict.value) FROM var_dict WHERE (var_dict.key == "dog");
+
+     List<String> list4 = SELECT (var_dict.key) FROM var_dict WHERE (var_dict.key == "dog");
+
+     List<String> list5 = SELECT (var_dict.key) FROM var_dict WHERE (var_dict.key != "dog");
+
+     return SELECT (var_dict.value) FROM var_dict WHERE (var_dict.value <= 4);
 }
